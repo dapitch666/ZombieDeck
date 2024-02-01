@@ -1,0 +1,242 @@
+[
+  {
+    "id": 1,
+    "cardType": "SPAWN",
+    "zombieType": "WALKER",
+    "amount": [1, 2, 4, 6]
+  },
+  {
+    "id": 2,
+    "cardType": "SPAWN",
+    "zombieType": "WALKER",
+    "amount": [2, 3, 5, 7]
+  },
+  {
+    "id": 3,
+    "cardType": "SPAWN",
+    "zombieType": "WALKER",
+    "amount": [3, 5, 7, 9]
+  },
+  {
+    "id": 4,
+    "cardType": "SPAWN",
+    "zombieType": "WALKER",
+    "amount": [4, 6, 8, 10]
+  },
+  {
+    "id": 5,
+    "cardType": "RUSH",
+    "zombieType": "WALKER",
+    "amount": [1, 2, 4, 6]
+  },
+  {
+    "id": 6,
+    "cardType": "RUSH",
+    "zombieType": "WALKER",
+    "amount": [2, 3, 5, 7]
+  },
+  {
+    "id": 7,
+    "cardType": "RUSH",
+    "zombieType": "WALKER",
+    "amount": [3, 5, 7, 9]
+  },
+  {
+    "id": 8,
+    "cardType": "RUSH",
+    "zombieType": "WALKER",
+    "amount": [4, 6, 8, 10]
+  },
+  {
+    "id": 9,
+    "cardType": "SPAWN",
+    "zombieType": "FATTY",
+    "amount": [1, 1, 2, 3]
+  },
+  {
+    "id": 10,
+    "cardType": "SPAWN",
+    "zombieType": "FATTY",
+    "amount": [2, 3, 4, 4]
+  },
+  {
+    "id": 11,
+    "cardType": "RUSH",
+    "zombieType": "FATTY",
+    "amount": [0, 1, 2, 3]
+  },
+  {
+    "id": 12,
+    "cardType": "RUSH",
+    "zombieType": "FATTY",
+    "amount": [1, 2, 3, 4]
+  },
+  {
+    "id": 13,
+    "cardType": "SPAWN",
+    "zombieType": "RUNNER",
+    "amount": [0, 1, 2, 3]
+  },
+  {
+    "id": 14,
+    "cardType": "SPAWN",
+    "zombieType": "RUNNER",
+    "amount": [1, 1, 2, 3]
+  },
+  {
+    "id": 15,
+    "cardType": "SPAWN",
+    "zombieType": "RUNNER",
+    "amount": [1, 2, 3, 4]
+  },
+  {
+    "id": 16,
+    "cardType": "SPAWN",
+    "zombieType": "RUNNER",
+    "amount": [2, 3, 4, 4]
+  },
+  {
+    "id": 17,
+    "cardType": "SPAWN",
+    "zombieType": "ABOMINATION",
+    "amount": [0, 1, 1, 1]
+  },
+  {
+    "id": 18,
+    "cardType": "SPAWN",
+    "zombieType": "ABOMINATION",
+    "amount": [0, 1, 1, 1]
+  },
+  {
+    "id": 19,
+    "cardType": "SPAWN",
+    "zombieType": "WALKER",
+    "amount": [2, 4, 6, 8]
+  },
+  {
+    "id": 20,
+    "cardType": "SPAWN",
+    "zombieType": "WALKER",
+    "amount": [3, 5, 7, 9]
+  },
+  {
+    "id": 21,
+    "cardType": "SPAWN",
+    "zombieType": "WALKER",
+    "amount": [4, 6, 8, 10]
+  },
+  {
+    "id": 22,
+    "cardType": "SPAWN",
+    "zombieType": "WALKER",
+    "amount": [6, 8, 10, 12]
+  },
+  {
+    "id": 23,
+    "cardType": "RUSH",
+    "zombieType": "WALKER",
+    "amount": [2, 4, 6, 8]
+  },
+  {
+    "id": 24,
+    "cardType": "RUSH",
+    "zombieType": "WALKER",
+    "amount": [3, 5, 7, 9]
+  },
+  {
+    "id": 25,
+    "cardType": "RUSH",
+    "zombieType": "WALKER",
+    "amount": [4, 6, 8, 10]
+  },
+  {
+    "id": 26,
+    "cardType": "RUSH",
+    "zombieType": "WALKER",
+    "amount": [6, 8, 10, 12]
+  },
+  {
+    "id": 27,
+    "cardType": "SPAWN",
+    "zombieType": "FATTY",
+    "amount": [1, 2, 3, 4]
+  },
+  {
+    "id": 28,
+    "cardType": "SPAWN",
+    "zombieType": "FATTY",
+    "amount": [3, 4, 5, 6]
+  },
+  {
+    "id": 29,
+    "cardType": "RUSH",
+    "zombieType": "FATTY",
+    "amount": [1, 2, 3, 4]
+  },
+  {
+    "id": 30,
+    "cardType": "RUSH",
+    "zombieType": "FATTY",
+    "amount": [2, 3, 4, 5]
+  },
+  {
+    "id": 31,
+    "cardType": "SPAWN",
+    "zombieType": "RUNNER",
+    "amount": [1, 2, 3, 4]
+  },
+  {
+    "id": 32,
+    "cardType": "SPAWN",
+    "zombieType": "RUNNER",
+    "amount": [1, 2, 3, 4]
+  },
+  {
+    "id": 33,
+    "cardType": "SPAWN",
+    "zombieType": "RUNNER",
+    "amount": [2, 3, 4, 5]
+  },
+  {
+    "id": 34,
+    "cardType": "SPAWN",
+    "zombieType": "RUNNER",
+    "amount": [3, 4, 5, 6]
+  },
+  {
+    "id": 35,
+    "cardType": "SPAWN",
+    "zombieType": "ABOMINATION",
+    "amount": [1, 1, 1, 1]
+  },
+  {
+    "id": 36,
+    "cardType": "SPAWN",
+    "zombieType": "ABOMINATION",
+    "amount": [1, 1, 1, 1]
+  },
+  {
+    "id": 37,
+    "cardType": "EXTRA_ACTIVATION",
+    "zombieType": "WALKER",
+    "amount": [0, 1, 1, 1]
+  },
+  {
+    "id": 38,
+    "cardType": "EXTRA_ACTIVATION",
+    "zombieType": "WALKER",
+    "amount": [0, 1, 1, 1]
+  },
+  {
+    "id": 39,
+    "cardType": "EXTRA_ACTIVATION",
+    "zombieType": "FATTY",
+    "amount": [0, 1, 1, 1]
+  },
+  {
+    "id": 40,
+    "cardType": "EXTRA_ACTIVATION",
+    "zombieType": "RUNNER",
+    "amount": [0, 1, 1, 1]
+  }
+]

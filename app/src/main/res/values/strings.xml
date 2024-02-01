@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">ZombiDeck</string>
+    <string name="welcome">Bienvenue dans ZombiDeck.</string>
+    <string name="options">options</string>
+    <string name="shuffle_and_start">Mélanger les cartes et démarrer</string>
+
+    <string name="draw_a_card">Tirer une carte</string>
+    <string-array name="danger_levels">
+        <item>Niveau de danger bleu</item>
+        <item>Niveau de danger jaune</item>
+        <item>Niveau de danger orange</item>
+        <item>Niveau de danger rouge</item>
+    </string-array>
+    <string name="card_number">#%1$s</string>
+    <string name="amount">x%1d</string>
+    <string name="spawn_then_activate">Générez, puis activez.</string>
+    <string name="one_extra_activation">Une activation supplémentaire.</string>
+    <string name="last_card">Il n\'y a plus de cartes dans la pioche</string>
+</resources>
