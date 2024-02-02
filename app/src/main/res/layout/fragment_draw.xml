@@ -29,6 +29,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ProgressBar
+            android:id="@+id/determinateBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:progress="25"
+            app:layout_constraintTop_toBottomOf="@+id/spinner_danger" />
+
         <androidx.cardview.widget.CardView
             android:id="@+id/card"
             android:layout_width="260dp"
@@ -59,7 +68,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerInside"
-                    android:src="@drawable/fatty" />
+                    android:paddingVertical="20dp"
+                    android:paddingRight="60dp"
+                    android:src="@drawable/walker" />
 
                 <TextView
                     android:id="@+id/card_zombie"
@@ -69,10 +80,10 @@
                     android:fontFamily="@font/overpass_black"
                     android:paddingVertical="5dp"
                     android:paddingStart="20dp"
-                    android:text="zombie"
+                    android:text="@string/abomination"
                     android:textAllCaps="true"
                     android:textColor="@color/white"
-                    android:textSize="30sp"
+                    android:textSize="26sp"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
@@ -93,11 +104,11 @@
                     android:layout_margin="16dp"
                     android:layout_marginEnd="10dp"
                     android:background="@drawable/zombie_count_bg"
-                    android:elevation="64dp"
                     android:fontFamily="@font/overpass_bold"
                     android:paddingHorizontal="20dp"
                     android:text="x4"
                     android:textSize="48sp"
+                    android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -121,7 +132,24 @@
         </androidx.cardview.widget.CardView>
 
         <Button
-            android:id="@+id/draw_card"
+            android:id="@+id/previous_card_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_marginStart="237dp"
+            android:layout_marginEnd="253dp"
+            android:layout_marginBottom="76dp"
+            android:fontFamily="@font/overpass_bold"
+            android:paddingHorizontal="24dp"
+            android:text="@string/previous_card"
+            android:textSize="16sp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/next_card_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/next_card_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"

@@ -11,31 +11,47 @@ import java.util.List;
 public class DrawViewModel extends ViewModel {
     private final DeckRepository deckRepository;
     private List<Card> deck;
-    private Integer currentCardIndex = 0;
+    private Integer currentCardIndex;
 
     public DrawViewModel(DeckRepository deckRepository) {
         this.deckRepository = deckRepository;
     }
 
     MutableLiveData<Card> currentCard = new MutableLiveData<>();
-    MutableLiveData<Boolean> isLastCard = new MutableLiveData<>(false);
-    MutableLiveData<Integer> dangerLevel = new MutableLiveData<>(0);
     MutableLiveData<Boolean> isStarted = new MutableLiveData<>(false);
 
     public void start() {
         deck = deckRepository.getCards();
-        currentCard.postValue(deck.get(0));
+        currentCardIndex = 0;
+        currentCard.postValue(deck.get(currentCardIndex));
         isStarted.postValue(true);
-        isLastCard.postValue(false);
     }
 
-    public void drawCard() {
+    public void nextCard() {
         currentCardIndex++;
         if (currentCardIndex >= deck.size()) {
             return;
-        } else if (currentCardIndex == deck.size() - 1) {
-            isLastCard.postValue(true);
         }
         currentCard.postValue(deck.get(currentCardIndex));
+    }
+
+    public void previousCard() {
+        currentCardIndex--;
+        if (currentCardIndex < 0) {
+            return;
+        }
+        currentCard.postValue(deck.get(currentCardIndex));
+    }
+
+    public boolean isFirstCard() {
+        return currentCardIndex == 0;
+    }
+
+    public boolean isLastCard() {
+        return currentCardIndex == deck.size() - 1;
+    }
+
+    public int getProgress() {
+        return currentCardIndex * 100 / deck.size();
     }
 }

@@ -16,4 +16,10 @@
     <string name="spawn_then_activate">Générez, puis activez.</string>
     <string name="one_extra_activation">Une activation supplémentaire.</string>
     <string name="last_card">Il n\'y a plus de cartes dans la pioche</string>
+    <string name="abomination">abomination</string>
+    <string name="previous_card">carte précédente</string>
+    <string name="shuffle">mélanger</string>
+    <string name="walker">rôdeur</string>
+    <string name="runner">forcené</string>
+    <string name="fatty">balèze</string>
 </resources>

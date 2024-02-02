@@ -3,6 +3,8 @@ package org.anne.zombiedeck.ui.drawcard;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -58,7 +61,7 @@ public class DrawFragment extends Fragment {
         super.onCreate(savedInstanceState);
         context = requireActivity().getApplicationContext();
         viewModel = new ViewModelProvider(this,
-                ViewModelFactory.getInstance(requireActivity().getApplicationContext()))
+                ViewModelFactory.getInstance(context))
                 .get(DrawViewModel.class);
     }
 
@@ -75,7 +78,7 @@ public class DrawFragment extends Fragment {
         // Spinner
         final Spinner spinner = binding.spinnerDanger;
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                requireActivity().getApplicationContext(),
+                context,
                 R.array.danger_levels,
                 R.layout.spinner_list
         );
@@ -93,7 +96,7 @@ public class DrawFragment extends Fragment {
                 };
                 spinner.setBackgroundResource(backgroundResource);
                 spinner.setPopupBackgroundResource(colorList.get(dangerLevel));
-                updateDangerLevel(dangerLevel);
+                updateDangerLevel();
             }
 
             @Override
@@ -102,26 +105,31 @@ public class DrawFragment extends Fragment {
             }
         });
         // End spinner
-        binding.drawCard.setOnClickListener(this::drawCard);
+        binding.previousCardButton.setOnClickListener(this::previousCard);
+        binding.nextCardButton.setOnClickListener(this::drawCard);
     }
 
-    private void drawCard(View view) {
-        if (Boolean.FALSE.equals(viewModel.isStarted.getValue())) {
-            viewModel.start();
-        } else if (Boolean.TRUE.equals(viewModel.isLastCard.getValue())) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(R.string.last_card);
-            builder.setPositiveButton(R.string.shuffle_and_start, (dialog, which) -> viewModel.start());
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        } else {
-            viewModel.drawCard();
+    private void previousCard(View view) {
+        if (viewModel.isFirstCard()) {
+            return;
         }
-        viewModel.currentCard.observe(getViewLifecycleOwner(), this::showCard);
+        viewModel.previousCard();
+        viewModel.currentCard.observe(getViewLifecycleOwner(), this::displayCard);
         binding.card.setVisibility(View.VISIBLE);
     }
 
-    private void showCard(Card card) {
+    private void drawCard(View view) {
+        if (Boolean.FALSE.equals(viewModel.isStarted.getValue()) ||
+                viewModel.isLastCard()) {
+            viewModel.start();
+        } else {
+            viewModel.nextCard();
+        }
+        viewModel.currentCard.observe(getViewLifecycleOwner(), this::displayCard);
+        binding.card.setVisibility(View.VISIBLE);
+    }
+
+    private void displayCard(Card card) {
         int zombieImage = switch (card.getZombieType()) {
             case WALKER -> R.drawable.walker;
             case RUNNER -> R.drawable.runner;
@@ -129,15 +137,9 @@ public class DrawFragment extends Fragment {
             case ABOMINATION -> R.drawable.abomination;
         };
         binding.cardImage.setImageDrawable(
-                AppCompatResources.getDrawable(requireActivity().getApplicationContext(), zombieImage));
-        // binding.cardImage.setImageDrawable(null);
-        // binding.cardImage.setImageDrawable(
-        //        AppCompatResources.getDrawable(context, R.drawable.walker)
-        //);
+                AppCompatResources.getDrawable(context, zombieImage));
         binding.cardId.setText(getString(R.string.card_number, getCardId(card.getId())));
         binding.cardZombie.setText(card.getZombieType().toString());
-        binding.zombieAmount.setText(getString(R.string.amount, card.getAmount().get(dangerLevel)));
-        binding.zombieAmount.setBackgroundColor(colorList.get(dangerLevel));
         switch (card.getCardType()) {
             case RUSH -> {
                 binding.cardAction.setText(getString(R.string.spawn_then_activate));
@@ -149,6 +151,18 @@ public class DrawFragment extends Fragment {
             }
             case SPAWN -> binding.cardAction.setVisibility(View.INVISIBLE);
         }
+        updateDangerLevel();
+        displayButtons();
+        updateProgress(viewModel.getProgress());
+    }
+
+    private void updateProgress(int progress) {
+        binding.determinateBar.setProgress(progress);
+    }
+
+    private void displayButtons() {
+        binding.previousCardButton.setVisibility(viewModel.isFirstCard() ? View.INVISIBLE : View.VISIBLE);
+        binding.nextCardButton.setText(viewModel.isLastCard() ? R.string.shuffle : R.string.draw_a_card);
     }
 
     @SuppressLint("DefaultLocale")
@@ -156,11 +170,12 @@ public class DrawFragment extends Fragment {
         return String.format("%03d", id);
     }
 
-    private void updateDangerLevel(Integer integer) {
+    private void updateDangerLevel() { // TODO: rename
         if (viewModel.currentCard.getValue() != null) {
             Card card = viewModel.currentCard.getValue();
             binding.zombieAmount.setText(getString(R.string.amount, card.getAmount().get(dangerLevel)));
-            binding.zombieAmount.setBackgroundColor(colorList.get(dangerLevel));
+            Drawable background = binding.zombieAmount.getBackground();
+            background.setColorFilter(ContextCompat.getColor(context, colorList.get(dangerLevel)), PorterDuff.Mode.SRC_ATOP);
         }
     }
 }
