@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
-    <color name="white">#EEEEEEEE</color>
+    <color name="white">#FFFFFFFE</color>
     <color name="grey">#8F000000</color>
-    <color name="danger_blue">#1976D2</color>
-    <color name="danger_yellow">#FBC02D</color>
-    <color name="danger_orange">#F57C00</color>
-    <color name="danger_red">#D32F2F</color>
+    <color name="danger_blue">#4591B1</color>
+    <color name="danger_yellow">#FFCC01</color>
+    <color name="danger_orange">#EF7F09</color>
+    <color name="danger_red">#E0251E</color>
+    <color name="transp">#27686161</color>
 </resources>

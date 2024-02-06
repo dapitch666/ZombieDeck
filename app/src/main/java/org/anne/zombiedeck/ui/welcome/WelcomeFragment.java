@@ -8,12 +8,10 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.Navigation;
 
 import org.anne.zombiedeck.R;
 import org.anne.zombiedeck.databinding.FragmentWelcomeBinding;
-import org.anne.zombiedeck.ui.drawcard.DrawFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,13 +50,10 @@ public class WelcomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        binding.startButton.setOnClickListener(v -> {
-            FragmentManager fragmentManager = getParentFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            DrawFragment drawFragment = DrawFragment.newInstance();
-            fragmentTransaction.add(R.id.container, drawFragment);
-            fragmentTransaction.commit();
-        });
+        binding.startButton.setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_welcomeFragment_to_drawFragment));
+        binding.configureButton.setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_welcomeFragment_to_settingsFragment));
     }
 
 

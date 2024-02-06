@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Deck {
     List<Card> cards;
@@ -21,9 +22,11 @@ public class Deck {
         cards = new ArrayList<>();
     }
 
-    public void initializeDeckFromJson(Context context) {
+    public void initializeDeckFromJson(Context context, ArrayList<Integer> allowedCards) {
         String jsonFileString = readJsonFile(context, R.raw.cards);
-        cards = parseJsonToCards(jsonFileString);
+        cards = parseJsonToCards(jsonFileString).stream()
+                .filter(card -> allowedCards.contains(card.getId()))
+                .collect(Collectors.toList());
     }
 
     public List<Card> getCards() {

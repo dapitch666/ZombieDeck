@@ -43,8 +43,8 @@ public class Card {
         this.zombieType = zombieType;
     }
 
-    public List<Integer> getAmount() {
-        return amount;
+    public int getAmount(Danger dangerLevel) {
+        return this.amount.get(dangerLevel.getIndex());
     }
 
     public void setAmount(List<Integer> amount) {

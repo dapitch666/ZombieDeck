@@ -4,5 +4,6 @@
         <item>@font/overpass</item>
         <item>@font/overpass_black</item>
         <item>@font/overpass_bold</item>
+        <item>@font/overpass_mono_bold</item>
     </array>
 </resources>

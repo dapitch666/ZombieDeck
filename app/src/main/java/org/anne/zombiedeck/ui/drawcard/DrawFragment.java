@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,16 +18,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import org.anne.zombiedeck.R;
+import org.anne.zombiedeck.data.Abomination;
 import org.anne.zombiedeck.data.Card;
+import org.anne.zombiedeck.data.Danger;
+import org.anne.zombiedeck.data.ZombieType;
 import org.anne.zombiedeck.databinding.FragmentDrawBinding;
 import org.anne.zombiedeck.injection.ViewModelFactory;
+import org.anne.zombiedeck.ui.abominations.AbominationDialogFragment;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,11 +43,8 @@ import java.util.List;
 public class DrawFragment extends Fragment {
     private DrawViewModel viewModel;
     private FragmentDrawBinding binding;
-    private int dangerLevel = 0;
+    private Danger dangerLevel = Danger.BLUE;
     private Context context;
-    private static final List<Integer> colorList = Arrays.asList(
-            R.color.danger_blue, R.color.danger_yellow,
-            R.color.danger_orange, R.color.danger_red);
 
     public DrawFragment() {
         // Required empty public constructor
@@ -86,27 +90,30 @@ public class DrawFragment extends Fragment {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                dangerLevel = position;
-                int backgroundResource = switch (position) {
-                    case 0 -> R.drawable.bg_spinner_blue;
-                    case 1 -> R.drawable.bg_spinner_yellow;
-                    case 2 -> R.drawable.bg_spinner_orange;
-                    case 3 -> R.drawable.bg_spinner_red;
-                    default -> R.drawable.bg_spinner;
+                dangerLevel = Danger.valueOf(position);
+                int backgroundResource = switch (dangerLevel) {
+                    case BLUE -> R.drawable.bg_spinner_blue;
+                    case YELLOW -> R.drawable.bg_spinner_yellow;
+                    case ORANGE -> R.drawable.bg_spinner_orange;
+                    case RED -> R.drawable.bg_spinner_red;
                 };
                 spinner.setBackgroundResource(backgroundResource);
-                spinner.setPopupBackgroundResource(colorList.get(dangerLevel));
-                updateDangerLevel();
+                spinner.setPopupBackgroundResource(dangerLevel.getColor());
+                refreshDangerLevelDisplay();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
-                spinner.setSelection(dangerLevel);
+                spinner.setSelection(dangerLevel.getIndex());
             }
         });
         // End spinner
         binding.previousCardButton.setOnClickListener(this::previousCard);
         binding.nextCardButton.setOnClickListener(this::drawCard);
+        binding.drawAbominationButton.setOnClickListener(v -> viewModel.drawAbomination());
+        binding.seeAbominationButton.setOnClickListener(this::displayAbomination);
+        viewModel.currentAbomination.observe(getViewLifecycleOwner(), this::displayAbomination);
+        viewModel.currentCard.observe(getViewLifecycleOwner(), this::displayCard);
     }
 
     private void previousCard(View view) {
@@ -114,8 +121,7 @@ public class DrawFragment extends Fragment {
             return;
         }
         viewModel.previousCard();
-        viewModel.currentCard.observe(getViewLifecycleOwner(), this::displayCard);
-        binding.card.setVisibility(View.VISIBLE);
+        binding.card.setEnabled(true);
     }
 
     private void drawCard(View view) {
@@ -125,21 +131,46 @@ public class DrawFragment extends Fragment {
         } else {
             viewModel.nextCard();
         }
-        viewModel.currentCard.observe(getViewLifecycleOwner(), this::displayCard);
-        binding.card.setVisibility(View.VISIBLE);
+    }
+
+    private void displayAbomination(Abomination abomination) {
+        DialogFragment dialog = AbominationDialogFragment.newInstance(abomination.name());
+        if (dialog.getDialog() != null && dialog.getDialog().getWindow() != null) {
+            dialog.getDialog().getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+        dialog.show(getChildFragmentManager(), "AbominationDialogFragment");
+    }
+
+    private void displayAbomination(View view) {
+        displayAbomination(Objects.requireNonNull(viewModel.currentAbomination.getValue()));
     }
 
     private void displayCard(Card card) {
-        int zombieImage = switch (card.getZombieType()) {
-            case WALKER -> R.drawable.walker;
-            case RUNNER -> R.drawable.runner;
-            case FATTY -> R.drawable.fatty;
-            case ABOMINATION -> R.drawable.abomination;
-        };
+        int zombieImage;
+        int zombieName;
+        switch (card.getZombieType()) {
+            case WALKER -> {
+                zombieName = R.string.walker;
+                zombieImage = R.drawable.walker;
+            }
+            case RUNNER -> {
+                zombieName = R.string.runner;
+                zombieImage = R.drawable.runner;
+            }
+            case FATTY -> {
+                zombieName = R.string.fatty;
+                zombieImage = R.drawable.fatty;
+            }
+            case ABOMINATION -> {
+                zombieName = R.string.abomination;
+                zombieImage = R.drawable.abomination;
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + card.getZombieType());
+        }
         binding.cardImage.setImageDrawable(
                 AppCompatResources.getDrawable(context, zombieImage));
         binding.cardId.setText(getString(R.string.card_number, getCardId(card.getId())));
-        binding.cardZombie.setText(card.getZombieType().toString());
+        binding.cardZombie.setText(getText(zombieName));
         switch (card.getCardType()) {
             case RUSH -> {
                 binding.cardAction.setText(getString(R.string.spawn_then_activate));
@@ -151,18 +182,23 @@ public class DrawFragment extends Fragment {
             }
             case SPAWN -> binding.cardAction.setVisibility(View.INVISIBLE);
         }
-        updateDangerLevel();
-        displayButtons();
-        updateProgress(viewModel.getProgress());
-    }
-
-    private void updateProgress(int progress) {
-        binding.determinateBar.setProgress(progress);
-    }
-
-    private void displayButtons() {
-        binding.previousCardButton.setVisibility(viewModel.isFirstCard() ? View.INVISIBLE : View.VISIBLE);
+        // Flip card
+        if (binding.cardFront.getVisibility() == View.INVISIBLE) {
+            binding.cardFront.setVisibility(View.VISIBLE);
+            binding.bgCard.setImageDrawable(
+                    AppCompatResources.getDrawable(context, R.drawable.bg_card));
+        }
+        // Display number of zombies for the selected danger level
+        refreshDangerLevelDisplay();
+        // Display buttons
+        binding.previousCardButton.setEnabled(!viewModel.isFirstCard());
         binding.nextCardButton.setText(viewModel.isLastCard() ? R.string.shuffle : R.string.draw_a_card);
+        // Progress bar
+        binding.determinateBar.setProgress(viewModel.getProgress());
+        // Display card
+        if (binding.card.getVisibility() == View.INVISIBLE) {
+            binding.card.setVisibility(View.VISIBLE);
+        }
     }
 
     @SuppressLint("DefaultLocale")
@@ -170,12 +206,15 @@ public class DrawFragment extends Fragment {
         return String.format("%03d", id);
     }
 
-    private void updateDangerLevel() { // TODO: rename
+    private void refreshDangerLevelDisplay() { // TODO: rename
         if (viewModel.currentCard.getValue() != null) {
             Card card = viewModel.currentCard.getValue();
-            binding.zombieAmount.setText(getString(R.string.amount, card.getAmount().get(dangerLevel)));
+            binding.zombieAmount.setText(getString(R.string.amount, card.getAmount(dangerLevel)));
             Drawable background = binding.zombieAmount.getBackground();
-            background.setColorFilter(ContextCompat.getColor(context, colorList.get(dangerLevel)), PorterDuff.Mode.SRC_ATOP);
+            background.setColorFilter(ContextCompat.getColor(context, dangerLevel.getColor()), PorterDuff.Mode.SRC_ATOP);
+            // Propose to draw an abomination
+            binding.drawAbominationButton.setEnabled(card.getZombieType() == ZombieType.ABOMINATION
+                    && card.getAmount(dangerLevel) > 0);
         }
     }
 }

@@ -2,9 +2,9 @@
     <string name="app_name">ZombiDeck</string>
     <string name="welcome">Bienvenue dans ZombiDeck.</string>
     <string name="options">options</string>
-    <string name="shuffle_and_start">Mélanger les cartes et démarrer</string>
+    <string name="shuffle_and_start">Battre les cartes et démarrer</string>
 
-    <string name="draw_a_card">Tirer une carte</string>
+    <string name="draw_a_card">Piocher une carte</string>
     <string-array name="danger_levels">
         <item>Niveau de danger bleu</item>
         <item>Niveau de danger jaune</item>
@@ -16,10 +16,32 @@
     <string name="spawn_then_activate">Générez, puis activez.</string>
     <string name="one_extra_activation">Une activation supplémentaire.</string>
     <string name="last_card">Il n\'y a plus de cartes dans la pioche</string>
-    <string name="abomination">abomination</string>
+    <string name="abomination">Abomination</string>
     <string name="previous_card">carte précédente</string>
     <string name="shuffle">mélanger</string>
     <string name="walker">rôdeur</string>
     <string name="runner">forcené</string>
     <string name="fatty">balèze</string>
+    <string name="configure_the_deck">Configurer le jeu</string>
+    <string name="tuning_the_difficulty">Ajuster la difficulté</string>
+    <string name="cards_1_to_18">Inclure les cartes 1 à 18</string>
+    <string name="cards_19_to_36">Inclure les cartes 19 à 36</string>
+    <string name="cards_37_to_40">Inclure les cartes 37 à 40</string>
+    <string name="cards_1_to_18_summary">Les cartes les plus faciles de l\'invasion. Les zombies sont moins nombreux, mais bénéficient tout de même des règles de ruée. Aucune abomination n\'apparaît au niveau de danger bleu.</string>
+    <string name="cards_19_to_36_summary">Plus difficile. Les zombies apparaissent en plus grand nombre, notamment aux niveaux de danger les plus bas. Les abominations apparaissent dès le niveau de danger bleu.</string>
+    <string name="cards_37_to_40_summary">Ce sont des cartes Activation supplémentaire. Elles rendent les zombies moins prévisibles et contribuent à tenir les survivants en haleine.</string>
+    <string name="ok">OK</string>
+    <string name="preferences_alert">Vous devez sélectionner au moins un jeu de cartes</string>
+    <string name="hobomination">Cradomination</string>
+    <string name="abominacop">Abominaflic</string>
+    <string name="abominawild">Abominabête</string>
+    <string name="patient_0">Patient 0</string>
+    <string name="hobomination_rule">Les survivants situés dans la zone de la Cradomination ne peuvent pas effecturer d\'actiond de combat.</string>
+    <string name="abominacop_rule">L\'Abominaflic arrive en premier dans l\'ordre de priorité des cibles.</string>
+    <string name="abominawild_rule">Dans la zone de l\'Abominabête, les effets Molotov ne tuent que celle-ci. Les autres acteurs ne sont pas affectés et les autres effets sont ignorés.</string>
+    <string name="patient_0_rule">Pas de règles spéciales.</string>
+    <string name="draw_an_abomination">Piocher une abomination</string>
+    <string name="see_abomination">Voir l\'abomination</string>
+    <string name="draw">Piocher</string>
+    <string name="see">Voir</string>
 </resources>
