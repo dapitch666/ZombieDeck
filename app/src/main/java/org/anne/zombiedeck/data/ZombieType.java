@@ -3,10 +3,10 @@ package org.anne.zombiedeck.data;
 import org.anne.zombiedeck.R;
 
 public enum ZombieType {
-    WALKER(R.string.walker, R.drawable.walker),
-    RUNNER(R.string.runner, R.drawable.runner),
-    FATTY(R.string.fatty, R.drawable.fatty),
-    ABOMINATION(R.string.abomination, R.drawable.abomination);
+    WALKER(R.string.walker, R.drawable.zombie_walker),
+    RUNNER(R.string.runner, R.drawable.zombie_runner),
+    FATTY(R.string.fatty, R.drawable.zombie_fatty),
+    ABOMINATION(R.string.abomination, R.drawable.zombie_abomination);
 
     private final int name;
     private final int image;
