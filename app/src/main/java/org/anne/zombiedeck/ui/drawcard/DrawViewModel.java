@@ -15,6 +15,7 @@ public class DrawViewModel extends ViewModel {
     private List<Card> deck;
     private List<Abomination> abominations;
     private Integer currentCardIndex;
+    private boolean firstAbominationDrawn = false;
 
     public DrawViewModel(DeckRepository deckRepository) {
         this.deckRepository = deckRepository;
@@ -51,6 +52,7 @@ public class DrawViewModel extends ViewModel {
     public void drawAbomination() {
         int index = (int) (Math.random() * abominations.size());
         currentAbomination.postValue(abominations.get(index));
+        firstAbominationDrawn = true;
     }
 
     public boolean isFirstCard() {
@@ -63,5 +65,9 @@ public class DrawViewModel extends ViewModel {
 
     public int getProgress() {
         return (currentCardIndex + 1) * 100 / deck.size();
+    }
+
+    public boolean hasAbomination() {
+        return firstAbominationDrawn;
     }
 }
