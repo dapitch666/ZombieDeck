@@ -4,13 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,7 +36,6 @@ import org.anne.zombiedeck.ui.abominations.AbominationDialogFragment;
 public class DrawFragment extends Fragment {
     private DrawViewModel viewModel;
     private FragmentDrawBinding binding;
-    private Danger dangerLevel = Danger.BLUE;
     private Context context;
 
     public DrawFragment() {
@@ -73,41 +71,42 @@ public class DrawFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // Spinner
-        final Spinner spinner = binding.spinnerDanger;
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                context,
-                R.array.danger_levels,
-                R.layout.spinner_list
-        );
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                dangerLevel = Danger.valueOf(position);
-                int backgroundResource = switch (dangerLevel) {
-                    case BLUE -> R.drawable.bg_spinner_blue;
-                    case YELLOW -> R.drawable.bg_spinner_yellow;
-                    case ORANGE -> R.drawable.bg_spinner_orange;
-                    case RED -> R.drawable.bg_spinner_red;
-                };
-                spinner.setBackgroundResource(backgroundResource);
-                spinner.setPopupBackgroundResource(dangerLevel.getColor());
-                refreshDangerLevelDisplay();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                spinner.setSelection(dangerLevel.getIndex());
-            }
-        });
-        // End spinner
+        binding.dangerLevelBackButton.setOnClickListener(v -> viewModel.previousDangerLevel());
+        binding.dangerLevelForwardButton.setOnClickListener(v -> viewModel.nextDangerLevel());
         binding.previousCardButton.setOnClickListener(this::previousCard);
-        binding.nextCardButton.setOnClickListener(this::drawCard);
+        binding.nextCardButton.setOnClickListener(v -> viewModel.nextCard());
         binding.drawAbominationButton.setOnClickListener(this::drawAbomination);
         binding.displayAbominationButton.setOnClickListener(this::displayAbomination);
         viewModel.currentAbomination.observe(getViewLifecycleOwner(), this::displayAbomination);
         viewModel.currentCard.observe(getViewLifecycleOwner(), this::displayCard);
+        viewModel.currentDanger.observe(getViewLifecycleOwner(), this::updateDangerLevel);
+        viewModel.isLastCard.observe(getViewLifecycleOwner(),
+                b -> binding.nextCardButton.setText(b ? R.string.shuffle : R.string.draw_a_card));
+    }
+
+    private void updateDangerLevel(Danger danger) {
+        binding.dangerLevelText.setText(getString(R.string.danger_level, getString(danger.getName())));
+        binding.dangerLevelText.getBackground().setColorFilter(ContextCompat.getColor(context, danger.getColor()), PorterDuff.Mode.SRC_ATOP);
+        if (danger == Danger.YELLOW) {
+            binding.dangerLevelText.setTextColor(ContextCompat.getColor(context, R.color.black));
+        } else {
+            binding.dangerLevelText.setTextColor(ContextCompat.getColor(context, R.color.white));
+        }
+        if (danger != Danger.BLUE) {
+            binding.dangerLevelBackButton.setIconTintResource(danger.previous().getColor());
+            binding.dangerLevelBackButton.setEnabled(true);
+        } else {
+            binding.dangerLevelBackButton.setIconTintResource(R.color.grey);
+            binding.dangerLevelBackButton.setEnabled(false);
+        }
+        if (danger != Danger.RED) {
+            binding.dangerLevelForwardButton.setIconTintResource(danger.next().getColor());
+            binding.dangerLevelForwardButton.setEnabled(true);
+        } else {
+            binding.dangerLevelForwardButton.setIconTintResource(R.color.grey);
+            binding.dangerLevelForwardButton.setEnabled(false);
+        }
+        refreshDangerLevelDisplay();
     }
 
     private void previousCard(View view) {
@@ -116,15 +115,6 @@ public class DrawFragment extends Fragment {
         }
         viewModel.previousCard();
         binding.card.setEnabled(true);
-    }
-
-    private void drawCard(View view) {
-        if (Boolean.FALSE.equals(viewModel.isStarted.getValue()) ||
-                viewModel.isLastCard()) {
-            viewModel.start();
-        } else {
-            viewModel.nextCard();
-        }
     }
 
     private void displayAbomination(Abomination abomination) {
@@ -153,16 +143,36 @@ public class DrawFragment extends Fragment {
                 AppCompatResources.getDrawable(context, zombieType.getImage()));
         binding.cardId.setText(getString(R.string.card_number, String.format("%03d", card.getId())));
         binding.cardZombie.setText(getText(zombieType.getName()));
+        LayerDrawable bgCardTop = (LayerDrawable) binding.bgCardTop.getDrawable();
+        GradientDrawable stripe = (GradientDrawable) bgCardTop.findDrawableByLayerId(R.id.stripe_bg);
+        GradientDrawable cardTop = (GradientDrawable) bgCardTop.findDrawableByLayerId(R.id.top_bg);
         switch (card.getCardType()) {
             case RUSH -> {
                 binding.cardAction.setText(getString(R.string.spawn_then_activate));
                 binding.cardAction.setVisibility(View.VISIBLE);
+                stripe.setColor(ContextCompat.getColor(context, R.color.danger_yellow));
+                cardTop.setColor(ContextCompat.getColor(context, R.color.danger_yellow));
+                binding.cardZombie.setBackgroundColor(ContextCompat.getColor(context, R.color.danger_yellow));
+                binding.cardZombie.setTextColor(ContextCompat.getColor(context, R.color.black));
+                binding.cardId.setTextColor(ContextCompat.getColor(context, R.color.black));
             }
             case EXTRA_ACTIVATION -> {
                 binding.cardAction.setText(getString(R.string.one_extra_activation));
                 binding.cardAction.setVisibility(View.VISIBLE);
+                stripe.setColor(ContextCompat.getColor(context, R.color.danger_red));
+                cardTop.setColor(ContextCompat.getColor(context, R.color.danger_red));
+                binding.cardZombie.setBackgroundColor(ContextCompat.getColor(context, R.color.danger_red));
+                binding.cardZombie.setTextColor(ContextCompat.getColor(context, R.color.white));
+                binding.cardId.setTextColor(ContextCompat.getColor(context, R.color.white));
             }
-            case SPAWN -> binding.cardAction.setVisibility(View.INVISIBLE);
+            case SPAWN -> {
+                binding.cardAction.setVisibility(View.INVISIBLE);
+                stripe.setColor(ContextCompat.getColor(context, R.color.white));
+                cardTop.setColor(ContextCompat.getColor(context, R.color.black));
+                binding.cardZombie.setBackgroundColor(ContextCompat.getColor(context, R.color.black));
+                binding.cardZombie.setTextColor(ContextCompat.getColor(context, R.color.white));
+                binding.cardId.setTextColor(ContextCompat.getColor(context, R.color.white));
+            }
         }
         // Flip card
         if (binding.cardFront.getVisibility() == View.INVISIBLE) {
@@ -174,7 +184,7 @@ public class DrawFragment extends Fragment {
         refreshDangerLevelDisplay();
         // Display buttons
         binding.previousCardButton.setEnabled(!viewModel.isFirstCard());
-        binding.nextCardButton.setText(viewModel.isLastCard() ? R.string.shuffle : R.string.draw_a_card);
+        // binding.nextCardButton.setText(viewModel.isLastCard() ? R.string.shuffle : R.string.draw_a_card);
         // Progress bar
         binding.determinateBar.setProgress(viewModel.getProgress());
         // Display card
@@ -185,8 +195,9 @@ public class DrawFragment extends Fragment {
 
 
     private void refreshDangerLevelDisplay() {
-        if (viewModel.currentCard.getValue() != null) {
+        if (viewModel.currentCard.getValue() != null && viewModel.currentDanger.getValue() != null) {
             Card card = viewModel.currentCard.getValue();
+            Danger dangerLevel = viewModel.currentDanger.getValue();
             binding.zombieAmount.setText(getString(R.string.amount, card.getAmount(dangerLevel)));
             Drawable background = binding.zombieAmount.getBackground();
             background.setColorFilter(ContextCompat.getColor(context, dangerLevel.getColor()), PorterDuff.Mode.SRC_ATOP);

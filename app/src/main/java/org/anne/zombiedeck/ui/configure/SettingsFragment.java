@@ -38,7 +38,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private void showDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.preferences_alert)
-                .setPositiveButton(R.string.ok, (dialog, id) -> Log.d(TAG, "Dialog: OK"));
+                .setPositiveButton(R.string.positive, null);
         AlertDialog dialog = builder.create();
         dialog.show();
     }
