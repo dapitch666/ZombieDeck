@@ -24,10 +24,10 @@ public class DrawViewModel extends ViewModel {
         this.deckRepository = deckRepository;
     }
 
-    MutableLiveData<Card> currentCard = new MutableLiveData<>();
-    MutableLiveData<Abomination> currentAbomination = new MutableLiveData<>();
-    MutableLiveData<Danger> currentDanger = new MutableLiveData<>(Danger.BLUE);
-    MutableLiveData<Boolean> isLastCard = new MutableLiveData<>(false);
+    final MutableLiveData<Card> currentCard = new MutableLiveData<>();
+    final MutableLiveData<Abomination> currentAbomination = new MutableLiveData<>();
+    final MutableLiveData<Danger> currentDanger = new MutableLiveData<>(Danger.BLUE);
+    final MutableLiveData<Boolean> isLastCard = new MutableLiveData<>(false);
 
     public void nextCard() {
         if (isStarted && currentCardIndex < deck.size() - 1) {

@@ -3,7 +3,6 @@ package org.anne.zombiedeck.ui.configure;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
@@ -11,7 +10,6 @@ import androidx.preference.SwitchPreferenceCompat;
 import org.anne.zombiedeck.R;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
-    private static final String TAG = "SettingsFragment";
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -38,7 +36,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private void showDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.preferences_alert)
-                .setPositiveButton(R.string.positive, null);
+                .setPositiveButton(android.R.string.ok, null);
         AlertDialog dialog = builder.create();
         dialog.show();
     }

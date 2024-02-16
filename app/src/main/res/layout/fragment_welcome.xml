@@ -10,7 +10,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/poster" />
+        android:src="@drawable/poster"
+        android:importantForAccessibility="no" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -21,7 +22,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/logo" />
+            android:src="@drawable/logo"
+            android:importantForAccessibility="no" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/start_button"

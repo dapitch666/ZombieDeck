@@ -13,26 +13,11 @@ import androidx.navigation.Navigation;
 import org.anne.zombiedeck.R;
 import org.anne.zombiedeck.databinding.FragmentWelcomeBinding;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link WelcomeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class WelcomeFragment extends Fragment {
 
     private FragmentWelcomeBinding binding;
 
     public WelcomeFragment() {
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment WelcomeFragment.
-     */
-    public static WelcomeFragment newInstance() {
-        return new WelcomeFragment();
     }
 
     @Override

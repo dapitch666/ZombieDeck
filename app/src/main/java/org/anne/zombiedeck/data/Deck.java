@@ -44,7 +44,8 @@ public class Deck {
     public List<Card> parseJsonToCards(String jsonString) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.readValue(jsonString, new TypeReference<List<Card>>() {});
+            return objectMapper.readValue(jsonString, new TypeReference<>() {
+            });
         } catch (IOException e) {
             e.printStackTrace();
             return new ArrayList<>();

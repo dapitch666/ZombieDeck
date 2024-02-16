@@ -2,25 +2,19 @@ package org.anne.zombiedeck.ui.drawcard;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StyleRes;
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.compose.ui.graphics.Color;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -34,11 +28,7 @@ import org.anne.zombiedeck.databinding.FragmentDrawBinding;
 import org.anne.zombiedeck.injection.ViewModelFactory;
 import org.anne.zombiedeck.ui.abominations.AbominationDialogFragment;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link DrawFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class DrawFragment extends Fragment {
     private DrawViewModel viewModel;
     private FragmentDrawBinding binding;
@@ -46,16 +36,6 @@ public class DrawFragment extends Fragment {
 
     public DrawFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment DrawCardFragment.
-     */
-    public static DrawFragment newInstance() {
-        return new DrawFragment();
     }
 
     @Override

@@ -7,13 +7,11 @@
     android:gravity="center">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/abomination_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="25dp">
 
         <ImageView
-            android:id="@+id/bg_card"
             android:layout_width="260dp"
             android:layout_height="400dp"
             android:scaleType="centerCrop"
@@ -23,10 +21,10 @@
             tools:ignore="ContentDescription" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/abomination_card_front"
             android:layout_width="260dp"
             android:layout_height="400dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            tools:ignore="TextSizeCheck">
 
             <ImageView
                 android:id="@+id/bg_abomination_card_top"
@@ -37,7 +35,7 @@
                 android:scaleX="1.1"
                 android:src="@drawable/bg_card_top"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:layout_editor_absoluteX="5dp" />
+                android:importantForAccessibility="no" />
 
             <TextView
                 android:id="@+id/abomination_name"
@@ -58,8 +56,8 @@
                 android:id="@+id/abomination_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
                 android:layout_marginTop="10dp"
+                android:scaleType="centerCrop"
                 android:src="@drawable/abomination_abominacop"
                 tools:ignore="ContentDescription" />
 
