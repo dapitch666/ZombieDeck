@@ -10,20 +10,20 @@ public enum Danger {
 
     private final int index;
     private final int name;
-    private final int color;
+    private final int bgColor;
 
-    Danger(int index, int name, int color) {
+    Danger(int index, int name, int bgColor) {
         this.index = index;
         this.name = name;
-        this.color = color;
+        this.bgColor = bgColor;
     }
 
     public int getIndex() {
         return index;
     }
 
-    public int getColor() {
-        return color;
+    public int getBgColor() {
+        return bgColor;
     }
 
     public int getName() {
@@ -46,5 +46,9 @@ public enum Danger {
             case ORANGE -> RED;
             case RED -> throw new IllegalStateException("Unexpected value: " + this);
         };
+    }
+
+    public int getTextColor() {
+        return this == YELLOW ? R.color.black : R.color.white;
     }
 }

@@ -2,19 +2,25 @@ package org.anne.zombiedeck.ui.drawcard;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StyleRes;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.compose.ui.graphics.Color;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -82,29 +88,25 @@ public class DrawFragment extends Fragment {
         viewModel.currentDanger.observe(getViewLifecycleOwner(), this::updateDangerLevel);
         viewModel.isLastCard.observe(getViewLifecycleOwner(),
                 b -> binding.nextCardButton.setText(b ? R.string.shuffle : R.string.draw_a_card));
+        updateDangerLevel(Danger.BLUE);
     }
 
     private void updateDangerLevel(Danger danger) {
+        Drawable dangerProgressBarBackground = binding.dangerProgressBarBg.getBackground();
+        GradientDrawable dangerProgressBarBackgroundColor = (GradientDrawable) dangerProgressBarBackground;
+        dangerProgressBarBackgroundColor.setColor(ContextCompat.getColor(context, danger.getBgColor()));
         binding.dangerLevelText.setText(getString(R.string.danger_level, getString(danger.getName())));
-        binding.dangerLevelText.getBackground().setColorFilter(ContextCompat.getColor(context, danger.getColor()), PorterDuff.Mode.SRC_ATOP);
-        if (danger == Danger.YELLOW) {
-            binding.dangerLevelText.setTextColor(ContextCompat.getColor(context, R.color.black));
-        } else {
-            binding.dangerLevelText.setTextColor(ContextCompat.getColor(context, R.color.white));
-        }
         if (danger != Danger.BLUE) {
-            binding.dangerLevelBackButton.setIconTintResource(danger.previous().getColor());
-            binding.dangerLevelBackButton.setEnabled(true);
+            binding.dangerLevelBackButton.setIconTintResource(danger.previous().getBgColor());
+            binding.dangerLevelBackButton.setVisibility(View.VISIBLE);
         } else {
-            binding.dangerLevelBackButton.setIconTintResource(R.color.grey);
-            binding.dangerLevelBackButton.setEnabled(false);
+            binding.dangerLevelBackButton.setVisibility(View.INVISIBLE);
         }
         if (danger != Danger.RED) {
-            binding.dangerLevelForwardButton.setIconTintResource(danger.next().getColor());
-            binding.dangerLevelForwardButton.setEnabled(true);
+            binding.dangerLevelForwardButton.setIconTintResource(danger.next().getBgColor());
+            binding.dangerLevelForwardButton.setVisibility(View.VISIBLE);
         } else {
-            binding.dangerLevelForwardButton.setIconTintResource(R.color.grey);
-            binding.dangerLevelForwardButton.setEnabled(false);
+            binding.dangerLevelForwardButton.setVisibility(View.INVISIBLE);
         }
         refreshDangerLevelDisplay();
     }
@@ -184,9 +186,8 @@ public class DrawFragment extends Fragment {
         refreshDangerLevelDisplay();
         // Display buttons
         binding.previousCardButton.setEnabled(!viewModel.isFirstCard());
-        // binding.nextCardButton.setText(viewModel.isLastCard() ? R.string.shuffle : R.string.draw_a_card);
         // Progress bar
-        binding.determinateBar.setProgress(viewModel.getProgress());
+        binding.dangerProgressBar.setProgress(viewModel.getProgress());
         // Display card
         if (binding.card.getVisibility() == View.INVISIBLE) {
             binding.card.setVisibility(View.VISIBLE);
@@ -199,8 +200,9 @@ public class DrawFragment extends Fragment {
             Card card = viewModel.currentCard.getValue();
             Danger dangerLevel = viewModel.currentDanger.getValue();
             binding.zombieAmount.setText(getString(R.string.amount, card.getAmount(dangerLevel)));
+            binding.zombieAmount.setTextColor(ContextCompat.getColor(context, dangerLevel.getTextColor()));
             Drawable background = binding.zombieAmount.getBackground();
-            background.setColorFilter(ContextCompat.getColor(context, dangerLevel.getColor()), PorterDuff.Mode.SRC_ATOP);
+            background.setColorFilter(ContextCompat.getColor(context, dangerLevel.getBgColor()), PorterDuff.Mode.SRC_ATOP);
             toggleAbominationButton(card.getZombieType() == ZombieType.ABOMINATION
                     && card.getAmount(dangerLevel) > 0);
         }

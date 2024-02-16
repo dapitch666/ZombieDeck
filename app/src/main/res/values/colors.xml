@@ -3,9 +3,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFE</color>
     <color name="grey">#50000000</color>
-    <color name="danger_blue">#4591B1</color>
+    <color name="danger_blue">#0093B4</color>
     <color name="danger_yellow">#FFCC01</color>
-    <color name="danger_orange">#EF7F09</color>
-    <color name="danger_red">#E0251E</color>
+    <color name="danger_orange">#E85112</color>
+    <color name="danger_red">#E2001A</color>
     <color name="transp">#27686161</color>
 </resources>

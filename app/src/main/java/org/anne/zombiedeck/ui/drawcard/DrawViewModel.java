@@ -67,6 +67,9 @@ public class DrawViewModel extends ViewModel {
     }
 
     public int getProgress() {
+        if (deck == null || deck.isEmpty()) {
+            return 0;
+        }
         return (currentCardIndex + 1) * 100 / deck.size();
     }
 
