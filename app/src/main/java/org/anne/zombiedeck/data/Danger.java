@@ -2,6 +2,11 @@ package org.anne.zombiedeck.data;
 
 import org.anne.zombiedeck.R;
 
+/**
+ * Enum for the danger level
+ * Defines the name, color, and index for each danger level
+ * Also provides methods to get the next and previous danger levels
+ */
 public enum Danger {
     BLUE(0, R.string.blue, R.color.danger_blue),
     YELLOW(1, R.string.yellow, R.color.danger_yellow),

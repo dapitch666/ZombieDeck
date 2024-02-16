@@ -11,6 +11,9 @@ import org.anne.zombiedeck.ui.drawcard.DrawViewModel;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * ViewModel provider factory to instantiate DrawViewModel.
+ */
 public class ViewModelFactory implements ViewModelProvider.Factory {
     private final DeckRepository deckRepository;
     private static ViewModelFactory factory;

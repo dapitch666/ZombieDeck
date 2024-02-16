@@ -33,6 +33,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         });
     }
 
+    /**
+     * Show an alert dialog when all switches are off
+     */
     private void showDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.preferences_alert)

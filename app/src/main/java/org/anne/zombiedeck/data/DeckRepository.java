@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Repository for the deck of cards
+ */
 public class DeckRepository {
     private final Deck deck;
     private final Context context;

@@ -2,6 +2,10 @@ package org.anne.zombiedeck.data;
 
 import java.util.List;
 
+/**
+ * Class for the card
+ * Used to load the data from the json file
+ */
 public class Card {
     int id;
     CardType cardType;

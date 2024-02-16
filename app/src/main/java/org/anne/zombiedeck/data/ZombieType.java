@@ -2,6 +2,11 @@ package org.anne.zombiedeck.data;
 
 import org.anne.zombiedeck.R;
 
+/**
+ * Enum for the type of zombie
+ * Defines the name and image for each zombie type
+ * @see Card
+ */
 public enum ZombieType {
     WALKER(R.string.walker, R.drawable.zombie_walker),
     RUNNER(R.string.runner, R.drawable.zombie_runner),

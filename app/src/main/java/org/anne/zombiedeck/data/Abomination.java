@@ -2,6 +2,11 @@ package org.anne.zombiedeck.data;
 
 import org.anne.zombiedeck.R;
 
+/**
+ * Enum for the type of abomination
+ * Defines the name, image, and rule for each abomination
+ * @see org.anne.zombiedeck.data.Deck
+ */
 public enum Abomination {
     HOBOMINATION(R.string.hobomination, R.drawable.abomination_hobomination, R.string.hobomination_rule),
     ABOMINACOP(R.string.abominacop, R.drawable.abomination_abominacop, R.string.abominacop_rule),

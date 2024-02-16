@@ -65,6 +65,7 @@ public class AbominationDialogFragment extends DialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        // Set the background to transparent to see the rounded corners
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
@@ -76,6 +77,7 @@ public class AbominationDialogFragment extends DialogFragment {
         GradientDrawable cardTop = (GradientDrawable) bgAbominationCardTop.findDrawableByLayerId(R.id.top_bg);
         stripe.setColor(ContextCompat.getColor(requireContext(), R.color.danger_yellow));
         cardTop.setColor(ContextCompat.getColor(requireContext(), R.color.black));
+        // Close the dialog when the user taps the background or the card
         view.setOnClickListener(v -> dismiss());
     }
 }

@@ -54,15 +54,25 @@ public class DrawFragment extends Fragment {
         return binding.getRoot();
     }
 
+    /**
+     * Set up the view after the fragment's view has been created:
+     * - Set up buttons
+     * - Observe data
+     * - Initialize view according to default danger level (blue)
+     *
+     * @param view               The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     *                           from a previous saved state as given here.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding.dangerLevelBackButton.setOnClickListener(v -> viewModel.previousDangerLevel());
         binding.dangerLevelForwardButton.setOnClickListener(v -> viewModel.nextDangerLevel());
-        binding.previousCardButton.setOnClickListener(this::previousCard);
+        binding.previousCardButton.setOnClickListener(v -> viewModel.previousCard());
         binding.nextCardButton.setOnClickListener(v -> viewModel.nextCard());
-        binding.drawAbominationButton.setOnClickListener(this::drawAbomination);
-        binding.displayAbominationButton.setOnClickListener(this::displayAbomination);
+        binding.drawAbominationButton.setOnClickListener(v -> drawAbomination());
+        binding.displayAbominationButton.setOnClickListener(v -> displayAbomination());
         viewModel.currentAbomination.observe(getViewLifecycleOwner(), this::displayAbomination);
         viewModel.currentCard.observe(getViewLifecycleOwner(), this::displayCard);
         viewModel.currentDanger.observe(getViewLifecycleOwner(), this::updateDangerLevel);
@@ -71,11 +81,19 @@ public class DrawFragment extends Fragment {
         updateDangerLevel(Danger.BLUE);
     }
 
+    /**
+     * Set the danger level to display and update the view accordingly.
+     *
+     * @param danger The new danger level to display.
+     */
     private void updateDangerLevel(Danger danger) {
+        // Set danger level progress bar background color and text
         Drawable dangerProgressBarBackground = binding.dangerProgressBarBg.getBackground();
         GradientDrawable dangerProgressBarBackgroundColor = (GradientDrawable) dangerProgressBarBackground;
         dangerProgressBarBackgroundColor.setColor(ContextCompat.getColor(context, danger.getBgColor()));
         binding.dangerLevelText.setText(getString(R.string.danger_level, getString(danger.getName())));
+
+        // Set danger level buttons
         if (danger != Danger.BLUE) {
             binding.dangerLevelBackButton.setIconTintResource(danger.previous().getBgColor());
             binding.dangerLevelBackButton.setVisibility(View.VISIBLE);
@@ -88,17 +106,15 @@ public class DrawFragment extends Fragment {
         } else {
             binding.dangerLevelForwardButton.setVisibility(View.INVISIBLE);
         }
+        // Update danger level on card
         refreshDangerLevelDisplay();
     }
 
-    private void previousCard(View view) {
-        if (viewModel.isFirstCard()) {
-            return;
-        }
-        viewModel.previousCard();
-        binding.card.setEnabled(true);
-    }
-
+    /**
+     * Display the abomination card in a dialog.
+     *
+     * @param abomination The abomination to display.
+     */
     private void displayAbomination(Abomination abomination) {
         DialogFragment dialog = AbominationDialogFragment.newInstance(abomination.name());
         if (dialog.getDialog() != null && dialog.getDialog().getWindow() != null) {
@@ -107,22 +123,33 @@ public class DrawFragment extends Fragment {
         dialog.show(getChildFragmentManager(), "AbominationDialogFragment");
     }
 
-    private void displayAbomination(View view) {
+    /**
+     * Display the current abomination in a dialog.
+     * Is called when the display abomination button is clicked.
+     */
+    private void displayAbomination() {
         if (viewModel.currentAbomination.getValue() != null) {
             displayAbomination(viewModel.currentAbomination.getValue());
         }
     }
 
-    private void drawAbomination(View view) {
+    /**
+     * Draw a new abomination card and enable the display abomination button.
+     */
+    private void drawAbomination() {
         viewModel.drawAbomination();
         toggleAbominationButton(false);
     }
 
+    /**
+     * Display the current card.
+     *
+     * @param card The card to display.
+     */
     @SuppressLint("DefaultLocale")
     private void displayCard(Card card) {
         ZombieType zombieType = card.getZombieType();
-        binding.cardImage.setImageDrawable(
-                AppCompatResources.getDrawable(context, zombieType.getImage()));
+        binding.cardImage.setImageDrawable(AppCompatResources.getDrawable(context, zombieType.getImage()));
         binding.cardId.setText(getString(R.string.card_number, String.format("%03d", card.getId())));
         binding.cardZombie.setText(getText(zombieType.getName()));
         LayerDrawable bgCardTop = (LayerDrawable) binding.bgCardTop.getDrawable();
@@ -159,8 +186,7 @@ public class DrawFragment extends Fragment {
         // Flip card
         if (binding.cardFront.getVisibility() == View.INVISIBLE) {
             binding.cardFront.setVisibility(View.VISIBLE);
-            binding.bgCard.setImageDrawable(
-                    AppCompatResources.getDrawable(context, R.drawable.bg_card));
+            binding.bgCard.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.bg_card));
         }
         // Display number of zombies for the selected danger level
         refreshDangerLevelDisplay();
@@ -174,20 +200,29 @@ public class DrawFragment extends Fragment {
         }
     }
 
-
+    /**
+     * Refresh the display of the number of zombies for the current danger level.
+     */
     private void refreshDangerLevelDisplay() {
         if (viewModel.currentCard.getValue() != null && viewModel.currentDanger.getValue() != null) {
             Card card = viewModel.currentCard.getValue();
             Danger dangerLevel = viewModel.currentDanger.getValue();
             binding.zombieAmount.setText(getString(R.string.amount, card.getAmount(dangerLevel)));
-            binding.zombieAmount.setTextColor(ContextCompat.getColor(context, dangerLevel.getTextColor()));
+            binding.zombieAmount.setTextColor(ContextCompat.getColor(
+                    context, dangerLevel.getTextColor()));
             Drawable background = binding.zombieAmount.getBackground();
-            background.setColorFilter(ContextCompat.getColor(context, dangerLevel.getBgColor()), PorterDuff.Mode.SRC_ATOP);
+            background.setColorFilter(ContextCompat.getColor(
+                    context, dangerLevel.getBgColor()), PorterDuff.Mode.SRC_ATOP);
             toggleAbominationButton(card.getZombieType() == ZombieType.ABOMINATION
                     && card.getAmount(dangerLevel) > 0);
         }
     }
 
+    /**
+     * Toggle the display of the draw abomination and display abomination buttons.
+     *
+     * @param drawNewAbomination True if a new abomination should be drawn, false to use the current one
+     */
     private void toggleAbominationButton(boolean drawNewAbomination) {
         binding.displayAbominationButton.setVisibility(drawNewAbomination ? View.GONE : View.VISIBLE);
         binding.displayAbominationButton.setEnabled(!drawNewAbomination && viewModel.hasAbomination());

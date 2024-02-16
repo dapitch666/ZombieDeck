@@ -15,6 +15,13 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+/**
+ * Deck of zombie cards
+ * Contains a list of cards initialized from a JSON file
+ * Filtered by the user's preferences in the settings
+ * @see Card
+ * @see org.anne.zombiedeck.data.DeckRepository
+ */
 public class Deck {
     List<Card> cards;
 
