@@ -37,4 +37,5 @@
     <string name="yellow">jaune</string>
     <string name="orange">orange</string>
     <string name="red">rouge</string>
+    <string name="no_extra_activation">PAS d\'activation supplémentaire</string>
 </resources>

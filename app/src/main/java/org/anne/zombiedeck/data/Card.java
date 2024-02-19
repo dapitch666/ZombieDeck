@@ -54,4 +54,8 @@ public class Card {
     public void setAmount(List<Integer> amount) {
         this.amount = amount;
     }
+
+    public boolean isExtraActivation() {
+        return this.cardType == CardType.EXTRA_ACTIVATION;
+    }
 }

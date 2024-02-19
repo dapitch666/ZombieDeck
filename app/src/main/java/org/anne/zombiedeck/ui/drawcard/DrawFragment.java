@@ -166,7 +166,6 @@ public class DrawFragment extends Fragment {
                 binding.cardId.setTextColor(ContextCompat.getColor(context, R.color.black));
             }
             case EXTRA_ACTIVATION -> {
-                binding.cardAction.setText(getString(R.string.one_extra_activation));
                 binding.cardAction.setVisibility(View.VISIBLE);
                 stripe.setColor(ContextCompat.getColor(context, R.color.danger_red));
                 cardTop.setColor(ContextCompat.getColor(context, R.color.danger_red));
@@ -207,12 +206,20 @@ public class DrawFragment extends Fragment {
         if (viewModel.currentCard.getValue() != null && viewModel.currentDanger.getValue() != null) {
             Card card = viewModel.currentCard.getValue();
             Danger dangerLevel = viewModel.currentDanger.getValue();
-            binding.zombieAmount.setText(getString(R.string.amount, card.getAmount(dangerLevel)));
-            binding.zombieAmount.setTextColor(ContextCompat.getColor(
-                    context, dangerLevel.getTextColor()));
-            Drawable background = binding.zombieAmount.getBackground();
-            background.setColorFilter(ContextCompat.getColor(
-                    context, dangerLevel.getBgColor()), PorterDuff.Mode.SRC_ATOP);
+            if (card.isExtraActivation()) {
+                binding.cardAction.setText(card.getAmount(dangerLevel) == 0 ?
+                        getString(R.string.no_extra_activation) :
+                        getString(R.string.one_extra_activation));
+                binding.zombieAmount.setVisibility(View.INVISIBLE);
+            } else {
+                binding.zombieAmount.setText(getString(R.string.amount, card.getAmount(dangerLevel)));
+                binding.zombieAmount.setTextColor(ContextCompat.getColor(
+                        context, dangerLevel.getTextColor()));
+                Drawable background = binding.zombieAmount.getBackground();
+                background.setColorFilter(ContextCompat.getColor(
+                        context, dangerLevel.getBgColor()), PorterDuff.Mode.SRC_ATOP);
+                binding.zombieAmount.setVisibility(View.VISIBLE);
+            }
             toggleAbominationButton(card.getZombieType() == ZombieType.ABOMINATION
                     && card.getAmount(dangerLevel) > 0);
         }
