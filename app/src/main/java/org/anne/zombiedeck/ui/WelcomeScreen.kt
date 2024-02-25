@@ -22,6 +22,7 @@ import org.anne.zombiedeck.ui.theme.ZombieDeckTheme
 @Composable
 fun WelcomeScreen(
     navigateToDraw: (Boolean) -> Unit,
+    navigateToSettings: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -55,7 +56,7 @@ fun WelcomeScreen(
                     buttonText = stringResource(id = R.string.shuffle_and_start)
                 )
                 ZombieButton(
-                    onClick = { /*TODO*/ },
+                    onClick = navigateToSettings,
                     buttonText = stringResource(R.string.configure_the_deck)
                 )
             }
@@ -68,7 +69,8 @@ fun WelcomeScreen(
 fun WelcomeScreenPreview() {
     ZombieDeckTheme {
         WelcomeScreen(
-            navigateToDraw = { }
+            navigateToDraw = { },
+            navigateToSettings = { }
         )
     }
 }

@@ -51,6 +51,10 @@ android {
 
 dependencies {
 
+    implementation("com.chillibits:simplesettings:1.3.4")
+    implementation("com.google.android.material:material:<latest-version>")
+    implementation("androidx.preference:preference-ktx:<latest-version>")
+
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")

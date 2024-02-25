@@ -1,25 +1,43 @@
 package org.anne.zombiedeck.viewmodels
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import com.chillibits.simplesettings.tool.getPrefBooleanValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.anne.zombiedeck.data.Abomination
+import org.anne.zombiedeck.data.Card
 import org.anne.zombiedeck.data.DeckState
 import org.anne.zombiedeck.data.allCards
 
-class GameViewModel : ViewModel() {
+class GameViewModel(private val application: Application) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow(DeckState())
     val uiState: StateFlow<DeckState> = _uiState.asStateFlow()
 
-    private var deck = allCards.shuffled()
-    val abominations = Abomination.entries
+    private var deck = getCards()
+
+    private fun getCards(): List<Card> {
+        val cards: MutableList<Card> = mutableListOf()
+        if (application.getPrefBooleanValue("cards_1_to_18")) {
+            cards.addAll(allCards.subList(0, 18))
+        }
+        if (application.getPrefBooleanValue("cards_19_to_36")) {
+            cards.addAll(allCards.subList(18, 36))
+        }
+        if (application.getPrefBooleanValue("cards_37_to_40")) {
+            cards.addAll(allCards.subList(36, 40))
+        }
+        return cards.shuffled()
+    }
+
+    private val abominations = Abomination.entries
 
     fun nextCard() {
         var currentCardIndex = _uiState.value.currentCardIndex
         // If we are at the last card, shuffle the deck and start over
         if (isLastCard()) {
-            deck = allCards.shuffled()
+            deck = getCards()
             currentCardIndex = -1
         }
         val nextCardIndex = currentCardIndex + 1

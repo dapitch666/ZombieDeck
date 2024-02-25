@@ -1,0 +1,25 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/tuning_the_difficulty">
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="cards_1_to_18"
+            app:summary="@string/cards_1_to_18_summary"
+            app:title="@string/cards_1_to_18" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="cards_19_to_36"
+            app:summary="@string/cards_19_to_36_summary"
+            app:title="@string/cards_19_to_36" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="cards_37_to_40"
+            app:summary="@string/cards_37_to_40_summary"
+            app:title="@string/cards_37_to_40" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

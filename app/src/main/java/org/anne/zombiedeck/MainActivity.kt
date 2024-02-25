@@ -11,7 +11,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ZombieDeckTheme {
-                ZombieDeckApp()
+                ZombieDeckApp(
+                    context = this
+                )
             }
         }
     }

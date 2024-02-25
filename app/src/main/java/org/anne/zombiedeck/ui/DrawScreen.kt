@@ -31,7 +31,11 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.anne.zombiedeck.R
+import org.anne.zombiedeck.data.Abomination
+import org.anne.zombiedeck.data.Card
+import org.anne.zombiedeck.data.CardType
 import org.anne.zombiedeck.data.Danger
+import org.anne.zombiedeck.data.ZombieType
 import org.anne.zombiedeck.ui.components.DangerLevelIconButton
 import org.anne.zombiedeck.ui.components.DangerProgressBar
 import org.anne.zombiedeck.ui.components.ZombieButton
@@ -42,11 +46,42 @@ import org.anne.zombiedeck.viewmodels.GameViewModel
 @Composable
 fun DrawScreen(
     modifier: Modifier = Modifier,
-    gameViewModel: GameViewModel = viewModel(),
 ) {
+    val gameViewModel: GameViewModel = viewModel()
     val gameUiState by gameViewModel.uiState.collectAsState()
-    val card = gameUiState.currentCard
-    val danger = gameUiState.currentDanger
+    DrawUIScreen(
+        modifier = modifier,
+        card = gameUiState.currentCard,
+        abomination = gameUiState.currentAbomination,
+        danger = gameUiState.currentDanger,
+        decreaseDangerLevel = { gameViewModel.decreaseDangerLevel() },
+        increaseDangerLevel = { gameViewModel.increaseDangerLevel() },
+        progress = gameViewModel.getProgress(),
+        abominationJustDrawn = gameUiState.abominationJustDrawn,
+        drawAbomination = { gameViewModel.drawNewAbomination() },
+        isFirstCard = gameViewModel.isFirstCard(),
+        isLastCard = gameViewModel.isLastCard(),
+        previousCard = { gameViewModel.previousCard() },
+        nextCard = { gameViewModel.nextCard() },
+    )
+}
+
+@Composable
+fun DrawUIScreen(
+    modifier: Modifier = Modifier,
+    card: Card?,
+    abomination: Abomination?,
+    danger: Danger = Danger.BLUE,
+    decreaseDangerLevel: (Boolean) -> Unit = {},
+    increaseDangerLevel: (Boolean) -> Unit = {},
+    progress: Float = 0f,
+    abominationJustDrawn: Boolean = false,
+    drawAbomination: () -> Unit = {},
+    isFirstCard: Boolean = false,
+    isLastCard: Boolean = false,
+    previousCard: () -> Unit = {},
+    nextCard: () -> Unit = {},
+) {
     // Background image
     Box(
         modifier = modifier.fillMaxSize()
@@ -74,7 +109,7 @@ fun DrawScreen(
             val isFirstDangerLevel = danger == Danger.BLUE
             val isLastDangerLevel = danger == Danger.RED
             DangerLevelIconButton(
-                onClick = { gameViewModel.decreaseDangerLevel() },
+                onClick = decreaseDangerLevel,
                 icon = Icons.Outlined.KeyboardArrowLeft,
                 color = if (isFirstDangerLevel) R.color.grey else danger.previous().colorRes,
                 enabled = !isFirstDangerLevel
@@ -83,13 +118,13 @@ fun DrawScreen(
                 modifier = Modifier
                     .weight(1f)
                     .padding(5.dp),
-                progress = gameViewModel.getProgress(),
+                progress = progress,
                 danger = danger,
             )
             DangerLevelIconButton(
                 icon = Icons.Outlined.KeyboardArrowRight,
                 color = if (isLastDangerLevel) R.color.grey else danger.next().colorRes,
-                onClick = { gameViewModel.increaseDangerLevel() },
+                onClick = increaseDangerLevel,
                 enabled = !isLastDangerLevel
             )
         }
@@ -110,7 +145,7 @@ fun DrawScreen(
                 Box (modifier = Modifier.offset(y = (-44).dp)) {
                     ZombieCard(
                         card = null,
-                        abomination = gameUiState.currentAbomination,
+                        abomination = abomination,
                         modifier = Modifier
                             .clickable(onClick = { showAbominationDialog = false })
                     )
@@ -127,17 +162,17 @@ fun DrawScreen(
             // Draw / see abomination button
             val amount = card?.getAmount(danger) ?: 0
             val drawNewAbomination = card?.isAbomination() == true && amount > 0
-            val enable = drawNewAbomination || gameUiState.currentAbomination != null
+            val enable = drawNewAbomination || abomination != null
 
             ZombieButton(
-                buttonText = if (drawNewAbomination && !gameUiState.abominationJustDrawn) {
+                buttonText = if (drawNewAbomination && !abominationJustDrawn) {
                     stringResource(id = R.string.draw_an_abomination)
                 } else {
                     stringResource(id = R.string.see_abomination)
                 },
                 onClick = {
-                    if(drawNewAbomination && !gameUiState.abominationJustDrawn) {
-                        gameViewModel.drawNewAbomination()
+                    if(drawNewAbomination && !abominationJustDrawn) {
+                        drawAbomination()
                     }
                     showAbominationDialog = showAbominationDialog.not()
                           },
@@ -151,15 +186,15 @@ fun DrawScreen(
                 // Previous / next card buttons
                 ZombieButton(
                     buttonText = stringResource(id = R.string.previous_card),
-                    onClick = { gameViewModel.previousCard() },
-                    enable = !gameViewModel.isFirstCard(),
+                    onClick = { previousCard() },
+                    enable = !isFirstCard,
                     modifier = Modifier.weight(1f),
                     fillWidth = true
                 )
                 ZombieButton(
-                    buttonText = if (gameViewModel.isLastCard()) stringResource(id = R.string.shuffle)
+                    buttonText = if (isLastCard) stringResource(id = R.string.shuffle)
                         else stringResource(id = R.string.draw_a_card),
-                    onClick = { gameViewModel.nextCard() },
+                    onClick = { nextCard() },
                     modifier = Modifier.weight(1f),
                     fillWidth = true
                 )
@@ -173,6 +208,24 @@ fun DrawScreen(
 @Composable
 fun DrawScreenPreview() {
     ZombieDeckTheme {
-        DrawScreen()
+        DrawUIScreen(
+            card = Card(
+                21,
+                CardType.RUSH,
+                ZombieType.FATTY,
+                listOf(0, 4, 6, 8)
+            ),
+            abomination = Abomination.ABOMINAWILD,
+            danger = Danger.BLUE,
+            decreaseDangerLevel = {},
+            increaseDangerLevel = {},
+            progress = 0.5f,
+            abominationJustDrawn = false,
+            drawAbomination = {},
+            isFirstCard = false,
+            isLastCard = false,
+            previousCard = {},
+            nextCard = {},
+        )
     }
 }
