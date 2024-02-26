@@ -9,14 +9,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.anne.zombiedeck.R
 import org.anne.zombiedeck.data.Danger
 
@@ -51,8 +54,11 @@ fun DangerProgressBar(
             text = stringResource(R.string.danger_level, stringResource(id = danger.nameRes)),
             color = colorResource(R.color.white),
             textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
             modifier = Modifier
                 .fillMaxWidth()
+                .align(Alignment.Center)
         )
     }
 }

@@ -27,7 +27,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,6 +39,7 @@ import org.anne.zombiedeck.data.CardType
 import org.anne.zombiedeck.data.Danger
 import org.anne.zombiedeck.data.ZombieType
 import org.anne.zombiedeck.ui.theme.ZombieDeckTheme
+import org.anne.zombiedeck.ui.theme.overpassMonoFont
 
 @Composable
 fun ZombieCard(
@@ -67,6 +67,7 @@ fun ZombieCard(
         card?.cardType == CardType.RUSH -> colorResource(R.color.danger_yellow)
         else -> colorResource(R.color.black)
     }
+    val dangerColor = colorResource(danger.colorRes)
     val amount = card?.getAmount(danger)
     Card(
         modifier = modifier
@@ -127,22 +128,19 @@ fun ZombieCard(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp),
+                            .padding(start = 15.dp, top = 5.dp, end = 10.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        val zombieName = if (isAbomination) {
-                            stringResource(id = abomination!!.nameRes).uppercase()
-                        } else {
-                            stringResource(id = card!!.zombieType.nameRes).uppercase()
-                        }
-
                         Text(
-                            text = zombieName,
+                            text = if (isAbomination) {
+                                stringResource(id = abomination!!.nameRes).uppercase()
+                            } else {
+                                stringResource(id = card!!.zombieType.nameRes).uppercase()
+                            },
                             color = fontColor,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.Black,
                             fontSize = 22.sp,
-                            textAlign = TextAlign.Center
                         )
                         if (!isAbomination) {
                             val cardId = stringResource(
@@ -152,7 +150,8 @@ fun ZombieCard(
                             Text(
                                 text = cardId,
                                 color = fontColor,
-                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Light,
+                                fontSize = 12.sp,
                             )
                         }
                     }
@@ -170,33 +169,25 @@ fun ZombieCard(
 
                 )
                 // Zombie count
-                // Hidden if the card is an abomination or an extra activation with 0 activations
-                if (!isAbomination && !(card?.cardType == CardType.EXTRA_ACTIVATION && amount!! == 0)) {
-                    val rectColor = colorResource(danger.colorRes)
-                    Box(
+                // Hidden if the card is an abomination or an extra activation
+                if (!isAbomination && card?.cardType != CardType.EXTRA_ACTIVATION) {
+                    Text(
+                        text = stringResource(id = R.string.amount, amount!!),
+                        color = colorResource(danger.getTextColor()),
+                        fontFamily = overpassMonoFont,
+                        fontSize = 40.sp,
+                        textAlign = TextAlign.Center,
                         modifier = Modifier
-                            //.background(colorResource(R.color.black))
+                            .padding(end = 16.dp)
                             .align(Alignment.CenterEnd)
-                            .padding(16.dp, 8.dp)
                             .drawBehind {
                                 drawRoundRect(
-                                    color = rectColor,
-                                    size = size,
+                                    color = dangerColor,
                                     cornerRadius = CornerRadius(10.dp.toPx())
                                 )
                             }
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.amount, amount!!),
-                            color = colorResource(danger.getTextColor()),
-                            fontFamily = FontFamily.Monospace,
-                            fontSize = 22.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .align(Alignment.CenterEnd)
+                            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
                         )
-                    }
                 }
                 // Bottom of the card
                 if (isAbomination) {
@@ -206,9 +197,9 @@ fun ZombieCard(
                             .align(Alignment.BottomCenter)
                             .fillMaxWidth()
                             .background(colorResource(id = R.color.black))
-                            .padding(16.dp),
+                            .padding(vertical = 16.dp, horizontal = 8.dp),
                         color = fontColor,
-                        fontSize = 12.sp,
+                        fontSize = 14.sp,
                         textAlign = TextAlign.Center,
                         lineHeight = 16.sp
                     )
@@ -228,7 +219,7 @@ fun ZombieCard(
                             .align(Alignment.BottomCenter)
                             .padding(16.dp),
                         color = colorResource(id = R.color.white),
-                        fontSize = 16.sp,
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center
                     )
@@ -251,7 +242,7 @@ fun DrawZombieCardZombiePreview() {
     ZombieDeckTheme {
         ZombieCard(
             card = Card(
-                21,
+                7,
                 CardType.RUSH,
                 ZombieType.FATTY,
                 listOf(0, 4, 6, 8)
@@ -270,7 +261,7 @@ fun DrawZombieCardAbominationPreview() {
 
         ZombieCard(
             card = null,
-            abomination = Abomination.ABOMINACOP
+            abomination = Abomination.PATIENT_0
         )
     }
 }

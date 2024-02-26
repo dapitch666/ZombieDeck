@@ -17,11 +17,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.anne.zombiedeck.R
+import org.anne.zombiedeck.ui.theme.overpassFamily
 
 @Composable
 fun ZombieButton(
@@ -62,7 +64,7 @@ fun ZombieButton(
                 modifier = Modifier
                     .background(backgroundColor)
                     .align(Alignment.Center)
-                    .padding(10.dp, 5.dp, 10.dp, 5.dp)
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
                     .conditional(
                         fillWidth,
                         { fillMaxWidth() },
@@ -75,7 +77,9 @@ fun ZombieButton(
                     text = buttonText,
                     color = foregroundColor,
                     textAlign = TextAlign.Center,
-                    fontSize = 16.sp
+                    fontFamily = overpassFamily,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
 
@@ -98,11 +102,13 @@ fun ZombieButtonDisabledPreview() {
     ZombieButton(
         buttonText = "Button",
         enable = false,
-        modifier = Modifier.wrapContentSize()
+        fillWidth = false
     )
 }
 
-@Preview
+@Preview(
+    widthDp = 360,
+)
 @Composable
 fun ZombieButtonsOnARowPreview() {
     Row(
@@ -110,13 +116,13 @@ fun ZombieButtonsOnARowPreview() {
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         ZombieButton(
-            buttonText = "Button 1",
+            buttonText = "Carte précédente",
             enable = false,
             modifier = Modifier.weight(1f),
             fillWidth = true
         )
         ZombieButton(
-            buttonText = "Long button text",
+            buttonText = "Piocher une carte",
             enable = true,
             modifier = Modifier.weight(1f),
             fillWidth = true
