@@ -2,7 +2,7 @@ package org.anne.zombiedeck.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import com.chillibits.simplesettings.tool.getPrefBooleanValue
+import androidx.preference.PreferenceManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,18 +14,19 @@ import org.anne.zombiedeck.data.allCards
 class GameViewModel(private val application: Application) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow(DeckState())
     val uiState: StateFlow<DeckState> = _uiState.asStateFlow()
+    val prefs = PreferenceManager.getDefaultSharedPreferences(application)
 
     private var deck = getCards()
 
     private fun getCards(): List<Card> {
         val cards: MutableList<Card> = mutableListOf()
-        if (application.getPrefBooleanValue("cards_1_to_18")) {
+        if (prefs.getBoolean("cards_1_to_18", true)) {
             cards.addAll(allCards.subList(0, 18))
         }
-        if (application.getPrefBooleanValue("cards_19_to_36")) {
+        if (prefs.getBoolean("cards_19_to_36", true)) {
             cards.addAll(allCards.subList(18, 36))
         }
-        if (application.getPrefBooleanValue("cards_37_to_40")) {
+        if (prefs.getBoolean("cards_37_to_40", true)) {
             cards.addAll(allCards.subList(36, 40))
         }
         return cards.shuffled()

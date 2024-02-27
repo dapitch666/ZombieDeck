@@ -38,4 +38,6 @@
     <string name="red">rouge</string>
     <string name="no_extra_activation">PAS d\'activation supplémentaire</string>
     <string name="not_important">Not important for accessibility</string>
+    <string name="settings">Préférences</string>
+    <string name="title">Titre</string>
 </resources>
