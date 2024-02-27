@@ -1,8 +1,7 @@
 package org.anne.zombiedeck.viewmodels
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.preference.PreferenceManager
+import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -10,23 +9,25 @@ import org.anne.zombiedeck.data.Abomination
 import org.anne.zombiedeck.data.Card
 import org.anne.zombiedeck.data.DeckState
 import org.anne.zombiedeck.data.allCards
+import org.anne.zombiedeck.settings.MyPreference
+import javax.inject.Inject
 
-class GameViewModel(private val application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class GameViewModel @Inject constructor(private val myPreference: MyPreference) : ViewModel() {
     private val _uiState = MutableStateFlow(DeckState())
     val uiState: StateFlow<DeckState> = _uiState.asStateFlow()
-    val prefs = PreferenceManager.getDefaultSharedPreferences(application)
 
     private var deck = getCards()
 
     private fun getCards(): List<Card> {
         val cards: MutableList<Card> = mutableListOf()
-        if (prefs.getBoolean("cards_1_to_18", true)) {
+        if (myPreference.getBoolean("cards_1_to_18")) {
             cards.addAll(allCards.subList(0, 18))
         }
-        if (prefs.getBoolean("cards_19_to_36", true)) {
+        if (myPreference.getBoolean("cards_19_to_36")) {
             cards.addAll(allCards.subList(18, 36))
         }
-        if (prefs.getBoolean("cards_37_to_40", true)) {
+        if (myPreference.getBoolean("cards_37_to_40")) {
             cards.addAll(allCards.subList(36, 40))
         }
         return cards.shuffled()

@@ -34,7 +34,9 @@ fun ZombieDeckNavHost(
             DrawScreen()
         }
         composable(route = "Settings") {
-            SettingsScreen()
+            SettingsScreen(
+                navigateUp = { navController.popBackStack() }
+            )
         }
     }
 }

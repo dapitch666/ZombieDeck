@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import org.anne.zombiedeck.R
 import org.anne.zombiedeck.data.Abomination
 import org.anne.zombiedeck.data.Card
@@ -47,7 +47,7 @@ import org.anne.zombiedeck.viewmodels.GameViewModel
 fun DrawScreen(
     modifier: Modifier = Modifier,
 ) {
-    val gameViewModel: GameViewModel = viewModel()
+    val gameViewModel: GameViewModel = hiltViewModel()
     val gameUiState by gameViewModel.uiState.collectAsState()
     DrawUIScreen(
         modifier = modifier,
