@@ -68,7 +68,7 @@ fun SettingsUIScreen(
             },
             navigationIcon = {
                 IconButton(onClick = backButtonOnClick ) {
-                    Icon(Icons.Filled.ArrowBack, contentDescription = null)
+                    Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(id = R.string.back))
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
@@ -86,9 +86,7 @@ fun SettingsUIScreen(
                 // the switch composable
                 SettingsSwitchComp(
                     name = R.string.cards_1_to_18,
-                    icon = R.drawable.baseline_settings_24,
-                    iconDesc = R.string.not_important,
-                    // value is collected from StateFlow - updates the UI on change
+                    summary = R.string.cards_1_to_18_summary,
                     state = cards1To18State
                 ) {
                     // call ViewModel to toggle the value
@@ -96,9 +94,7 @@ fun SettingsUIScreen(
                 }
                 SettingsSwitchComp(
                     name = R.string.cards_19_to_36,
-                    icon = R.drawable.baseline_settings_24,
-                    iconDesc = R.string.not_important,
-                    // value is collected from StateFlow - updates the UI on change
+                    summary = R.string.cards_19_to_36_summary,
                     state = cards19To36State
                 ) {
                     // call ViewModel to toggle the value
@@ -106,9 +102,7 @@ fun SettingsUIScreen(
                 }
                 SettingsSwitchComp(
                     name = R.string.cards_37_to_40,
-                    icon = R.drawable.baseline_settings_24,
-                    iconDesc = R.string.not_important,
-                    // value is collected from StateFlow - updates the UI on change
+                    summary = R.string.cards_37_to_40_summary,
                     state = cards37To40State
                 ) {
                     // call ViewModel to toggle the value
