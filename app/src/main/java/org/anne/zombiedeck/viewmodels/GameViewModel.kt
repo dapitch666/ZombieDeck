@@ -18,6 +18,7 @@ class GameViewModel @Inject constructor(private val myPreference: MyPreference) 
     val uiState: StateFlow<DeckState> = _uiState.asStateFlow()
 
     private var deck = getCards()
+    private var isForward = true
 
     private fun getCards(): List<Card> {
         val cards: MutableList<Card> = mutableListOf()
@@ -44,6 +45,7 @@ class GameViewModel @Inject constructor(private val myPreference: MyPreference) 
         }
         val nextCardIndex = currentCardIndex + 1
         val nextCard = deck[nextCardIndex]
+        isForward = true
         _uiState.value = _uiState.value.copy(
             currentCardIndex = nextCardIndex,
             currentCard = nextCard,
@@ -63,6 +65,7 @@ class GameViewModel @Inject constructor(private val myPreference: MyPreference) 
         val currentCardIndex = _uiState.value.currentCardIndex
         val previousCardIndex = currentCardIndex - 1
         val previousCard = deck[previousCardIndex]
+        isForward = false
         _uiState.value = _uiState.value.copy(
             currentCardIndex = previousCardIndex,
             currentCard = previousCard,
@@ -80,6 +83,10 @@ class GameViewModel @Inject constructor(private val myPreference: MyPreference) 
 
     fun isFirstCard(): Boolean {
         return _uiState.value.currentCardIndex <= 0
+    }
+
+    fun isForward(): Boolean {
+        return isForward
     }
 
     fun increaseDangerLevel() {

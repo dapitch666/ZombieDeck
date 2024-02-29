@@ -1,5 +1,12 @@
 package org.anne.zombiedeck.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -52,6 +59,7 @@ fun DrawScreen(
     DrawUIScreen(
         modifier = modifier,
         card = gameUiState.currentCard,
+        isForward = gameViewModel.isForward(),
         abomination = gameUiState.currentAbomination,
         danger = gameUiState.currentDanger,
         decreaseDangerLevel = { gameViewModel.decreaseDangerLevel() },
@@ -70,6 +78,7 @@ fun DrawScreen(
 fun DrawUIScreen(
     modifier: Modifier = Modifier,
     card: Card?,
+    isForward: Boolean = true,
     abomination: Abomination?,
     danger: Danger = Danger.BLUE,
     decreaseDangerLevel: (Boolean) -> Unit = {},
@@ -118,7 +127,7 @@ fun DrawUIScreen(
                 modifier = Modifier
                     .weight(1f)
                     .padding(5.dp),
-                progress = progress,
+                currentProgress = progress,
                 danger = danger,
             )
             DangerLevelIconButton(
@@ -129,25 +138,42 @@ fun DrawUIScreen(
             )
         }
         // Card
-        ZombieCard(
-            card = card,
-            abomination = null,
-            danger = danger,
-        )
+        AnimatedContent(
+            targetState = card,
+            label = "Card animation",
+            transitionSpec = {
+                if (isForward) {
+                    slideInHorizontally { width -> width } + fadeIn() togetherWith slideOutHorizontally { width -> -width } + fadeOut()
+                } else {
+                    slideInHorizontally { width -> -width } + fadeIn() togetherWith slideOutHorizontally { width -> width } + fadeOut()
+                }.using(SizeTransform(clip = false))
+            }
+        ) { targetCard ->
+            ZombieCard(
+                card = targetCard,
+                abomination = null,
+                danger = danger,
+            )
+        }
 
         // Abomination dialog window
         var showAbominationDialog by remember { mutableStateOf(false) }
         if (showAbominationDialog) {
             Dialog(
                 onDismissRequest = { showAbominationDialog = false },
-                properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true),
+                properties = DialogProperties(
+                    dismissOnBackPress = true,
+                    dismissOnClickOutside = true
+                ),
             ) {
-                Box (modifier = Modifier.offset(y = (-44).dp)) {
+                Box(
+                    modifier = Modifier
+                        .offset(y = (-44).dp)
+                        .clickable(onClick = { showAbominationDialog = false })
+                ) {
                     ZombieCard(
                         card = null,
                         abomination = abomination,
-                        modifier = Modifier
-                            .clickable(onClick = { showAbominationDialog = false })
                     )
                 }
             }
@@ -171,11 +197,11 @@ fun DrawUIScreen(
                     stringResource(id = R.string.see_abomination)
                 },
                 onClick = {
-                    if(drawNewAbomination && !abominationJustDrawn) {
+                    if (drawNewAbomination && !abominationJustDrawn) {
                         drawAbomination()
                     }
                     showAbominationDialog = showAbominationDialog.not()
-                          },
+                },
                 enable = enable,
                 modifier = Modifier.defaultMinSize(minWidth = 10.dp)
             )
@@ -193,7 +219,7 @@ fun DrawUIScreen(
                 )
                 ZombieButton(
                     buttonText = if (isLastCard) stringResource(id = R.string.shuffle)
-                        else stringResource(id = R.string.draw_a_card),
+                    else stringResource(id = R.string.draw_a_card),
                     onClick = { nextCard() },
                     modifier = Modifier.weight(1f),
                     fillWidth = true
@@ -215,7 +241,7 @@ fun DrawScreenPreview() {
                 ZombieType.FATTY,
                 listOf(0, 4, 6, 8)
             ),
-            abomination = Abomination.ABOMINAWILD,
+            abomination = null,
             danger = Danger.BLUE,
             decreaseDangerLevel = {},
             increaseDangerLevel = {},

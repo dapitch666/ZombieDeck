@@ -1,5 +1,6 @@
 package org.anne.zombiedeck.ui.components
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,10 +27,14 @@ import org.anne.zombiedeck.data.Danger
 
 @Composable
 fun DangerProgressBar(
-    progress: Float,
+    currentProgress: Float,
     danger: Danger,
     modifier: Modifier = Modifier,
 ) {
+    val progress by animateFloatAsState(
+        targetValue = currentProgress,
+        label = "Progress bar animation"
+    )
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
@@ -67,7 +73,7 @@ fun DangerProgressBar(
 @Composable
 fun DangerProgressBarPreview() {
     DangerProgressBar(
-        progress = 0.5f,
+        currentProgress = 0.5f,
         danger = Danger.ORANGE
     )
 }

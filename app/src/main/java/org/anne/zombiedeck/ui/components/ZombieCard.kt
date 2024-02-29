@@ -1,5 +1,12 @@
 package org.anne.zombiedeck.ui.components
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -45,8 +52,7 @@ import org.anne.zombiedeck.ui.theme.overpassMonoFont
 fun ZombieCard(
     card: Card?,
     abomination: Abomination?,
-    modifier: Modifier = Modifier,
-    danger: Danger = Danger.BLUE
+    danger: Danger = Danger.BLUE,
 ) {
     val isAbomination = abomination != null
     val stripeColor = when {
@@ -67,10 +73,9 @@ fun ZombieCard(
         card?.cardType == CardType.RUSH -> colorResource(R.color.danger_yellow)
         else -> colorResource(R.color.black)
     }
-    val dangerColor = colorResource(danger.colorRes)
     val amount = card?.getAmount(danger)
     Card(
-        modifier = modifier
+        modifier = Modifier
             .size(260.dp, 400.dp)
             .padding(16.dp),
         shape = RoundedCornerShape(25.dp),
@@ -94,7 +99,7 @@ fun ZombieCard(
                         .height(60.dp)
                 ) {
                     Column(
-                        modifier
+                        modifier = Modifier
                             .rotate(-5f)
                             .scale(1.2f)
                             .fillMaxSize()
@@ -166,28 +171,50 @@ fun ZombieCard(
                     modifier = Modifier
                         .matchParentSize()
                         .offset(if (isAbomination) 0.dp else (-30).dp, 20.dp)
-
                 )
                 // Zombie count
                 // Hidden if the card is an abomination or an extra activation
                 if (!isAbomination && card?.cardType != CardType.EXTRA_ACTIVATION) {
-                    Text(
-                        text = stringResource(id = R.string.amount, amount!!),
-                        color = colorResource(danger.getTextColor()),
-                        fontFamily = overpassMonoFont,
-                        fontSize = 40.sp,
-                        textAlign = TextAlign.Center,
+                    AnimatedContent(
+                        targetState = danger,
+                        label = "Danger level change",
+                        transitionSpec = {
+                            if (targetState > initialState) {
+                                slideInVertically { height -> height } + fadeIn() togetherWith
+                                        slideOutVertically { height -> -height } + fadeOut()
+                            } else {
+                                slideInVertically { height -> -height } + fadeIn() togetherWith
+                                        slideOutVertically { height -> height } + fadeOut()
+                            }.using(
+                                // Disable clipping since the faded slide-in/out should
+                                // be displayed out of bounds.
+                                SizeTransform(clip = false)
+                            )
+                        },
                         modifier = Modifier
                             .padding(end = 16.dp)
                             .align(Alignment.CenterEnd)
-                            .drawBehind {
-                                drawRoundRect(
-                                    color = dangerColor,
-                                    cornerRadius = CornerRadius(10.dp.toPx())
-                                )
-                            }
-                            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+                    ) { targetDanger ->
+                        val dangerColor = colorResource(targetDanger.colorRes)
+                        Text(
+                            text = stringResource(
+                                id = R.string.amount,
+                                card!!.getAmount(targetDanger)
+                            ),
+                            color = colorResource(targetDanger.getTextColor()),
+                            fontFamily = overpassMonoFont,
+                            fontSize = 40.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .drawBehind {
+                                    drawRoundRect(
+                                        color = dangerColor,
+                                        cornerRadius = CornerRadius(10.dp.toPx())
+                                    )
+                                }
+                                .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
                         )
+                    }
                 }
                 // Bottom of the card
                 if (isAbomination) {
@@ -258,10 +285,20 @@ fun DrawZombieCardZombiePreview() {
 @Composable
 fun DrawZombieCardAbominationPreview() {
     ZombieDeckTheme {
-
         ZombieCard(
             card = null,
             abomination = Abomination.PATIENT_0
+        )
+    }
+}
+
+@Preview
+@Composable
+fun DrawZombieCardNonePreview() {
+    ZombieDeckTheme {
+        ZombieCard(
+            card = null,
+            abomination = null
         )
     }
 }
