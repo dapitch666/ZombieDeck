@@ -17,6 +17,9 @@ class GameViewModel @Inject constructor(private val myPreference: MyPreference) 
     private val _uiState = MutableStateFlow(DeckState())
     val uiState: StateFlow<DeckState> = _uiState.asStateFlow()
 
+    private val _isMuted = MutableStateFlow(myPreference.getBoolean("isMuted"))
+    val isMuted = _isMuted.asStateFlow()
+
     private var deck = getCards()
     private var isForward = true
 
@@ -71,6 +74,15 @@ class GameViewModel @Inject constructor(private val myPreference: MyPreference) 
             currentCard = previousCard,
             abominationJustDrawn = false,
         )
+    }
+
+    fun toggleMute() {
+        _isMuted.value = _isMuted.value.not()
+        myPreference.setBoolean("isMuted", _isMuted.value)
+    }
+
+    fun getIsMuted(): Boolean {
+        return _isMuted.value
     }
 
     fun getProgress(): Float {

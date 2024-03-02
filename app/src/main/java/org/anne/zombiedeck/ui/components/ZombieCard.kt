@@ -52,6 +52,7 @@ import org.anne.zombiedeck.ui.theme.overpassMonoFont
 fun ZombieCard(
     card: Card?,
     abomination: Abomination?,
+    modifier: Modifier = Modifier,
     danger: Danger = Danger.BLUE,
 ) {
     val isAbomination = abomination != null
@@ -75,9 +76,8 @@ fun ZombieCard(
     }
     val amount = card?.getAmount(danger)
     Card(
-        modifier = Modifier
-            .size(260.dp, 400.dp)
-            .padding(16.dp),
+        modifier = modifier
+            .size(260.dp, 400.dp),
         shape = RoundedCornerShape(25.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
     ) {
@@ -96,14 +96,13 @@ fun ZombieCard(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(60.dp)
+                        .height(150.dp)
                 ) {
                     Column(
                         modifier = Modifier
                             .rotate(-5f)
-                            .scale(1.2f)
                             .fillMaxSize()
-                            .offset(0.dp, (-2).dp)
+                            .scale(1.2f)
                     ) {
                         Box(
                             modifier = Modifier
@@ -157,6 +156,7 @@ fun ZombieCard(
                                 color = fontColor,
                                 fontWeight = FontWeight.Light,
                                 fontSize = 12.sp,
+                                modifier = Modifier.alpha(0.8f)
                             )
                         }
                     }
@@ -242,7 +242,7 @@ fun ZombieCard(
                     }
                     Text(
                         text = text,
-                        modifier = Modifier
+                        modifier = modifier
                             .align(Alignment.BottomCenter)
                             .padding(16.dp),
                         color = colorResource(id = R.color.white),
@@ -256,7 +256,7 @@ fun ZombieCard(
                     painter = painterResource(R.drawable.card_back),
                     contentDescription = stringResource(id = R.string.not_important),
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.matchParentSize()
+                    modifier = modifier.matchParentSize()
                 )
             }
         }

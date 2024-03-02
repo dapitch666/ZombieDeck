@@ -15,14 +15,18 @@ import org.anne.zombiedeck.ui.WelcomeScreen
 
 @Composable
 fun ZombieDeckApp(
+    playAbominationSound: () -> Unit,
     navController: NavHostController = rememberNavController()
 ) {
-    ZombieDeckNavHost(navController = navController)
+    ZombieDeckNavHost(
+        playAbominationSound = playAbominationSound,
+        navController = navController)
 }
 
 @Composable
 fun ZombieDeckNavHost(
-    navController: NavHostController
+    playAbominationSound: () -> Unit,
+    navController: NavHostController,
 ) {
     NavHost(
         navController = navController,
@@ -39,13 +43,15 @@ fun ZombieDeckNavHost(
             ) {
             WelcomeScreen(
                 navigateToDraw = { navController.navigate("Draw") },
-                navigateToSettings = { navController.navigate("Settings") }
+                navigateToSettings = { navController.navigate("Settings") },
             )
         }
         composable(
             route = "Draw",
         ) {
-            DrawScreen()
+            DrawScreen(
+                playAbominationSound = playAbominationSound,
+            )
         }
         composable(
             route = "Settings",

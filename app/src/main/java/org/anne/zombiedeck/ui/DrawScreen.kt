@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -21,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.KeyboardArrowRight
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -53,9 +53,12 @@ import org.anne.zombiedeck.viewmodels.GameViewModel
 @Composable
 fun DrawScreen(
     modifier: Modifier = Modifier,
+    playAbominationSound: () -> Unit = {},
 ) {
     val gameViewModel: GameViewModel = hiltViewModel()
     val gameUiState by gameViewModel.uiState.collectAsState()
+    val isMuted by gameViewModel.isMuted.collectAsState()
+
     DrawUIScreen(
         modifier = modifier,
         card = gameUiState.currentCard,
@@ -66,11 +69,14 @@ fun DrawScreen(
         increaseDangerLevel = { gameViewModel.increaseDangerLevel() },
         progress = gameViewModel.getProgress(),
         abominationJustDrawn = gameUiState.abominationJustDrawn,
-        drawAbomination = { gameViewModel.drawNewAbomination() },
+        drawAbomination = gameViewModel::drawNewAbomination,
         isFirstCard = gameViewModel.isFirstCard(),
         isLastCard = gameViewModel.isLastCard(),
-        previousCard = { gameViewModel.previousCard() },
-        nextCard = { gameViewModel.nextCard() },
+        previousCard = gameViewModel::previousCard,
+        nextCard = gameViewModel::nextCard,
+        playAbominationSound = playAbominationSound,
+        isMuted = isMuted,
+        toggleMute = gameViewModel::toggleMute,
     )
 }
 
@@ -90,6 +96,9 @@ fun DrawUIScreen(
     isLastCard: Boolean = false,
     previousCard: () -> Unit = {},
     nextCard: () -> Unit = {},
+    playAbominationSound: () -> Unit = {},
+    isMuted: Boolean = false,
+    toggleMute: () -> Unit = {},
 ) {
     // Background image
     Box(
@@ -100,6 +109,21 @@ fun DrawUIScreen(
             contentDescription = stringResource(id = R.string.not_important),
             contentScale = ContentScale.FillBounds,
             modifier = Modifier.matchParentSize()
+        )
+        // Sound control button
+        val soundIcon = if (isMuted) R.drawable.ic_volume_off else R.drawable.ic_volume_on
+        IconButton(
+            onClick = { toggleMute() },
+            enabled = true,
+            content = {
+                Image(
+                    painter = painterResource(id = soundIcon),
+                    contentDescription = stringResource(R.string.toggle_sound_on_off),
+                )
+            },
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 92.dp, end = 16.dp)
         )
     }
     // Content
@@ -143,9 +167,11 @@ fun DrawUIScreen(
             label = "Card animation",
             transitionSpec = {
                 if (isForward) {
-                    slideInHorizontally { width -> width } + fadeIn() togetherWith slideOutHorizontally { width -> -width } + fadeOut()
+                    slideInHorizontally { width -> width } + fadeIn() togetherWith
+                            slideOutHorizontally { width -> -width } + fadeOut()
                 } else {
-                    slideInHorizontally { width -> -width } + fadeIn() togetherWith slideOutHorizontally { width -> width } + fadeOut()
+                    slideInHorizontally { width -> -width } + fadeIn() togetherWith
+                            slideOutHorizontally { width -> width } + fadeOut()
                 }.using(SizeTransform(clip = false))
             }
         ) { targetCard ->
@@ -188,6 +214,9 @@ fun DrawUIScreen(
             // Draw / see abomination button
             val amount = card?.getAmount(danger) ?: 0
             val drawNewAbomination = card?.isAbomination() == true && amount > 0
+            if (!isMuted && drawNewAbomination && !abominationJustDrawn) {
+                playAbominationSound()
+            }
             val enable = drawNewAbomination || abomination != null
 
             ZombieButton(
@@ -203,7 +232,6 @@ fun DrawUIScreen(
                     showAbominationDialog = showAbominationDialog.not()
                 },
                 enable = enable,
-                modifier = Modifier.defaultMinSize(minWidth = 10.dp)
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -219,7 +247,7 @@ fun DrawUIScreen(
                 )
                 ZombieButton(
                     buttonText = if (isLastCard) stringResource(id = R.string.shuffle)
-                    else stringResource(id = R.string.draw_a_card),
+                        else stringResource(id = R.string.draw_a_card),
                     onClick = { nextCard() },
                     modifier = Modifier.weight(1f),
                     fillWidth = true
@@ -237,21 +265,22 @@ fun DrawScreenPreview() {
         DrawUIScreen(
             card = Card(
                 21,
-                CardType.RUSH,
+                CardType.EXTRA_ACTIVATION,
                 ZombieType.FATTY,
                 listOf(0, 4, 6, 8)
             ),
-            abomination = null,
+            abomination = Abomination.ABOMINAWILD,
             danger = Danger.BLUE,
             decreaseDangerLevel = {},
             increaseDangerLevel = {},
             progress = 0.5f,
             abominationJustDrawn = false,
             drawAbomination = {},
-            isFirstCard = false,
+            isFirstCard = true,
             isLastCard = false,
             previousCard = {},
             nextCard = {},
+            isMuted = true
         )
     }
 }
