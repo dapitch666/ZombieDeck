@@ -1,6 +1,7 @@
 package org.anne.zombiedeck.ui
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -8,18 +9,16 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.KeyboardArrowLeft
-import androidx.compose.material.icons.outlined.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,13 +28,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.zIndex
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.anne.zombiedeck.R
 import org.anne.zombiedeck.data.Abomination
@@ -100,18 +102,37 @@ fun DrawUIScreen(
     isMuted: Boolean = false,
     toggleMute: () -> Unit = {},
 ) {
-    // Background image
-    Box(
-        modifier = modifier.fillMaxSize()
+    ConstraintLayout(
+        modifier = modifier
+            .fillMaxSize()
     ) {
+        // Create references for the composables
+        val (
+            backgroundImage, soundButton, dangerRow, cardContent,
+            abominationButton, previousButton, nextButton, abominationDialog
+        ) = createRefs()
+        // Local state for the abomination dialog
+        var showAbominationDialog by remember { mutableStateOf(false) }
+        val interactionSource = remember { MutableInteractionSource() }
+        // Sound icon based on mute state
+        val soundIcon = if (isMuted) R.drawable.ic_volume_off else R.drawable.ic_volume_on
+
+        // Background image
         Image(
             painter = painterResource(id = R.drawable.bg_sheet),
             contentDescription = stringResource(id = R.string.not_important),
             contentScale = ContentScale.FillBounds,
-            modifier = Modifier.matchParentSize()
+            modifier = Modifier.constrainAs(backgroundImage) {
+                top.linkTo(parent.top)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                bottom.linkTo(parent.bottom)
+                width = Dimension.fillToConstraints
+                height = Dimension.fillToConstraints
+            }
         )
-        // Sound control button
-        val soundIcon = if (isMuted) R.drawable.ic_volume_off else R.drawable.ic_volume_on
+
+        // Sound button
         IconButton(
             onClick = { toggleMute() },
             enabled = true,
@@ -121,30 +142,28 @@ fun DrawUIScreen(
                     contentDescription = stringResource(R.string.toggle_sound_on_off),
                 )
             },
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(top = 92.dp, end = 16.dp)
+            modifier = Modifier.constrainAs(soundButton) {
+                top.linkTo(parent.top, margin = 92.dp)
+                end.linkTo(parent.end, margin = 16.dp)
+            }
         )
-    }
-    // Content
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp, 32.dp),
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Danger level buttons and progress bar
+        // Danger level row
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.constrainAs(dangerRow) {
+                top.linkTo(parent.top, margin = 32.dp)
+                start.linkTo(parent.start, margin = 16.dp)
+                end.linkTo(parent.end, margin = 16.dp)
+                width = Dimension.fillToConstraints
+                height = Dimension.wrapContent
+            },
             verticalAlignment = Alignment.CenterVertically
         ) {
             val isFirstDangerLevel = danger == Danger.BLUE
             val isLastDangerLevel = danger == Danger.RED
             DangerLevelIconButton(
                 onClick = decreaseDangerLevel,
-                icon = Icons.Outlined.KeyboardArrowLeft,
-                color = if (isFirstDangerLevel) R.color.grey else danger.previous().colorRes,
+                icon = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                color = if (isFirstDangerLevel) R.color.scrimColor else danger.previous().colorRes,
                 enabled = !isFirstDangerLevel
             )
             DangerProgressBar(
@@ -155,8 +174,8 @@ fun DrawUIScreen(
                 danger = danger,
             )
             DangerLevelIconButton(
-                icon = Icons.Outlined.KeyboardArrowRight,
-                color = if (isLastDangerLevel) R.color.grey else danger.next().colorRes,
+                icon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                color = if (isLastDangerLevel) R.color.scrimColor else danger.next().colorRes,
                 onClick = increaseDangerLevel,
                 enabled = !isLastDangerLevel
             )
@@ -164,6 +183,14 @@ fun DrawUIScreen(
         // Card
         AnimatedContent(
             targetState = card,
+            modifier = Modifier.constrainAs(cardContent) {
+                top.linkTo(dangerRow.bottom)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                bottom.linkTo(abominationButton.top)
+                width = Dimension.wrapContent
+                height = Dimension.wrapContent
+            },
             label = "Card animation",
             transitionSpec = {
                 if (isForward) {
@@ -182,81 +209,110 @@ fun DrawUIScreen(
             )
         }
 
-        // Abomination dialog window
-        var showAbominationDialog by remember { mutableStateOf(false) }
-        if (showAbominationDialog) {
-            Dialog(
-                onDismissRequest = { showAbominationDialog = false },
-                properties = DialogProperties(
-                    dismissOnBackPress = true,
-                    dismissOnClickOutside = true
-                ),
-            ) {
-                Box(
-                    modifier = Modifier
-                        .offset(y = (-44).dp)
-                        .clickable(onClick = { showAbominationDialog = false })
-                ) {
-                    ZombieCard(
-                        card = null,
-                        abomination = abomination,
-                    )
+        // Action buttons
+        // Draw / see abomination button
+        val amount = card?.getAmount(danger) ?: 0
+        val drawNewAbomination = card?.isAbomination() == true && amount > 0
+        if(!isMuted && drawNewAbomination && !abominationJustDrawn) playAbominationSound()
+        val enable = drawNewAbomination || abomination != null
+
+        ZombieButton(
+            buttonText = if (drawNewAbomination && !abominationJustDrawn) {
+                stringResource(id = R.string.draw_an_abomination)
+            } else {
+                stringResource(id = R.string.see_abomination)
+            },
+            onClick = {
+                if (drawNewAbomination && !abominationJustDrawn) {
+                    drawAbomination()
                 }
+                showAbominationDialog = showAbominationDialog.not()
+            },
+            enable = enable,
+            modifier = Modifier.constrainAs(abominationButton) {
+                bottom.linkTo(previousButton.top, margin = 32.dp)
+                start.linkTo(parent.start, margin = 16.dp)
+                end.linkTo(parent.end, margin = 16.dp)
+                width = Dimension.wrapContent
+                height = Dimension.wrapContent
             }
+        )
+        ZombieButton(
+            buttonText = stringResource(id = R.string.previous_card),
+            onClick = { previousCard() },
+            enable = !isFirstCard,
+            fillWidth = true,
+            modifier = Modifier.constrainAs(previousButton) {
+                bottom.linkTo(parent.bottom, margin = 32.dp)
+                start.linkTo(parent.start, margin = 16.dp)
+                end.linkTo(nextButton.start, margin = 8.dp)
+                width = Dimension.fillToConstraints
+                height = Dimension.wrapContent
+            }
+        )
+        ZombieButton(
+            buttonText = if (isLastCard) stringResource(id = R.string.shuffle)
+            else stringResource(id = R.string.draw_a_card),
+            onClick = { nextCard() },
+            fillWidth = true,
+            modifier = Modifier.constrainAs(nextButton) {
+                bottom.linkTo(parent.bottom, margin = 32.dp)
+                start.linkTo(previousButton.end, margin = 8.dp)
+                end.linkTo(parent.end, margin = 16.dp)
+                width = Dimension.fillToConstraints
+                height = Dimension.wrapContent
+            }
+        )
+
+        // Abomination dialog
+        AnimatedVisibility(
+            visible = showAbominationDialog,
+            label = "Abomination card",
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier
+                .constrainAs(abominationDialog) {
+                    top.linkTo(cardContent.top)
+                    start.linkTo(cardContent.start)
+                    end.linkTo(cardContent.end)
+                    bottom.linkTo(cardContent.bottom)
+                    width = Dimension.wrapContent
+                    height = Dimension.wrapContent
+                }
+                .zIndex(2f)
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    onClick = { showAbominationDialog = false }
+                )
+        ) {
+            ZombieCard(
+                card = null,
+                abomination = abomination,
+            )
         }
 
-        // Action buttons
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(32.dp)
+        // Dim background when abomination dialog is shown
+        AnimatedVisibility(
+            visible = showAbominationDialog,
+            label = "Abomination dialog background",
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier
+                .fillMaxSize()
         ) {
-            // Draw / see abomination button
-            val amount = card?.getAmount(danger) ?: 0
-            val drawNewAbomination = card?.isAbomination() == true && amount > 0
-            if (!isMuted && drawNewAbomination && !abominationJustDrawn) {
-                playAbominationSound()
-            }
-            val enable = drawNewAbomination || abomination != null
-
-            ZombieButton(
-                buttonText = if (drawNewAbomination && !abominationJustDrawn) {
-                    stringResource(id = R.string.draw_an_abomination)
-                } else {
-                    stringResource(id = R.string.see_abomination)
-                },
-                onClick = {
-                    if (drawNewAbomination && !abominationJustDrawn) {
-                        drawAbomination()
-                    }
-                    showAbominationDialog = showAbominationDialog.not()
-                },
-                enable = enable,
+            Box(
+                modifier = Modifier.background(color = Color.Black.copy(alpha = 0.6f), RectangleShape)
+                    .zIndex(1f)
+                    .clickable(
+                        interactionSource = interactionSource,
+                        indication = null,
+                        onClick = { showAbominationDialog = false }
+                    )
             )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                // Previous / next card buttons
-                ZombieButton(
-                    buttonText = stringResource(id = R.string.previous_card),
-                    onClick = { previousCard() },
-                    enable = !isFirstCard,
-                    modifier = Modifier.weight(1f),
-                    fillWidth = true
-                )
-                ZombieButton(
-                    buttonText = if (isLastCard) stringResource(id = R.string.shuffle)
-                        else stringResource(id = R.string.draw_a_card),
-                    onClick = { nextCard() },
-                    modifier = Modifier.weight(1f),
-                    fillWidth = true
-                )
-            }
         }
     }
 }
-
 
 @Preview
 @Composable

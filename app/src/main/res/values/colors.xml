@@ -2,9 +2,9 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFE</color>
-    <color name="grey">#50000000</color>
     <color name="danger_blue">#0093B4</color>
     <color name="danger_yellow">#FFCC01</color>
     <color name="danger_orange">#E85112</color>
     <color name="danger_red">#E2001A</color>
+    <color name="scrimColor">#52000000</color>
 </resources>

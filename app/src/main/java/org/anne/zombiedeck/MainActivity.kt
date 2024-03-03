@@ -12,9 +12,17 @@ import org.anne.zombiedeck.ui.theme.ZombieDeckTheme
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        setContent {
+            ZombieDeckTheme {
+                ZombieDeckApp(
+                    playAbominationSound = { playAbominationSound() }
+                )
+            }
+        }
+    }
 
+    private fun playAbominationSound() {
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_GAME)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -26,15 +34,6 @@ class MainActivity : ComponentActivity() {
             .build()
 
         val sound = soundPool.load(this, R.raw.growling_zombie, 1)
-
-        setContent {
-            ZombieDeckTheme {
-                ZombieDeckApp(
-                    playAbominationSound = {
-                        soundPool.play(sound, 1f, 1f, 1, 0, 1f)
-                    }
-                )
-            }
-        }
+        soundPool.play(sound, 1f, 1f, 1, 0, 1f)
     }
 }
