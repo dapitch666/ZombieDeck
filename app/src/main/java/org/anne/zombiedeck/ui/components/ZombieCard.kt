@@ -107,7 +107,7 @@ fun ZombieCard(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(49.dp)
+                                .height(55.dp)
                                 .background(topBgColor)
                         )
                         Box(
@@ -132,7 +132,7 @@ fun ZombieCard(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 15.dp, top = 5.dp, end = 10.dp),
+                            .padding(start = 15.dp, top = 10.dp, end = 10.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -212,7 +212,7 @@ fun ZombieCard(
                                         cornerRadius = CornerRadius(10.dp.toPx())
                                     )
                                 }
-                                .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
                         )
                     }
                 }
@@ -265,7 +265,7 @@ fun ZombieCard(
 
 @Preview
 @Composable
-fun DrawZombieCardZombiePreview() {
+fun DrawZombieCardFattyRushPreview() {
     ZombieDeckTheme {
         ZombieCard(
             card = Card(
@@ -283,11 +283,80 @@ fun DrawZombieCardZombiePreview() {
 
 @Preview
 @Composable
-fun DrawZombieCardAbominationPreview() {
+fun DrawZombieCardRunnerSpawnPreview() {
+    ZombieDeckTheme {
+        ZombieCard(
+            card = Card(
+                7,
+                CardType.SPAWN,
+                ZombieType.RUNNER,
+                listOf(2, 4, 6, 8)
+            ),
+            abomination = null,
+            danger = Danger.ORANGE
+        )
+
+    }
+}
+
+@Preview
+@Composable
+fun DrawZombieCardWalkerExtraPreview() {
+    ZombieDeckTheme {
+        ZombieCard(
+            card = Card(
+                7,
+                CardType.EXTRA_ACTIVATION,
+                ZombieType.WALKER,
+                listOf(2, 4, 6, 8)
+            ),
+            abomination = null,
+            danger = Danger.YELLOW
+        )
+
+    }
+}
+
+@Preview
+@Composable
+fun DrawZombieCardAbominawildPreview() {
+    ZombieDeckTheme {
+        ZombieCard(
+            card = null,
+            abomination = Abomination.ABOMINAWILD
+        )
+    }
+}
+
+@Preview
+@Composable
+fun DrawZombieCardPatient0Preview() {
     ZombieDeckTheme {
         ZombieCard(
             card = null,
             abomination = Abomination.PATIENT_0
+        )
+    }
+}
+
+@Preview
+@Composable
+fun DrawZombieCardAbominacopPreview() {
+    ZombieDeckTheme {
+        ZombieCard(
+            card = null,
+            abomination = Abomination.ABOMINACOP
+        )
+    }
+}
+
+@Preview
+@Composable
+fun DrawZombieCardHobominationPreview() {
+    ZombieDeckTheme {
+        ZombieCard(
+            card = null,
+            abomination = Abomination.HOBOMINATION
         )
     }
 }

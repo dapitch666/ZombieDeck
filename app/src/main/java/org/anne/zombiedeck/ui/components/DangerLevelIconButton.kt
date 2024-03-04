@@ -2,19 +2,20 @@ package org.anne.zombiedeck.ui.components
 
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.KeyboardArrowLeft
-import androidx.compose.material.icons.outlined.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -37,16 +38,20 @@ fun DangerLevelIconButton(
         IconButton(
             onClick = { onClick(enabled) },
             enabled = enabled,
+            colors = IconButtonDefaults.iconButtonColors(
+                containerColor = iconColor,
+                contentColor = Color.White,
+                disabledContentColor = Color.White.copy(alpha = 0.9f),
+                disabledContainerColor = Color.Gray.copy(alpha = 0.6f)
+            ),
             modifier = modifier
-                .conditional(!enabled, { disabled() })
                 .size(36.dp)
-                .border(3.dp, iconColor, shape = CircleShape),
         ) {
             Icon(
                 icon,
                 contentDescription = stringResource(id = description),
-                tint = iconColor,
-                modifier = Modifier.size(36.dp)
+                modifier = Modifier
+                    .fillMaxSize()
             )
         }
     }
@@ -56,7 +61,7 @@ fun DangerLevelIconButton(
 @Composable
 fun DangerLevelIconButtonPreview() {
     DangerLevelIconButton(
-        icon = Icons.Outlined.KeyboardArrowLeft,
+        icon = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
         color = R.color.danger_blue,
         enabled = true
     )
@@ -66,7 +71,7 @@ fun DangerLevelIconButtonPreview() {
 @Composable
 fun DangerLevelIconButtonDisabledPreview() {
     DangerLevelIconButton(
-        icon = Icons.Outlined.KeyboardArrowRight,
+        icon = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
         color = R.color.danger_blue,
         enabled = false
     )

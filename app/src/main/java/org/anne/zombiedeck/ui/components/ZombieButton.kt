@@ -64,7 +64,7 @@ fun ZombieButton(
                 modifier = Modifier
                     .background(backgroundColor)
                     .align(Alignment.Center)
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(8.dp)
                     .conditional(
                         fillWidth,
                         { fillMaxWidth() },
@@ -78,8 +78,9 @@ fun ZombieButton(
                     color = foregroundColor,
                     textAlign = TextAlign.Center,
                     fontFamily = overpassFamily,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
                 )
             }
 

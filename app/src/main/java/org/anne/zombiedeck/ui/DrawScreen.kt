@@ -121,7 +121,7 @@ fun DrawUIScreen(
         Image(
             painter = painterResource(id = R.drawable.bg_sheet),
             contentDescription = stringResource(id = R.string.not_important),
-            contentScale = ContentScale.FillBounds,
+            contentScale = ContentScale.FillHeight,
             modifier = Modifier.constrainAs(backgroundImage) {
                 top.linkTo(parent.top)
                 start.linkTo(parent.start)

@@ -13,16 +13,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            ZombieDeckTheme {
-                ZombieDeckApp(
-                    playAbominationSound = { playAbominationSound() }
-                )
-            }
-        }
-    }
-
-    private fun playAbominationSound() {
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_GAME)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -34,6 +24,12 @@ class MainActivity : ComponentActivity() {
             .build()
 
         val sound = soundPool.load(this, R.raw.growling_zombie, 1)
-        soundPool.play(sound, 1f, 1f, 1, 0, 1f)
+        setContent {
+            ZombieDeckTheme {
+                ZombieDeckApp(
+                    playAbominationSound = { soundPool.play(sound, 1f, 1f, 1, 0, 1f) }
+                )
+            }
+        }
     }
 }
