@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -47,6 +46,7 @@ import org.anne.zombiedeck.data.Danger
 import org.anne.zombiedeck.data.ZombieType
 import org.anne.zombiedeck.ui.components.DangerLevelIconButton
 import org.anne.zombiedeck.ui.components.DangerProgressBar
+import org.anne.zombiedeck.ui.components.SoundButton
 import org.anne.zombiedeck.ui.components.ZombieButton
 import org.anne.zombiedeck.ui.components.ZombieCard
 import org.anne.zombiedeck.ui.theme.ZombieDeckTheme
@@ -114,8 +114,6 @@ fun DrawUIScreen(
         // Local state for the abomination dialog
         var showAbominationDialog by remember { mutableStateOf(false) }
         val interactionSource = remember { MutableInteractionSource() }
-        // Sound icon based on mute state
-        val soundIcon = if (isMuted) R.drawable.ic_volume_off else R.drawable.ic_volume_on
 
         // Background image
         Image(
@@ -133,15 +131,9 @@ fun DrawUIScreen(
         )
 
         // Sound button
-        IconButton(
+        SoundButton(
             onClick = { toggleMute() },
-            enabled = true,
-            content = {
-                Image(
-                    painter = painterResource(id = soundIcon),
-                    contentDescription = stringResource(R.string.toggle_sound_on_off),
-                )
-            },
+            enabled = !isMuted,
             modifier = Modifier.constrainAs(soundButton) {
                 top.linkTo(parent.top, margin = 92.dp)
                 end.linkTo(parent.end, margin = 16.dp)
@@ -336,7 +328,7 @@ fun DrawScreenPreview() {
             isLastCard = false,
             previousCard = {},
             nextCard = {},
-            isMuted = true
+            isMuted = false
         )
     }
 }
