@@ -13,28 +13,32 @@ import org.anne.zombiedeck.settings.MyPreference
 import javax.inject.Inject
 
 @HiltViewModel
-class GameViewModel @Inject constructor(private val myPreference: MyPreference) : ViewModel() {
+class GameViewModel @Inject constructor(private val myPreference: MyPreference?) : ViewModel() {
     private val _uiState = MutableStateFlow(DeckState())
     val uiState: StateFlow<DeckState> = _uiState.asStateFlow()
 
-    private val _isMuted = MutableStateFlow(myPreference.getBoolean("isMuted"))
+    private val _isMuted = MutableStateFlow(myPreference?.getBoolean("isMuted") ?: true)
     val isMuted = _isMuted.asStateFlow()
 
-    private var deck = getCards()
+    private lateinit var deck: List<Card>
     private var isForward = true
 
-    private fun getCards(): List<Card> {
+    init {
+        resetDeck()
+    }
+
+    private fun resetDeck() {
         val cards: MutableList<Card> = mutableListOf()
-        if (myPreference.getBoolean("cards_1_to_18")) {
+        if (myPreference?.getBoolean("cards_1_to_18") != false) {
             cards.addAll(allCards.subList(0, 18))
         }
-        if (myPreference.getBoolean("cards_19_to_36")) {
+        if (myPreference?.getBoolean("cards_19_to_36") != false) {
             cards.addAll(allCards.subList(18, 36))
         }
-        if (myPreference.getBoolean("cards_37_to_40")) {
+        if (myPreference?.getBoolean("cards_37_to_40") != false) {
             cards.addAll(allCards.subList(36, 40))
         }
-        return cards.shuffled()
+        deck = cards.shuffled()
     }
 
     private val abominations = Abomination.entries
@@ -43,7 +47,7 @@ class GameViewModel @Inject constructor(private val myPreference: MyPreference) 
         var currentCardIndex = _uiState.value.currentCardIndex
         // If we are at the last card, shuffle the deck and start over
         if (isLastCard()) {
-            deck = getCards()
+            resetDeck()
             currentCardIndex = -1
         }
         val nextCardIndex = currentCardIndex + 1
@@ -78,7 +82,7 @@ class GameViewModel @Inject constructor(private val myPreference: MyPreference) 
 
     fun toggleMute() {
         _isMuted.value = _isMuted.value.not()
-        myPreference.setBoolean("isMuted", _isMuted.value)
+        myPreference?.setBoolean("isMuted", _isMuted.value)
     }
 
     fun getIsMuted(): Boolean {
