@@ -1,4 +1,4 @@
-name: AndroidBuild
+name: Android Instrumented Tests
 
 on:
   pull_request :
