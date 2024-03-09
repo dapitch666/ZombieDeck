@@ -36,4 +36,6 @@
     <string name="settings">Préférences</string>
     <string name="back">Retour</string>
     <string name="toggle_sound_on_off">Activer / désactiver le son</string>
+    <string name="decrease_danger_level">Diminuer le danger</string>
+    <string name="increase_danger_level">Augmenter le danger</string>
 </resources>

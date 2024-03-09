@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -83,7 +84,8 @@ fun SettingsSwitchComp(
                 Spacer(modifier = Modifier.weight(1f))
                 Switch(
                     checked = state.value,
-                    onCheckedChange = { onClick() }
+                    onCheckedChange = { onClick() },
+                    modifier = Modifier.testTag(stringResource(id = name))
                 )
             }
             HorizontalDivider(

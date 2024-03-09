@@ -88,7 +88,7 @@ fun ZombieCard(
             if (card != null || abomination != null) {
                 Image(
                     painter = painterResource(R.drawable.bg_card),
-                    contentDescription = stringResource(id = R.string.not_important),
+                    contentDescription = "Card background",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.matchParentSize()
                 )
@@ -254,7 +254,7 @@ fun ZombieCard(
             } else {
                 Image(
                     painter = painterResource(R.drawable.card_back),
-                    contentDescription = stringResource(id = R.string.not_important),
+                    contentDescription = "Card back",
                     contentScale = ContentScale.Crop,
                     modifier = modifier.matchParentSize()
                 )

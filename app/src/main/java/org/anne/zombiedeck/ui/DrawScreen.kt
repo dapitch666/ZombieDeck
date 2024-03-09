@@ -118,7 +118,7 @@ fun DrawUIScreen(
         // Background image
         Image(
             painter = painterResource(id = R.drawable.bg_sheet),
-            contentDescription = stringResource(id = R.string.not_important),
+            contentDescription = "Background image",
             contentScale = ContentScale.FillHeight,
             modifier = Modifier.constrainAs(backgroundImage) {
                 top.linkTo(parent.top)
@@ -156,7 +156,8 @@ fun DrawUIScreen(
                 onClick = decreaseDangerLevel,
                 icon = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 color = if (isFirstDangerLevel) R.color.scrimColor else danger.previous().colorRes,
-                enabled = !isFirstDangerLevel
+                enabled = !isFirstDangerLevel,
+                description = R.string.decrease_danger_level
             )
             DangerProgressBar(
                 modifier = Modifier
@@ -169,7 +170,8 @@ fun DrawUIScreen(
                 icon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 color = if (isLastDangerLevel) R.color.scrimColor else danger.next().colorRes,
                 onClick = increaseDangerLevel,
-                enabled = !isLastDangerLevel
+                enabled = !isLastDangerLevel,
+                description = R.string.increase_danger_level
             )
         }
         // Card

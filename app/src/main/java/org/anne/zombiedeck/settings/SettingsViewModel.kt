@@ -33,7 +33,7 @@ class SettingsViewModel @Inject constructor(
     )
     var cards37To40 = _cards37To40.asStateFlow()
 
-    fun toggleSwitch(cardsRange: String){ // TODO use enum
+    fun toggleSwitch(cardsRange: String){
         when(cardsRange){
             "1_to_18" -> {
                 _cards1To18.value = _cards1To18.value.not()
