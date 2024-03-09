@@ -1,1 +1,3 @@
 # ZombieDeck
+[![Android Instrumented Tests](https://github.com/dapitch666/ZombieDeck/actions/workflows/android_instrumented_tests.yaml/badge.svg)](https://github.com/dapitch666/ZombieDeck/actions/workflows/android_instrumented_tests.yaml)
+[![Unit Tests](https://github.com/dapitch666/ZombieDeck/actions/workflows/unit_tests.yaml/badge.svg)](https://github.com/dapitch666/ZombieDeck/actions/workflows/unit_tests.yaml)
