@@ -1,20 +1,21 @@
 package org.anne.zombiedeck.settings
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MyPreference @Inject constructor(@ApplicationContext context : Context){
-    private val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+open class MyPreference @Inject constructor(@ApplicationContext context : Context?){
+    private val prefs: SharedPreferences? = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
 
-    fun getBoolean(key: String, defValue: Boolean = true): Boolean {
-        return prefs.getBoolean(key, defValue)
+    open fun getBoolean(key: String, defValue: Boolean = true): Boolean {
+        return prefs?.getBoolean(key, defValue) ?: defValue
     }
 
-    fun setBoolean(key: String, value: Boolean) {
-        prefs.edit().putBoolean(key, value).apply()
+    open fun setBoolean(key: String, value: Boolean) {
+        prefs?.edit()?.putBoolean(key, value)?.apply()
     }
 }

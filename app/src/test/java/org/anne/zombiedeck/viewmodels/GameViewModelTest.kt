@@ -6,6 +6,7 @@ import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.anne.zombiedeck.data.Danger
+import org.anne.zombiedeck.settings.MyPreference
 import org.junit.Assert.assertThrows
 import org.junit.Test
 
@@ -60,6 +61,13 @@ class GameViewModelTest {
     }
 
     @Test
+    fun gameViewModel_previousCardAtStart_NoOp() {
+        viewModel.previousCard()
+        assertEquals(-1, viewModel.uiState.value.currentCardIndex)
+        assertNull(viewModel.uiState.value.currentCard)
+    }
+
+    @Test
     fun gameViewModel_LastCard_DeckInitialized() {
         for (i in 0 until 40) {
             viewModel.nextCard()
@@ -107,5 +115,23 @@ class GameViewModelTest {
     fun gameViewModel_getProgress_ViewModelValuesUpdated() {
         viewModel.nextCard()
         assertEquals(1f / 40, viewModel.getProgress())
+    }
+
+    @Test
+    fun gameViewModel_filterCards_DeckSizeReduced() {
+        val fakePrefs = object : MyPreference(null) {
+            override fun getBoolean(key: String, defValue: Boolean): Boolean = when (key) {
+                "cards_37_to_40" -> false
+                else -> true
+            }
+            override fun setBoolean(key: String, value: Boolean) {}
+        }
+        
+        val filteredViewModel = GameViewModel(fakePrefs)
+        for (i in 0 until 36) {
+            filteredViewModel.nextCard()
+        }
+        assertTrue(filteredViewModel.isLastCard())
+        assertEquals(1f, filteredViewModel.getProgress())
     }
 }

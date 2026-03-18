@@ -47,22 +47,26 @@ class SettingsScreenTest {
 
     @Test
     fun testDialogOpensOnAllSwitchesOff() {
+        val cards1to18 = composeTestRule.activity.getString(R.string.cards_1_to_18)
+        val cards19to36 = composeTestRule.activity.getString(R.string.cards_19_to_36)
+        val cards37to40 = composeTestRule.activity.getString(R.string.cards_37_to_40)
+
         // Switches are on by default, ensure that they are all on after the test
-        composeTestRule.onNodeWithTag("Include cards 1 to 18")
+        composeTestRule.onNodeWithTag(cards1to18)
             .assertExists()
             .assertIsDisplayed()
             .assertIsOn()
             .performClick()
             .assertIsOff()
 
-        composeTestRule.onNodeWithTag("Include cards 19 to 36")
+        composeTestRule.onNodeWithTag(cards19to36)
             .assertExists()
             .assertIsDisplayed()
             .assertIsOn()
             .performClick()
             .assertIsOff()
 
-        composeTestRule.onNodeWithTag("Include cards 37 to 40")
+        composeTestRule.onNodeWithTag(cards37to40)
             .assertExists()
             .assertIsDisplayed()
             .assertIsOn()
@@ -80,7 +84,7 @@ class SettingsScreenTest {
             .assertIsDisplayed()
             .performClick()
 
-        composeTestRule.onNodeWithTag("Include cards 1 to 18")
+        composeTestRule.onNodeWithTag(cards1to18)
             .assertIsOn()
 
         // The dialog should no longer be displayed
@@ -88,12 +92,12 @@ class SettingsScreenTest {
             .assertDoesNotExist()
 
         // The other two switches should still be off. Turn them all again.
-        composeTestRule.onNodeWithTag("Include cards 19 to 36")
+        composeTestRule.onNodeWithTag(cards19to36)
             .assertIsOff()
             .performClick()
             .assertIsOn()
 
-        composeTestRule.onNodeWithTag("Include cards 37 to 40")
+        composeTestRule.onNodeWithTag(cards37to40)
             .assertIsOff()
             .performClick()
             .assertIsOn()

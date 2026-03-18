@@ -1,7 +1,7 @@
 package org.anne.zombiedeck.data
 
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertNotNull
+import org.anne.zombiedeck.R
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class DangerTest {
@@ -30,6 +30,9 @@ class DangerTest {
 
     @Test
     fun getTextColor() {
-        assertNotNull(currentDanger.getTextColor())
+        assertEquals(R.color.white, Danger.BLUE.getTextColor())
+        assertEquals(R.color.black, Danger.YELLOW.getTextColor())
+        assertEquals(R.color.white, Danger.ORANGE.getTextColor())
+        assertEquals(R.color.white, Danger.RED.getTextColor())
     }
 }

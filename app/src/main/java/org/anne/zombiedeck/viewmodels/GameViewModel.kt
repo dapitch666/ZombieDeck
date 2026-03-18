@@ -70,6 +70,7 @@ class GameViewModel @Inject constructor(private val myPreference: MyPreference?)
 
     fun previousCard() {
         val currentCardIndex = _uiState.value.currentCardIndex
+        if (currentCardIndex <= 0) return
         val previousCardIndex = currentCardIndex - 1
         val previousCard = deck[previousCardIndex]
         isForward = false

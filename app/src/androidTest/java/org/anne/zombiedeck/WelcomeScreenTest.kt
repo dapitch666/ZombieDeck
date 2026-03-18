@@ -3,7 +3,6 @@ package org.anne.zombiedeck
 import androidx.activity.compose.setContent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
@@ -36,12 +35,12 @@ class WelcomeScreenTest {
 
     @Test
     fun testWelcomeScreen() {
-        composeTestRule.onNodeWithText("Shuffle and start").assertExists()
+        composeTestRule.onNodeWithStringId(R.string.shuffle_and_start).assertExists()
     }
 
     @Test
     fun testSettingsButton() {
-        composeTestRule.onNodeWithText("Configure the deck")
+        composeTestRule.onNodeWithStringId(R.string.configure_the_deck)
             .assertExists()
             .performClick()
     }

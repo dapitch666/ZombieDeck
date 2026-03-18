@@ -5,7 +5,6 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.printToLog
@@ -23,16 +22,9 @@ class DrawScreenTest {
     @get:Rule(order = 1)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
-    private lateinit var activity: MainActivity
-
     @Before
     fun init() {
         hiltRule.inject()
-
-        // Start the application
-        composeTestRule.activityRule.scenario.onActivity {
-            activity = it
-        }
 
         // Go to the draw screen
         composeTestRule.onNodeWithStringId(R.string.shuffle_and_start)
@@ -64,16 +56,17 @@ class DrawScreenTest {
         // Card back should be replaced by the card front
         composeTestRule.onNodeWithContentDescription("Card back")
             .assertDoesNotExist()
+            
+        val walker = composeTestRule.activity.getString(R.string.walker).uppercase()
+        val runner = composeTestRule.activity.getString(R.string.runner).uppercase()
+        val fatty = composeTestRule.activity.getString(R.string.fatty).uppercase()
+        val abomination = composeTestRule.activity.getString(R.string.abomination).uppercase()
+        
         composeTestRule.onNode(
-            hasText("FATTY") or hasText("RUNNER") or hasText("WALKER") or hasText("ABOMINATION")
+            hasText(walker) or hasText(runner) or hasText(fatty) or hasText(abomination)
         ).assertExists()
-
     }
 
-    /*
-     * Testing the previous card button
-     * The previous card button should be disabled until a second card is drawn
-     */
     @Test
     fun testPreviousCardButton() {
         // Draw first card
@@ -102,28 +95,22 @@ class DrawScreenTest {
             .assertIsNotEnabled()
     }
 
-    /*
-     * Testing the sound button
-     */
     @Test
     fun testSoundButton() {
-        composeTestRule.onNodeWithContentDescription("Toggle sound on/off")
-            .printToLog("testSoundButton")
-
-        composeTestRule.onNodeWithContentDescription("Toggle sound on/off")
+        composeTestRule.onNodeWithDescriptionStringId(R.string.toggle_sound_on_off)
             .assertExists()
             .assertIsEnabled()
             .performClick()
     }
 
-    /*
-     * Testing the danger level buttons
-     * The danger level should be increased and decreased when the buttons are clicked
-     *
-     */
     @Test
     fun testDangerLevel() {
-        composeTestRule.onNodeWithText("blue danger level")
+        val blue = composeTestRule.activity.getString(R.string.blue)
+        val yellow = composeTestRule.activity.getString(R.string.yellow)
+        val orange = composeTestRule.activity.getString(R.string.orange)
+        val red = composeTestRule.activity.getString(R.string.red)
+        
+        composeTestRule.onNodeWithStringId(R.string.danger_level, blue)
             .assertExists()
 
         composeTestRule.onNodeWithDescriptionStringId(R.string.decrease_danger_level)
@@ -135,21 +122,19 @@ class DrawScreenTest {
             .assertIsEnabled()
             .performClick()
 
-        composeTestRule.onNodeWithText("yellow danger level")
-            .assertExists()
-        composeTestRule.onNodeWithText("blue danger level")
-            .assertDoesNotExist()
-
-        composeTestRule.onNodeWithDescriptionStringId(R.string.increase_danger_level)
-            .performClick()
-
-        composeTestRule.onNodeWithText("orange danger level")
+        composeTestRule.onNodeWithStringId(R.string.danger_level, yellow)
             .assertExists()
 
         composeTestRule.onNodeWithDescriptionStringId(R.string.increase_danger_level)
             .performClick()
 
-        composeTestRule.onNodeWithText("red danger level")
+        composeTestRule.onNodeWithStringId(R.string.danger_level, orange)
+            .assertExists()
+
+        composeTestRule.onNodeWithDescriptionStringId(R.string.increase_danger_level)
+            .performClick()
+
+        composeTestRule.onNodeWithStringId(R.string.danger_level, red)
             .assertExists()
 
         composeTestRule.onNodeWithDescriptionStringId(R.string.increase_danger_level)
@@ -160,7 +145,7 @@ class DrawScreenTest {
             .assertIsEnabled()
             .performClick()
 
-        composeTestRule.onNodeWithText("orange danger level")
+        composeTestRule.onNodeWithStringId(R.string.danger_level, orange)
             .assertExists()
     }
 }

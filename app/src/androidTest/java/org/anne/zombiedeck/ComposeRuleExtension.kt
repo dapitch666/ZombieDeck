@@ -9,8 +9,10 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 
 fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.onNodeWithStringId(
-    @StringRes id: Int): SemanticsNodeInteraction = onNodeWithText(activity.getString(id))
+    @StringRes id: Int, vararg formatArgs: Any): SemanticsNodeInteraction = 
+    onNodeWithText(activity.getString(id, *formatArgs))
 
 fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.onNodeWithDescriptionStringId(
-    @StringRes id: Int): SemanticsNodeInteraction = onNodeWithContentDescription(activity.getString(id))
+    @StringRes id: Int, vararg formatArgs: Any): SemanticsNodeInteraction = 
+    onNodeWithContentDescription(activity.getString(id, *formatArgs))
 
