@@ -90,8 +90,8 @@ fun DrawUIScreen(
     isForward: Boolean = true,
     abomination: Abomination?,
     danger: Danger = Danger.BLUE,
-    decreaseDangerLevel: (Boolean) -> Unit = {},
-    increaseDangerLevel: (Boolean) -> Unit = {},
+    decreaseDangerLevel: () -> Unit = {},
+    increaseDangerLevel: () -> Unit = {},
     progress: Float = 0f,
     abominationJustDrawn: Boolean = false,
     drawAbomination: () -> Unit = {},
@@ -154,7 +154,7 @@ fun DrawUIScreen(
             val isFirstDangerLevel = danger == Danger.BLUE
             val isLastDangerLevel = danger == Danger.RED
             DangerLevelIconButton(
-                onClick = decreaseDangerLevel,
+                onClick = { decreaseDangerLevel() },
                 icon = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 color = if (isFirstDangerLevel) R.color.scrimColor else danger.previous().colorRes,
                 enabled = !isFirstDangerLevel,
@@ -170,7 +170,7 @@ fun DrawUIScreen(
             DangerLevelIconButton(
                 icon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 color = if (isLastDangerLevel) R.color.scrimColor else danger.next().colorRes,
-                onClick = increaseDangerLevel,
+                onClick = { increaseDangerLevel() },
                 enabled = !isLastDangerLevel,
                 description = R.string.increase_danger_level
             )

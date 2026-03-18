@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 configure<ApplicationExtension> {
@@ -31,7 +32,8 @@ configure<ApplicationExtension> {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -72,6 +74,8 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.fragment:fragment-ktx:1.8.9")
     implementation("androidx.navigation:navigation-compose:2.9.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")

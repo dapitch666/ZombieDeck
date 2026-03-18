@@ -21,8 +21,8 @@ import org.anne.zombiedeck.ui.theme.ZombieDeckTheme
 
 @Composable
 fun WelcomeScreen(
-    navigateToDraw: (Boolean) -> Unit,
-    navigateToSettings: (Boolean) -> Unit,
+    navigateToDraw: () -> Unit,
+    navigateToSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.fillMaxSize()) {

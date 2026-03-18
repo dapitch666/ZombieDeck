@@ -9,9 +9,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.serialization.Serializable
 import org.anne.zombiedeck.settings.SettingsScreen
 import org.anne.zombiedeck.ui.DrawScreen
 import org.anne.zombiedeck.ui.WelcomeScreen
+
+@Serializable object Welcome
+@Serializable object Draw
+@Serializable object Settings
 
 @Composable
 fun ZombieDeckApp(
@@ -30,10 +35,9 @@ fun ZombieDeckNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = "Welcome"
+        startDestination = Welcome
     ) {
-        composable(
-            route = "Welcome",
+        composable<Welcome>(
             exitTransition = {
                 fadeOut(
                     animationSpec = tween(700, delayMillis = 700)
@@ -42,32 +46,27 @@ fun ZombieDeckNavHost(
             popEnterTransition = { EnterTransition.None }
             ) {
             WelcomeScreen(
-                navigateToDraw = { navController.navigate("Draw") },
-                navigateToSettings = { navController.navigate("Settings") },
+                navigateToDraw = { navController.navigate(Draw) },
+                navigateToSettings = { navController.navigate(Settings) },
             )
         }
-        composable(
-            route = "Draw",
-        ) {
+        composable<Draw> {
             DrawScreen(
                 playAbominationSound = playAbominationSound,
             )
         }
-        composable(
-            route = "Settings",
+        composable<Settings>(
             enterTransition = {
-
-                        slideIntoContainer(
-                            AnimatedContentTransitionScope.SlideDirection.Left,
-                            animationSpec = tween(700, delayMillis = 100)
-                        )
-
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(700, delayMillis = 100)
+                )
             },
             popExitTransition = {
-                        slideOutOfContainer(
-                            AnimatedContentTransitionScope.SlideDirection.Right,
-                            animationSpec = tween(700, delayMillis = 100)
-                        )
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(700, delayMillis = 100)
+                )
             }
         ) {
             SettingsScreen(
@@ -76,4 +75,3 @@ fun ZombieDeckNavHost(
         }
     }
 }
-

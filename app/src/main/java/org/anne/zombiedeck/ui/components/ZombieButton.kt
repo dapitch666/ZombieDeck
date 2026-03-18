@@ -31,12 +31,12 @@ fun ZombieButton(
     modifier: Modifier = Modifier,
     backgroundColor: Color = colorResource(R.color.danger_yellow),
     foregroundColor: Color = Color.Black,
-    onClick: (isEnabled: Boolean) -> Unit = {},
+    onClick: () -> Unit = {},
     enable: Boolean = true,
     fillWidth: Boolean = false,
 ) {
     Button(
-        onClick = { onClick(enable) },
+        onClick = onClick,
         modifier = modifier.conditional(!enable, { disabled() }),
         elevation = ButtonDefaults.elevatedButtonElevation(
             defaultElevation = 10.dp,
@@ -113,7 +113,6 @@ fun ZombieButtonDisabledPreview() {
 @Composable
 fun ZombieButtonsOnARowPreview() {
     Row(
-//        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         ZombieButton(
