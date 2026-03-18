@@ -7,13 +7,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -23,7 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.anne.zombiedeck.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DangerLevelIconButton(
     icon: ImageVector,
@@ -34,26 +31,25 @@ fun DangerLevelIconButton(
     enabled: Boolean = true,
 ) {
     val iconColor = colorResource(color)
-    CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
-        IconButton(
-            onClick = { onClick(enabled) },
-            enabled = enabled,
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = iconColor,
-                contentColor = Color.White,
-                disabledContentColor = Color.White.copy(alpha = 0.9f),
-                disabledContainerColor = Color.Gray.copy(alpha = 0.6f)
-            ),
-            modifier = modifier
-                .size(36.dp)
-        ) {
-            Icon(
-                icon,
-                contentDescription = stringResource(id = description),
-                modifier = Modifier
-                    .fillMaxSize()
-            )
-        }
+    IconButton(
+        onClick = { onClick(enabled) },
+        enabled = enabled,
+        colors = IconButtonDefaults.iconButtonColors(
+            containerColor = iconColor,
+            contentColor = Color.White,
+            disabledContentColor = Color.White.copy(alpha = 0.9f),
+            disabledContainerColor = Color.Gray.copy(alpha = 0.6f)
+        ),
+        modifier = modifier
+            .minimumInteractiveComponentSize()
+            .size(36.dp)
+    ) {
+        Icon(
+            icon,
+            contentDescription = stringResource(id = description),
+            modifier = Modifier
+                .fillMaxSize()
+        )
     }
 }
 

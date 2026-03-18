@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -206,18 +207,24 @@ fun DrawUIScreen(
         // Action buttons
         // Draw / see abomination button
         val amount = card?.getAmount(danger) ?: 0
-        val drawNewAbomination = card?.isAbomination() == true && amount > 0
-        if(!isMuted && drawNewAbomination && !abominationJustDrawn) playAbominationSound()
-        val enable = drawNewAbomination || abomination != null
+        val isAbominationCard = card?.isAbomination() == true && amount > 0
+
+        LaunchedEffect(card, isAbominationCard, abominationJustDrawn, isMuted) {
+            if (!isMuted && isAbominationCard && !abominationJustDrawn) {
+                playAbominationSound()
+            }
+        }
+
+        val enable = isAbominationCard || abomination != null
 
         ZombieButton(
-            buttonText = if (drawNewAbomination && !abominationJustDrawn) {
+            buttonText = if (isAbominationCard && !abominationJustDrawn) {
                 stringResource(id = R.string.draw_an_abomination)
             } else {
                 stringResource(id = R.string.see_abomination)
             },
             onClick = {
-                if (drawNewAbomination && !abominationJustDrawn) {
+                if (isAbominationCard && !abominationJustDrawn) {
                     drawAbomination()
                 }
                 showAbominationDialog = showAbominationDialog.not()

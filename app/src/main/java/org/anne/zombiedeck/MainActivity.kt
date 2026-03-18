@@ -11,6 +11,9 @@ import org.anne.zombiedeck.ui.theme.ZombieDeckTheme
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    private var soundPool: SoundPool? = null
+    private var soundId: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val audioAttributes = AudioAttributes.Builder()
@@ -18,18 +21,27 @@ class MainActivity : ComponentActivity() {
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
             .build()
 
-        val soundPool: SoundPool = SoundPool.Builder()
+        soundPool = SoundPool.Builder()
             .setMaxStreams(2)
             .setAudioAttributes(audioAttributes)
             .build()
 
-        val sound = soundPool.load(this, R.raw.growling_zombie, 1)
+        soundId = soundPool?.load(this, R.raw.growling_zombie, 1) ?: 0
+
         setContent {
             ZombieDeckTheme {
                 ZombieDeckApp(
-                    playAbominationSound = { soundPool.play(sound, 1f, 1f, 1, 0, 1f) }
+                    playAbominationSound = {
+                        soundPool?.play(soundId, 1f, 1f, 1, 0, 1f)
+                    }
                 )
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        soundPool?.release()
+        soundPool = null
     }
 }
