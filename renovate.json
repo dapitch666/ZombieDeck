@@ -1,0 +1,125 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":maintainLockFilesWeekly",
+    ":label(dependencies)",
+    ":semanticCommitsDisabled"
+  ],
+  "timezone": "Europe/Paris",
+  "schedule": [
+    "before 6am on monday"
+  ],
+  "prHourlyLimit": 2,
+  "prConcurrentLimit": 5,
+  "rebaseWhen": "conflicted",
+  "minimumReleaseAge": "3 days",
+  "enabledManagers": [
+    "gradle",
+    "gradle-wrapper",
+    "github-actions"
+  ],
+  "major": {
+    "dependencyDashboardApproval": true
+  },
+  "packageRules": [
+    {
+      "description": "Group Android toolchain plugin updates for manual review.",
+      "matchManagers": [
+        "gradle"
+      ],
+      "matchPackageNames": [
+        "com.android.application",
+        "com.google.dagger.hilt.android",
+        "org.jetbrains.kotlin.plugin.compose",
+        "org.jetbrains.kotlin.plugin.serialization",
+        "com.google.devtools.ksp",
+        "org.gradle.toolchains.foojay-resolver-convention"
+      ],
+      "groupName": "android-toolchain-plugins",
+      "automerge": false
+    },
+    {
+      "description": "Group Compose dependencies and allow safe automerge.",
+      "matchManagers": [
+        "gradle"
+      ],
+      "matchPackagePrefixes": [
+        "androidx.compose:"
+      ],
+      "groupName": "compose",
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ],
+      "automerge": true
+    },
+    {
+      "description": "Group AndroidX (non-Compose) and automerge patch updates only.",
+      "matchManagers": [
+        "gradle"
+      ],
+      "matchPackagePrefixes": [
+        "androidx."
+      ],
+      "excludePackagePrefixes": [
+        "androidx.compose:"
+      ],
+      "groupName": "androidx",
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "automerge": true
+    },
+    {
+      "description": "Group Dagger/Hilt runtime + compiler updates for manual review.",
+      "matchManagers": [
+        "gradle"
+      ],
+      "matchPackagePrefixes": [
+        "com.google.dagger:"
+      ],
+      "groupName": "hilt-dagger",
+      "automerge": false
+    },
+    {
+      "description": "Group test and debug dependencies and allow safe automerge.",
+      "matchManagers": [
+        "gradle"
+      ],
+      "matchDepTypes": [
+        "testImplementation",
+        "androidTestImplementation",
+        "debugImplementation",
+        "kspTest",
+        "kspAndroidTest"
+      ],
+      "groupName": "test-dependencies",
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ],
+      "automerge": true
+    },
+    {
+      "description": "Automerge Gradle wrapper patch/minor updates.",
+      "matchManagers": [
+        "gradle-wrapper"
+      ],
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ],
+      "automerge": true
+    },
+    {
+      "description": "Never automerge major updates.",
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "automerge": false
+    }
+  ]
+}
+
