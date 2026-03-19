@@ -1,0 +1,70 @@
+name: Release APK
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release-apk:
+    runs-on: ubuntu-latest
+    env:
+      APK_PATH: app/build/outputs/apk/release/app-release.apk
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: "zulu"
+          java-version: "21"
+
+      - name: Validate signing secrets
+        run: |
+          test -n "${{ secrets.ANDROID_KEYSTORE_BASE64 }}"
+          test -n "${{ secrets.KEYSTORE_PASSWORD }}"
+          test -n "${{ secrets.KEY_ALIAS }}"
+          test -n "${{ secrets.KEY_PASSWORD }}"
+
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > release.keystore
+
+      - name: Build release APK
+        env:
+          KEYSTORE_PATH: ${{ github.workspace }}/release.keystore
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew :app:assembleRelease
+
+      - name: Prepare release assets
+        run: |
+          TAG="${GITHUB_REF_NAME:-manual}"
+          APK_NAME="ZombieDeck-${TAG}.apk"
+          cp "$APK_PATH" "$APK_NAME"
+          sha256sum "$APK_NAME" > "${APK_NAME}.sha256"
+
+      - name: Upload workflow artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: |
+            ZombieDeck-*.apk
+            ZombieDeck-*.apk.sha256
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ZombieDeck-*.apk
+            ZombieDeck-*.apk.sha256
+          generate_release_notes: true
+
