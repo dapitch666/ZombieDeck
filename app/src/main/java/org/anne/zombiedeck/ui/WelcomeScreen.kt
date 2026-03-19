@@ -65,6 +65,7 @@ fun WelcomeScreen(
 }
 
 @Preview
+@Preview(locale = "fr")
 @Composable
 fun WelcomeScreenPreview() {
     ZombieDeckTheme {

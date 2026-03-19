@@ -31,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import org.anne.zombiedeck.R
 import org.anne.zombiedeck.data.Abomination
 import org.anne.zombiedeck.data.Card
@@ -103,6 +105,68 @@ fun DrawUIScreen(
     isMuted: Boolean = false,
     toggleMute: () -> Unit = {},
 ) {
+    // Responsive dimensions based on current window container size.
+    val density = LocalDensity.current
+    val windowSize = LocalWindowInfo.current.containerSize
+    val screenHeightDp = with(density) { windowSize.height.toDp().value.toInt() }
+    val screenWidthDp = with(density) { windowSize.width.toDp().value.toInt() }
+    
+    // Determine if we're on a small screen
+    val isSmallScreen = screenHeightDp < 700
+    
+    // Adapt margins and sizes based on screen height
+    val topMarginDanger = when {
+        screenHeightDp < 600 -> 12.dp
+        screenHeightDp < 700 -> 16.dp
+        screenHeightDp < 800 -> 24.dp
+        else -> 32.dp
+    }
+    val topMarginSound = when {
+        screenHeightDp < 600 -> 56.dp
+        screenHeightDp < 700 -> 68.dp
+        screenHeightDp < 800 -> 80.dp
+        else -> 92.dp
+    }
+    val cardTopMargin = when {
+        screenHeightDp < 600 -> 8.dp
+        screenHeightDp < 700 -> 12.dp
+        else -> 16.dp
+    }
+    val cardWidthPercent = when {
+        // Smaller card on short displays to avoid vertical overlap with controls.
+        screenHeightDp < 600 && screenWidthDp < 384 -> 0.56f
+        screenHeightDp < 600 -> 0.58f
+        screenHeightDp < 700 && screenWidthDp < 384 -> 0.62f
+        screenHeightDp < 700 -> 0.64f
+        screenWidthDp < 384 -> 0.8f
+        else -> 0.7f
+    }
+    val cardBottomMargin = when {
+        screenHeightDp < 600 -> 8.dp
+        screenHeightDp < 700 -> 12.dp
+        else -> 16.dp
+    }
+    val buttonSpacing = when {
+        screenHeightDp < 600 -> 4.dp
+        screenHeightDp < 700 -> 6.dp
+        else -> 8.dp
+    }
+    val bottomMarginButtons = when {
+        screenHeightDp < 600 -> 16.dp
+        screenHeightDp < 700 -> 20.dp
+        screenHeightDp < 800 -> 24.dp
+        else -> 32.dp
+    }
+    val abominationButtonMargin = when {
+        screenHeightDp < 600 -> 16.dp
+        screenHeightDp < 700 -> 20.dp
+        else -> 32.dp
+    }
+    val horizontalMargin = when {
+        screenWidthDp < 384 -> 8.dp
+        else -> 16.dp
+    }
+    
     ConstraintLayout(
         modifier = modifier
             .fillMaxSize()
@@ -136,16 +200,24 @@ fun DrawUIScreen(
             onClick = { toggleMute() },
             enabled = !isMuted,
             modifier = Modifier.constrainAs(soundButton) {
-                top.linkTo(parent.top, margin = 92.dp)
-                end.linkTo(parent.end, margin = 16.dp)
+                if (isSmallScreen) {
+                    // On small screens, align to the right of the abomination button
+                    bottom.linkTo(previousButton.top, margin = abominationButtonMargin)
+                    start.linkTo(abominationButton.end, margin = 8.dp)
+                    end.linkTo(parent.end, margin = horizontalMargin)
+                } else {
+                    // On larger screens, keep at top right
+                    top.linkTo(parent.top, margin = topMarginSound)
+                    end.linkTo(parent.end, margin = horizontalMargin)
+                }
             }
         )
         // Danger level row
         Row(
             modifier = Modifier.constrainAs(dangerRow) {
-                top.linkTo(parent.top, margin = 32.dp)
-                start.linkTo(parent.start, margin = 16.dp)
-                end.linkTo(parent.end, margin = 16.dp)
+                top.linkTo(parent.top, margin = topMarginDanger)
+                start.linkTo(parent.start, margin = horizontalMargin)
+                end.linkTo(parent.end, margin = horizontalMargin)
                 width = Dimension.fillToConstraints
                 height = Dimension.wrapContent
             },
@@ -179,11 +251,11 @@ fun DrawUIScreen(
         AnimatedContent(
             targetState = card,
             modifier = Modifier.constrainAs(cardContent) {
-                top.linkTo(dangerRow.bottom)
+                top.linkTo(dangerRow.bottom, margin = cardTopMargin)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
-                bottom.linkTo(abominationButton.top)
-                width = Dimension.wrapContent
+                bottom.linkTo(abominationButton.top, margin = cardBottomMargin)
+                width = Dimension.percent(cardWidthPercent)
                 height = Dimension.wrapContent
             },
             label = "Card animation",
@@ -231,9 +303,10 @@ fun DrawUIScreen(
             },
             enable = enable,
             modifier = Modifier.constrainAs(abominationButton) {
-                bottom.linkTo(previousButton.top, margin = 32.dp)
-                start.linkTo(parent.start, margin = 16.dp)
-                end.linkTo(parent.end, margin = 16.dp)
+                bottom.linkTo(previousButton.top, margin = abominationButtonMargin)
+                start.linkTo(parent.start, margin = horizontalMargin)
+                end.linkTo(parent.end, margin = horizontalMargin)
+
                 width = Dimension.wrapContent
                 height = Dimension.wrapContent
             }
@@ -244,9 +317,9 @@ fun DrawUIScreen(
             enable = !isFirstCard,
             fillWidth = true,
             modifier = Modifier.constrainAs(previousButton) {
-                bottom.linkTo(parent.bottom, margin = 32.dp)
-                start.linkTo(parent.start, margin = 16.dp)
-                end.linkTo(nextButton.start, margin = 8.dp)
+                bottom.linkTo(parent.bottom, margin = bottomMarginButtons)
+                start.linkTo(parent.start, margin = horizontalMargin)
+                end.linkTo(nextButton.start, margin = buttonSpacing)
                 width = Dimension.fillToConstraints
                 height = Dimension.wrapContent
             }
@@ -257,9 +330,9 @@ fun DrawUIScreen(
             onClick = { nextCard() },
             fillWidth = true,
             modifier = Modifier.constrainAs(nextButton) {
-                bottom.linkTo(parent.bottom, margin = 32.dp)
-                start.linkTo(previousButton.end, margin = 8.dp)
-                end.linkTo(parent.end, margin = 16.dp)
+                bottom.linkTo(parent.bottom, margin = bottomMarginButtons)
+                start.linkTo(previousButton.end, margin = buttonSpacing)
+                end.linkTo(parent.end, margin = horizontalMargin)
                 width = Dimension.fillToConstraints
                 height = Dimension.wrapContent
             }
@@ -315,7 +388,9 @@ fun DrawUIScreen(
     }
 }
 
-@Preview
+@Preview(name = "Small phone", locale = "fr", device = "id:small_phone", showSystemUi = true) // spec:width=360dp,height=640dp,dpi=240
+@Preview(name = "Medium phone", device = "id:medium_phone", showSystemUi = true)
+@Preview(name = "A56 French", locale = "fr", device = "spec:width=384dp,height=832dp,dpi=450", showSystemUi = true)
 @Composable
 fun DrawScreenPreview() {
     ZombieDeckTheme {
@@ -338,6 +413,33 @@ fun DrawScreenPreview() {
             previousCard = {},
             nextCard = {},
             isMuted = false
+        )
+    }
+}
+
+@Preview(locale = "fr")
+@Composable
+fun DrawScreenPreviewFrench() {
+    ZombieDeckTheme {
+        DrawUIScreen(
+            card = Card(
+                21,
+                CardType.EXTRA_ACTIVATION,
+                ZombieType.FATTY,
+                listOf(0, 4, 6, 8)
+            ),
+            abomination = Abomination.ABOMINAWILD,
+            danger = Danger.BLUE,
+            decreaseDangerLevel = {},
+            increaseDangerLevel = {},
+            progress = 0.5f,
+            abominationJustDrawn = true,
+            drawAbomination = {},
+            isFirstCard = false,
+            isLastCard = true,
+            previousCard = {},
+            nextCard = {},
+            isMuted = true
         )
     }
 }

@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import org.anne.zombiedeck.R
 import org.anne.zombiedeck.settings.components.SettingsGroup
 import org.anne.zombiedeck.settings.components.SettingsSwitchComp
@@ -80,7 +80,7 @@ fun SettingsUIScreen(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
                 .padding(it)
-                .padding(16.dp)
+                .padding(13.dp)
         ) {
             SettingsGroup(name = R.string.tuning_the_difficulty) {
                 // the switch composable
@@ -127,7 +127,9 @@ fun SettingsUIScreen(
     }
 }
 
-@Preview
+@Preview(device = "id:small_phone", showSystemUi = true)
+@Preview(device = "id:medium_phone", showSystemUi = true)
+@Preview(locale = "fr", device = "spec:width=384dp,height=832dp,dpi=450", showSystemUi = true, name = "Galaxy A56 French")
 @Composable
 fun SettingsScreenPreview() {
     SettingsUIScreen(
