@@ -45,43 +45,41 @@
       "matchManagers": [
         "gradle"
       ],
-      "matchPackagePrefixes": [
-        "androidx.compose:"
-      ],
       "groupName": "compose",
       "matchUpdateTypes": [
         "patch",
         "minor"
       ],
-      "automerge": true
+      "automerge": true,
+      "matchPackageNames": [
+        "androidx.compose:{/,}**"
+      ]
     },
     {
       "description": "Group AndroidX (non-Compose) and automerge patch updates only.",
       "matchManagers": [
         "gradle"
       ],
-      "matchPackagePrefixes": [
-        "androidx."
-      ],
-      "excludePackagePrefixes": [
-        "androidx.compose:"
-      ],
       "groupName": "androidx",
       "matchUpdateTypes": [
         "patch"
       ],
-      "automerge": true
+      "automerge": true,
+      "matchPackageNames": [
+        "androidx.{/,}**",
+        "!androidx.compose:{/,}**"
+      ]
     },
     {
       "description": "Group Dagger/Hilt runtime + compiler updates for manual review.",
       "matchManagers": [
         "gradle"
       ],
-      "matchPackagePrefixes": [
-        "com.google.dagger:"
-      ],
       "groupName": "hilt-dagger",
-      "automerge": false
+      "automerge": false,
+      "matchPackageNames": [
+        "com.google.dagger:{/,}**"
+      ]
     },
     {
       "description": "Group test and debug dependencies and allow safe automerge.",
@@ -122,4 +120,3 @@
     }
   ]
 }
-
