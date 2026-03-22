@@ -27,7 +27,7 @@ fun SettingsGroup(
         Surface(
             color = MaterialTheme.colorScheme.secondaryContainer,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(4),
+            shape = RoundedCornerShape(12.dp),
         ) {
             Column {
                 content()

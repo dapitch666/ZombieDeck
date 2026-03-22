@@ -59,6 +59,7 @@ import org.anne.zombiedeck.viewmodels.GameViewModel
 fun DrawScreen(
     modifier: Modifier = Modifier,
     playAbominationSound: () -> Unit = {},
+    playShooterSound: () -> Unit = {},
 ) {
     val gameViewModel: GameViewModel = hiltViewModel()
     val gameUiState by gameViewModel.uiState.collectAsState()
@@ -80,6 +81,7 @@ fun DrawScreen(
         previousCard = gameViewModel::previousCard,
         nextCard = gameViewModel::nextCard,
         playAbominationSound = playAbominationSound,
+        playShooterSound = playShooterSound,
         isMuted = isMuted,
         toggleMute = gameViewModel::toggleMute,
     )
@@ -102,8 +104,10 @@ fun DrawUIScreen(
     previousCard: () -> Unit = {},
     nextCard: () -> Unit = {},
     playAbominationSound: () -> Unit = {},
+    playShooterSound: () -> Unit = {},
     isMuted: Boolean = false,
     toggleMute: () -> Unit = {},
+    showAbominationDialog: Boolean? = null,
 ) {
     // Responsive dimensions based on current window container size.
     val density = LocalDensity.current
@@ -166,7 +170,7 @@ fun DrawUIScreen(
         screenWidthDp < 384 -> 8.dp
         else -> 16.dp
     }
-    
+
     ConstraintLayout(
         modifier = modifier
             .fillMaxSize()
@@ -176,8 +180,9 @@ fun DrawUIScreen(
             backgroundImage, soundButton, dangerRow, cardContent,
             abominationButton, previousButton, nextButton, abominationDialog
         ) = createRefs()
-        // Local state for the abomination dialog
-        var showAbominationDialog by remember { mutableStateOf(false) }
+        // Local state is used in runtime; previews can force visibility via parameter.
+        var internalShowAbominationDialog by remember { mutableStateOf(false) }
+        val isAbominationDialogVisible = showAbominationDialog ?: internalShowAbominationDialog
         val interactionSource = remember { MutableInteractionSource() }
 
         // Background image
@@ -280,10 +285,14 @@ fun DrawUIScreen(
         // Draw / see abomination button
         val amount = card?.getAmount(danger) ?: 0
         val isAbominationCard = card?.isAbomination() == true && amount > 0
+        val isShooterCard = card?.isShooter() == true
 
-        LaunchedEffect(card, isAbominationCard, abominationJustDrawn, isMuted) {
+        LaunchedEffect(card, isAbominationCard, isShooterCard, isForward, abominationJustDrawn, isMuted) {
             if (!isMuted && isAbominationCard && !abominationJustDrawn) {
                 playAbominationSound()
+            }
+            if (!isMuted && isShooterCard && isForward) {
+                playShooterSound()
             }
         }
 
@@ -299,7 +308,9 @@ fun DrawUIScreen(
                 if (isAbominationCard && !abominationJustDrawn) {
                     drawAbomination()
                 }
-                showAbominationDialog = showAbominationDialog.not()
+                if (showAbominationDialog == null) {
+                    internalShowAbominationDialog = internalShowAbominationDialog.not()
+                }
             },
             enable = enable,
             modifier = Modifier.constrainAs(abominationButton) {
@@ -340,7 +351,7 @@ fun DrawUIScreen(
 
         // Abomination dialog
         AnimatedVisibility(
-            visible = showAbominationDialog,
+            visible = isAbominationDialogVisible,
             label = "Abomination card",
             enter = fadeIn(),
             exit = fadeOut(),
@@ -350,14 +361,18 @@ fun DrawUIScreen(
                     start.linkTo(cardContent.start)
                     end.linkTo(cardContent.end)
                     bottom.linkTo(cardContent.bottom)
-                    width = Dimension.wrapContent
+                    width = Dimension.percent(0.9f)
                     height = Dimension.wrapContent
                 }
                 .zIndex(2f)
                 .clickable(
                     interactionSource = interactionSource,
                     indication = null,
-                    onClick = { showAbominationDialog = false }
+                    onClick = {
+                        if (showAbominationDialog == null) {
+                            internalShowAbominationDialog = false
+                        }
+                    }
                 )
         ) {
             ZombieCard(
@@ -368,7 +383,7 @@ fun DrawUIScreen(
 
         // Dim background when abomination dialog is shown
         AnimatedVisibility(
-            visible = showAbominationDialog,
+            visible = isAbominationDialogVisible,
             label = "Abomination dialog background",
             enter = fadeIn(),
             exit = fadeOut(),
@@ -381,7 +396,11 @@ fun DrawUIScreen(
                     .clickable(
                         interactionSource = interactionSource,
                         indication = null,
-                        onClick = { showAbominationDialog = false }
+                        onClick = {
+                            if (showAbominationDialog == null) {
+                                internalShowAbominationDialog = false
+                            }
+                        }
                     )
             )
         }
@@ -396,13 +415,14 @@ fun DrawScreenPreview() {
     ZombieDeckTheme {
         DrawUIScreen(
             card = Card(
-                21,
-                CardType.EXTRA_ACTIVATION,
+                72,
+                CardType.SPAWN,
                 ZombieType.FATTY,
-                listOf(0, 4, 6, 8)
+                listOf(0, 4, 6, 8),
+                shooter = true
             ),
             abomination = Abomination.ABOMINAWILD,
-            danger = Danger.BLUE,
+            danger = Danger.YELLOW,
             decreaseDangerLevel = {},
             increaseDangerLevel = {},
             progress = 0.5f,
@@ -440,6 +460,34 @@ fun DrawScreenPreviewFrench() {
             previousCard = {},
             nextCard = {},
             isMuted = true
+        )
+    }
+}
+
+@Preview(name = "Abomination dialog open")
+@Composable
+fun DrawScreenPreviewAbominationDialogOpen() {
+    ZombieDeckTheme {
+        DrawUIScreen(
+            card = Card(
+                57,
+                CardType.SPAWN,
+                ZombieType.ABOMINATION,
+                listOf(1, 1, 1, 1)
+            ),
+            abomination = Abomination.ABOMINACOP,
+            danger = Danger.BLUE,
+            decreaseDangerLevel = {},
+            increaseDangerLevel = {},
+            progress = 0.7f,
+            abominationJustDrawn = true,
+            drawAbomination = {},
+            isFirstCard = false,
+            isLastCard = false,
+            previousCard = {},
+            nextCard = {},
+            isMuted = false,
+            showAbominationDialog = true
         )
     }
 }

@@ -18,34 +18,51 @@ class SettingsViewModel @Inject constructor(
     val state: StateFlow<MyState>
         get() = _state.asStateFlow()
 
-    private val _cards1To18: MutableStateFlow<Boolean> = MutableStateFlow(
-        myPreference.getBoolean("cards_1_to_18")
+    val fortHendrix: MutableStateFlow<Boolean> = MutableStateFlow(
+        myPreference.getBoolean("fortHendrix")
     )
-    var cards1To18 = _cards1To18.asStateFlow()
 
-    private val _cards19To36: MutableStateFlow<Boolean> = MutableStateFlow(
-        myPreference.getBoolean("cards_19_to_36")
+    private var selectedRanges: Set<IntRange> =
+        myPreference.getSelectedCardRanges(fortHendrix.value)
+
+    private val _easy: MutableStateFlow<Boolean> = MutableStateFlow(
+        selectedRanges.contains(rangeForSwitch("easy", fortHendrix.value))
     )
-    var cards19To36 = _cards19To36.asStateFlow()
+    var easy = _easy.asStateFlow()
 
-    private val _cards37To40: MutableStateFlow<Boolean> = MutableStateFlow(
-        myPreference.getBoolean("cards_37_to_40")
+    private val _hard: MutableStateFlow<Boolean> = MutableStateFlow(
+        selectedRanges.contains(rangeForSwitch("hard", fortHendrix.value))
     )
-    var cards37To40 = _cards37To40.asStateFlow()
+    var difficult = _hard.asStateFlow()
 
-    fun toggleSwitch(cardsRange: String){
-        when(cardsRange){
-            "1_to_18" -> {
-                _cards1To18.value = _cards1To18.value.not()
-                myPreference.setBoolean("cards_1_to_18", _cards1To18.value)
+    private val _extra: MutableStateFlow<Boolean> = MutableStateFlow(
+        selectedRanges.contains(rangeForSwitch("extra", fortHendrix.value))
+    )
+    var extraActivation = _extra.asStateFlow()
+
+    fun toggleSwitch(toggleSettingOption: String){
+        when(toggleSettingOption){
+            "fortHendrix" -> {
+                fortHendrix.value = fortHendrix.value.not()
+                myPreference.setBoolean("fortHendrix", fortHendrix.value)
+                selectedRanges = remapRangesForFortHendrix(selectedRanges, fortHendrix.value)
+                myPreference.setSelectedCardRanges(selectedRanges)
+                refreshSwitchStates()
             }
-            "19_to_36" -> {
-                _cards19To36.value = _cards19To36.value.not()
-                myPreference.setBoolean("cards_19_to_36", _cards19To36.value)
+            "easy" -> {
+                selectedRanges = toggleRangeSelection(selectedRanges, rangeForSwitch(toggleSettingOption, fortHendrix.value))
+                myPreference.setSelectedCardRanges(selectedRanges)
+                refreshSwitchStates()
             }
-            "37_to_40" -> {
-                _cards37To40.value = _cards37To40.value.not()
-                myPreference.setBoolean("cards_37_to_40", _cards37To40.value)
+            "hard" -> {
+                selectedRanges = toggleRangeSelection(selectedRanges, rangeForSwitch(toggleSettingOption, fortHendrix.value))
+                myPreference.setSelectedCardRanges(selectedRanges)
+                refreshSwitchStates()
+            }
+            "extra" -> {
+                selectedRanges = toggleRangeSelection(selectedRanges, rangeForSwitch(toggleSettingOption, fortHendrix.value))
+                myPreference.setSelectedCardRanges(selectedRanges)
+                refreshSwitchStates()
             }
         }
         checkSwitches()
@@ -53,8 +70,7 @@ class SettingsViewModel @Inject constructor(
 
     // this is a helper function to ensure that at least one switch is on
     private fun checkSwitches(){
-        if(!_cards1To18.value && !_cards19To36.value && !_cards37To40.value){
-            //_state.value = _state.value.copy(showDialog = true)
+        if(selectedRanges.isEmpty()){
             _state.update { state ->
                 state.copy(showDialog = true)
             }
@@ -63,8 +79,48 @@ class SettingsViewModel @Inject constructor(
 
     fun onDismiss(){
         _state.value = _state.value.copy(showDialog = false)
-        _cards1To18.value = true
-        myPreference.setBoolean("cards_1_to_18", true)
+        selectedRanges = selectedRanges.toMutableSet().apply {
+            add(rangeForSwitch("easy", fortHendrix.value))
+        }
+        myPreference.setSelectedCardRanges(selectedRanges)
+        refreshSwitchStates()
+
+    }
+
+    private fun refreshSwitchStates() {
+        _easy.value = selectedRanges.contains(rangeForSwitch("easy", fortHendrix.value))
+        _hard.value = selectedRanges.contains(rangeForSwitch("hard", fortHendrix.value))
+        _extra.value = selectedRanges.contains(rangeForSwitch("extra", fortHendrix.value))
+    }
+
+    private fun rangeForSwitch(cardsRange: String, fortEnabled: Boolean): IntRange {
+        return when (cardsRange) {
+            "easy" -> if (fortEnabled) 41..58 else 1..18
+            "hard" -> if (fortEnabled) 59..76 else 19..36
+            else -> if (fortEnabled) 77..80 else 37..40
+        }
+    }
+
+    private fun toggleRangeSelection(currentRanges: Set<IntRange>, range: IntRange): Set<IntRange> {
+        return currentRanges.toMutableSet().apply {
+            if (!remove(range)) {
+                add(range)
+            }
+        }
+    }
+
+    private fun remapRangesForFortHendrix(currentRanges: Set<IntRange>, fortEnabled: Boolean): Set<IntRange> {
+        return currentRanges.map { range ->
+            when (range) {
+                1..18 -> if (fortEnabled) 41..58 else range
+                19..36 -> if (fortEnabled) 59..76 else range
+                37..40 -> if (fortEnabled) 77..80 else range
+                41..58 -> if (fortEnabled) range else 1..18
+                59..76 -> if (fortEnabled) range else 19..36
+                77..80 -> if (fortEnabled) range else 37..40
+                else -> range
+            }
+        }.toSet()
 
     }
 }

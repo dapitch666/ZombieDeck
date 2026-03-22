@@ -28,7 +28,8 @@ class WelcomeScreenTest {
             navController.navigatorProvider.addNavigator(ComposeNavigator())
             ZombieDeckApp(
                 navController = navController,
-                playAbominationSound = { }
+                playAbominationSound = { },
+                playShooterSound = { }
             )
         }
     }

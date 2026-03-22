@@ -35,9 +35,11 @@ import org.anne.zombiedeck.R
 fun SettingsSwitchComp(
     @DrawableRes icon: Int? = null,
     @StringRes iconDesc: Int? = null,
-    @StringRes name: Int,
+    name: String,
     @StringRes summary: Int? = null,
+    testTag: String? = null,
     state: State<Boolean>,
+    displaySeparator: Boolean = true,
     onClick: () -> Unit
 ) {
     Surface(
@@ -65,7 +67,7 @@ fun SettingsSwitchComp(
                             Spacer(modifier = Modifier.width(8.dp))
                         }
                         Text(
-                            text = stringResource(id = name),
+                            text = name,
                             modifier = Modifier.padding(top = 8.dp),
                             style = MaterialTheme.typography.bodyMedium,
                             textAlign = TextAlign.Start,
@@ -85,12 +87,14 @@ fun SettingsSwitchComp(
                 Switch(
                     checked = state.value,
                     onCheckedChange = { onClick() },
-                    modifier = Modifier.testTag(stringResource(id = name))
+                    modifier = Modifier.testTag(testTag ?: name)
                 )
             }
-            HorizontalDivider(
-                modifier = Modifier.padding(top = 16.dp)
-            )
+            if (displaySeparator) {
+                HorizontalDivider(
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+            }
         }
     }
 }
@@ -101,7 +105,7 @@ fun SettingsSwitchCompWithIconPreview() {
     SettingsSwitchComp(
         icon = android.R.drawable.ic_menu_camera,
         iconDesc = android.R.string.ok,
-        name = android.R.string.cancel,
+        name = stringResource(android.R.string.cancel),
         state = remember {
             mutableStateOf(true)
         },
@@ -113,8 +117,8 @@ fun SettingsSwitchCompWithIconPreview() {
 @Composable
 fun SettingsSwitchCompPreview() {
     SettingsSwitchComp(
-        name = R.string.cards_1_to_18,
-        summary = R.string.cards_1_to_18_summary,
+        name = stringResource(R.string.cards_range, 1, 18),
+        summary = R.string.easy_cards_summary,
         state = remember {
             mutableStateOf(true)
         },
@@ -122,3 +126,15 @@ fun SettingsSwitchCompPreview() {
     )
 }
 
+@Preview
+@Composable
+fun SettingsSwitchCompWOSeparatorAndSummaryPreview() {
+    SettingsSwitchComp(
+        name = stringResource(R.string.fort_hendrix),
+        state = remember {
+            mutableStateOf(true)
+        },
+        displaySeparator = false,
+        onClick = {}
+    )
+}

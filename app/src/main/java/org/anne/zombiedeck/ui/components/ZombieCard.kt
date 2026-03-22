@@ -140,7 +140,7 @@ fun ZombieCard(
                     ) {
                         Text(
                             text = if (isAbomination) {
-                                stringResource(id = abomination!!.nameRes).uppercase()
+                                stringResource(id = abomination.nameRes).uppercase()
                             } else {
                                 stringResource(id = card!!.zombieType.nameRes).uppercase()
                             },
@@ -166,7 +166,7 @@ fun ZombieCard(
                 // Zombie image
                 Image(
                     painter = painterResource(
-                        if (isAbomination) abomination!!.imageRes else card!!.zombieType.imageRes
+                        if (isAbomination) abomination.imageRes else card!!.zombieType.imageRes
                     ),
                     contentDescription = stringResource(id = R.string.not_important),
                     contentScale = ContentScale.Crop,
@@ -218,10 +218,20 @@ fun ZombieCard(
                         )
                     }
                 }
+                // Shooter image
+                if (card?.isShooter() == true) {
+                    Image(
+                        painter = painterResource(R.drawable.shooter_badge),
+                        contentDescription = stringResource(id = R.string.not_important),
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .offset(x = (-10).dp, y = (-45).dp)
+                    )
+                }
                 // Bottom of the card
                 if (isAbomination) {
                     Text(
-                        text = stringResource(abomination!!.ruleRes),
+                        text = stringResource(abomination.ruleRes),
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .fillMaxWidth()
@@ -318,6 +328,25 @@ fun DrawZombieCardWalkerExtraPreview() {
 
     }
 }
+
+@Preview
+@Composable
+fun DrawZombieCardShooter() {
+    ZombieDeckTheme {
+        ZombieCard(
+            card = Card(
+                72,
+                CardType.SPAWN,
+                ZombieType.FATTY,
+                listOf(1, 2, 3, 4),
+                true
+            ),
+            abomination = null,
+            danger = Danger.BLUE
+        )
+    }
+}
+
 
 @Preview
 @Composable
