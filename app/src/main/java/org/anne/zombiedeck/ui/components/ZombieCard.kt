@@ -140,7 +140,7 @@ fun ZombieCard(
                     ) {
                         Text(
                             text = if (isAbomination) {
-                                stringResource(id = abomination.nameRes).uppercase()
+                                stringResource(id = requireNotNull(abomination).nameRes).uppercase()
                             } else {
                                 stringResource(id = card!!.zombieType.nameRes).uppercase()
                             },
@@ -222,15 +222,14 @@ fun ZombieCard(
                 if (card?.isShooter() == true) {
                     Image(
                         painter = painterResource(R.drawable.shooter_badge),
-                        contentDescription = "shooter",
+                        contentDescription = stringResource(id = R.string.shooter_zombie),
                         modifier = Modifier
-                            //.size(100.dp)
                             .align(Alignment.CenterEnd)
                             .offset(x = (-10).dp, y = (-45).dp)
                     )
                 }
                 // Bottom of the card
-                if (isAbomination) {
+                if (isAbomination && abomination != null) {
                     Text(
                         text = stringResource(abomination.ruleRes),
                         modifier = Modifier

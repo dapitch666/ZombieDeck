@@ -34,7 +34,11 @@ class GameViewModel @Inject constructor(private val myPreference: MyPreference?)
 
         val cards: MutableList<Card> = mutableListOf()
         selectedRanges.sortedBy { it.first }.forEach { range ->
-            cards.addAll(allCards.subList(range.first - 1, range.last))
+            val startIndex = (range.first - 1).coerceIn(0, allCards.size)
+            val endIndex = range.last.coerceIn(startIndex, allCards.size)
+            if (startIndex < endIndex) {
+                cards.addAll(allCards.subList(startIndex, endIndex))
+            }
         }
         deck = cards.shuffled()
     }
