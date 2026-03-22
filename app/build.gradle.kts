@@ -25,11 +25,6 @@ configure<ApplicationExtension> {
         }
     }
 
-    // Modern Kotlin configuration in AGP 9.0+
-    kotlin {
-        jvmToolchain(21)
-    }
-
     val keystorePath = System.getenv("KEYSTORE_PATH")
     val keystorePassword = System.getenv("KEYSTORE_PASSWORD")
     val keyAlias = System.getenv("KEY_ALIAS")
@@ -43,10 +38,10 @@ configure<ApplicationExtension> {
     if (hasReleaseSigningConfig) {
         signingConfigs {
             create("release") {
-                storeFile = file(requireNotNull(keystorePath))
-                storePassword = requireNotNull(keystorePassword)
-                this.keyAlias = requireNotNull(keyAlias)
-                this.keyPassword = requireNotNull(keyPassword)
+                storeFile = file(keystorePath)
+                storePassword = keystorePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
             }
         }
     }
@@ -79,9 +74,14 @@ configure<ApplicationExtension> {
     }
 }
 
+// Configure Kotlin toolchain at module scope (Project/Kotlin extension receiver).
+kotlin {
+    jvmToolchain(21)
+}
+
 dependencies {
     implementation("com.google.dagger:hilt-android:2.59.2")
-    implementation("androidx.compose.foundation:foundation-layout:1.10.5")
+    implementation("androidx.compose.foundation:foundation-layout")
     ksp("com.google.dagger:hilt-android-compiler:2.59.2")
     implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
@@ -113,5 +113,5 @@ dependencies {
     androidTestImplementation("androidx.navigation:navigation-testing:2.9.7")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.10.5")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
