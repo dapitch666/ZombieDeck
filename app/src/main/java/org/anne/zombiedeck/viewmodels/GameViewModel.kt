@@ -28,15 +28,13 @@ class GameViewModel @Inject constructor(private val myPreference: MyPreference?)
     }
 
     private fun resetDeck() {
+        val fortHendrixEnabled = myPreference?.getBoolean("fortHendrix") ?: false
+        val selectedRanges = myPreference?.getSelectedCardRanges(fortHendrixEnabled)
+            ?: setOf(1..18, 19..36, 37..40)
+
         val cards: MutableList<Card> = mutableListOf()
-        if (myPreference?.getBoolean("cards_1_to_18") != false) {
-            cards.addAll(allCards.subList(0, 18))
-        }
-        if (myPreference?.getBoolean("cards_19_to_36") != false) {
-            cards.addAll(allCards.subList(18, 36))
-        }
-        if (myPreference?.getBoolean("cards_37_to_40") != false) {
-            cards.addAll(allCards.subList(36, 40))
+        selectedRanges.sortedBy { it.first }.forEach { range ->
+            cards.addAll(allCards.subList(range.first - 1, range.last))
         }
         deck = cards.shuffled()
     }

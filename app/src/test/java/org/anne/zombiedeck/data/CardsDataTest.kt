@@ -6,17 +6,22 @@ import org.junit.Test
 class CardsDataTest {
     @Test
     fun allCards_isCompleteAndUnique() {
-        assertEquals("Should have 40 cards", 40, allCards.size)
+        assertEquals("Should have 80 cards", 80, allCards.size)
         val ids = allCards.map { it.id }
         assertEquals("All IDs should be unique", ids.distinct().size, ids.size)
-        assertEquals("IDs should range from 1 to 40", (1..40).toList(), ids.sorted())
+        assertEquals("IDs should range from 1 to 80", (1..80).toList(), ids.sorted())
     }
 
     @Test
     fun allCards_checkZombiesTypes() {
-        assertEquals(18, allCards.count { it.zombieType == ZombieType.WALKER })
-        assertEquals(9, allCards.count { it.zombieType == ZombieType.FATTY })
-        assertEquals(9, allCards.count { it.zombieType == ZombieType.RUNNER })
-        assertEquals(4, allCards.count { it.zombieType == ZombieType.ABOMINATION })
+        assertEquals(36, allCards.count { it.zombieType == ZombieType.WALKER })
+        assertEquals(18, allCards.count { it.zombieType == ZombieType.FATTY })
+        assertEquals(18, allCards.count { it.zombieType == ZombieType.RUNNER })
+        assertEquals(8, allCards.count { it.zombieType == ZombieType.ABOMINATION })
+    }
+
+    @Test
+    fun allCards_shooters() {
+        assertEquals(14, allCards.count { it.isShooter() })
     }
 }

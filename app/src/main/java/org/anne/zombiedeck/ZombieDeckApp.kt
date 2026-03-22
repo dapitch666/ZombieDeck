@@ -21,16 +21,19 @@ import org.anne.zombiedeck.ui.WelcomeScreen
 @Composable
 fun ZombieDeckApp(
     playAbominationSound: () -> Unit,
+    playShooterSound: () -> Unit,
     navController: NavHostController = rememberNavController()
 ) {
     ZombieDeckNavHost(
         playAbominationSound = playAbominationSound,
+        playShooterSound = playShooterSound,
         navController = navController)
 }
 
 @Composable
 fun ZombieDeckNavHost(
     playAbominationSound: () -> Unit,
+    playShooterSound: () -> Unit,
     navController: NavHostController,
 ) {
     NavHost(
@@ -53,6 +56,7 @@ fun ZombieDeckNavHost(
         composable<Draw> {
             DrawScreen(
                 playAbominationSound = playAbominationSound,
+                playShooterSound = playShooterSound,
             )
         }
         composable<Settings>(

@@ -15,12 +15,10 @@
     <string name="fatty">fatty</string>
     <string name="configure_the_deck">Configure the deck</string>
     <string name="tuning_the_difficulty">Tuning the difficulty</string>
-    <string name="cards_1_to_18">Include cards 1 to 18</string>
-    <string name="cards_19_to_36">Include cards 19 to 36</string>
-    <string name="cards_37_to_40">Include cards 37 to 40</string>
-    <string name="cards_1_to_18_summary">The easier part of a Zombie invasion. Zombies appear in lower amount, but still benefit from Rush rules. There is no Abomination at Blue Danger Level.</string>
-    <string name="cards_19_to_36_summary">The harder part. Zombies come in greater numbers, especially at low Danger Levels. Abominations appear at Blue Danger Level.</string>
-    <string name="cards_37_to_40_summary">These are Extra Activations cards. They make the Zombies less predictable and put more pressure on the Survivors.</string>
+    <string name="cards_range">Include cards %1$d to %2$d</string>
+    <string name="easy_cards_summary">The easier part of a Zombie invasion. Zombies appear in lower amount, but still benefit from Rush rules. There is no Abomination at Blue Danger Level.</string>
+    <string name="hard_cards_summary">The harder part. Zombies come in greater numbers, especially at low Danger Levels. Abominations appear at Blue Danger Level.</string>
+    <string name="extra_cards_summary">These are Extra Activations cards. They make the Zombies less predictable and put more pressure on the Survivors.</string>
     <string name="preferences_alert">You must select at least one deck of cards.</string>
     <string name="hobomination">Hobomination</string>
     <string name="abominacop">Abominacop</string>
@@ -43,4 +41,6 @@
     <string name="toggle_sound_on_off">Toggle sound on/off</string>
     <string name="decrease_danger_level">Decrease danger level</string>
     <string name="increase_danger_level">Increase danger level</string>
+    <string name="expansions">Expansions</string>
+    <string name="fort_hendrix">Fort Hendrix</string>
 </resources>

@@ -12,7 +12,8 @@ import org.anne.zombiedeck.ui.theme.ZombieDeckTheme
 class MainActivity : ComponentActivity() {
 
     private var soundPool: SoundPool? = null
-    private var soundId: Int = 0
+    private var abominationSoundId: Int = 0
+    private var shooterSoundId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,14 +27,18 @@ class MainActivity : ComponentActivity() {
             .setAudioAttributes(audioAttributes)
             .build()
 
-        soundId = soundPool?.load(this, R.raw.growling_zombie, 1) ?: 0
+        abominationSoundId = soundPool?.load(this, R.raw.growling_zombie, 1) ?: 0
+        shooterSoundId = soundPool?.load(this, R.raw.gunshot, 1) ?: 0
 
         setContent {
             ZombieDeckTheme {
                 ZombieDeckApp(
                     playAbominationSound = {
-                        soundPool?.play(soundId, 1f, 1f, 1, 0, 1f)
-                    }
+                        soundPool?.play(abominationSoundId, 1f, 1f, 1, 0, 1f)
+                    },
+                    playShooterSound = {
+                        soundPool?.play(shooterSoundId, 1f, 1f, 1, 0, 1f)
+                    },
                 )
             }
         }

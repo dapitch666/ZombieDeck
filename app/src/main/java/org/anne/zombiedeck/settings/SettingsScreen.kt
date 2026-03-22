@@ -38,9 +38,10 @@ fun SettingsScreen(
     val state = vm.state.collectAsState()
     SettingsUIScreen(
         state = state.value,
-        cards1To18State = vm.cards1To18.collectAsState(),
-        cards19To36State = vm.cards19To36.collectAsState(),
-        cards37To40State = vm.cards37To40.collectAsState(),
+        easyState = vm.easy.collectAsState(),
+        hardState = vm.difficult.collectAsState(),
+        extraState = vm.extraActivation.collectAsState(),
+        fortHendrixState = vm.fortHendrix.collectAsState(),
         toggleSwitch = vm::toggleSwitch,
         onDismiss = vm::onDismiss,
         backButtonOnClick = navigateUp
@@ -51,13 +52,23 @@ fun SettingsScreen(
 @Composable
 fun SettingsUIScreen(
     state: MyState,
-    cards1To18State: State<Boolean>,
-    cards19To36State: State<Boolean>,
-    cards37To40State: State<Boolean>,
+    easyState: State<Boolean>,
+    hardState: State<Boolean>,
+    extraState: State<Boolean>,
+    fortHendrixState: State<Boolean>,
     toggleSwitch: (String) -> Unit,
     onDismiss: () -> Unit,
     backButtonOnClick: () -> Unit
 ) {
+    val cardRanges = if (fortHendrixState.value) {
+        listOf(41 to 58, 59 to 76, 77 to 80)
+    } else {
+        listOf(1 to 18, 19 to 36, 37 to 40)
+    }
+    val easyLabel = stringResource(R.string.cards_range, cardRanges[0].first, cardRanges[0].second)
+    val hardLabel = stringResource(R.string.cards_range, cardRanges[1].first, cardRanges[1].second)
+    val extraLabel = stringResource(R.string.cards_range, cardRanges[2].first, cardRanges[2].second)
+
     Scaffold(topBar = {
         TopAppBar(
             title = {
@@ -82,31 +93,46 @@ fun SettingsUIScreen(
                 .padding(it)
                 .padding(13.dp)
         ) {
+            SettingsGroup(name = R.string.expansions) {
+                SettingsSwitchComp(
+                    name = stringResource(R.string.fort_hendrix),
+                    testTag = "fort_hendrix",
+                    state = fortHendrixState,
+                    displaySeparator = false
+                ) {
+                    // call ViewModel to toggle the value
+                    toggleSwitch("fortHendrix")
+                }
+            }
             SettingsGroup(name = R.string.tuning_the_difficulty) {
                 // the switch composable
                 SettingsSwitchComp(
-                    name = R.string.cards_1_to_18,
-                    summary = R.string.cards_1_to_18_summary,
-                    state = cards1To18State
+                    name = easyLabel,
+                    summary = R.string.easy_cards_summary,
+                    testTag = "easy",
+                    state = easyState
                 ) {
                     // call ViewModel to toggle the value
-                    toggleSwitch("1_to_18")
+                    toggleSwitch("easy")
                 }
                 SettingsSwitchComp(
-                    name = R.string.cards_19_to_36,
-                    summary = R.string.cards_19_to_36_summary,
-                    state = cards19To36State
+                    name = hardLabel,
+                    summary = R.string.hard_cards_summary,
+                    testTag = "hard",
+                    state = hardState
                 ) {
                     // call ViewModel to toggle the value
-                    toggleSwitch("19_to_36")
+                    toggleSwitch("hard")
                 }
                 SettingsSwitchComp(
-                    name = R.string.cards_37_to_40,
-                    summary = R.string.cards_37_to_40_summary,
-                    state = cards37To40State
+                    name = extraLabel,
+                    summary = R.string.extra_cards_summary,
+                    testTag = "extra",
+                    state = extraState,
+                    displaySeparator = false
                 ) {
                     // call ViewModel to toggle the value
-                    toggleSwitch("37_to_40")
+                    toggleSwitch("extra")
                 }
             }
         }
@@ -134,9 +160,40 @@ fun SettingsUIScreen(
 fun SettingsScreenPreview() {
     SettingsUIScreen(
         state = MyState(showDialog = false),
-        cards1To18State = remember { mutableStateOf(false) },
-        cards19To36State = remember { mutableStateOf(true) },
-        cards37To40State = remember { mutableStateOf(false) },
+        easyState = remember { mutableStateOf(false) },
+        hardState = remember { mutableStateOf(true) },
+        extraState = remember { mutableStateOf(false) },
+        fortHendrixState = remember { mutableStateOf(false) },
+        toggleSwitch = {},
+        onDismiss = {},
+        backButtonOnClick = {}
+    )
+}
+
+@Preview
+@Composable
+fun SettingsScreenPreviewDialog() {
+    SettingsUIScreen(
+        state = MyState(showDialog = true),
+        easyState = remember { mutableStateOf(false) },
+        hardState = remember { mutableStateOf(true) },
+        extraState = remember { mutableStateOf(false) },
+        fortHendrixState = remember { mutableStateOf(false) },
+        toggleSwitch = {},
+        onDismiss = {},
+        backButtonOnClick = {}
+    )
+}
+
+@Preview
+@Composable
+fun SettingsScreenFortHendrixPreview() {
+    SettingsUIScreen(
+        state = MyState(showDialog = false),
+        easyState = remember { mutableStateOf(true) },
+        hardState = remember { mutableStateOf(true) },
+        extraState = remember { mutableStateOf(true) },
+        fortHendrixState = remember { mutableStateOf(true) },
         toggleSwitch = {},
         onDismiss = {},
         backButtonOnClick = {}

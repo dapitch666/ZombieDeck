@@ -11,6 +11,7 @@ import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.isOn
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.rememberNavController
@@ -22,6 +23,13 @@ import org.junit.Test
 
 @HiltAndroidTest
 class SettingsScreenTest {
+    companion object {
+        private const val EASY_TAG = "easy"
+        private const val HARD_TAG = "hard"
+        private const val EXTRA_TAG = "extra"
+        private const val FORT_HENDRIX_TAG = "fort_hendrix"
+    }
+
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
@@ -35,7 +43,8 @@ class SettingsScreenTest {
         composeTestRule.activity.setContent {
             ZombieDeckApp(
                 navController = rememberNavController(),
-                playAbominationSound = { }
+                playAbominationSound = { },
+                playShooterSound = { }
             )
         }
 
@@ -47,26 +56,22 @@ class SettingsScreenTest {
 
     @Test
     fun testDialogOpensOnAllSwitchesOff() {
-        val cards1to18 = composeTestRule.activity.getString(R.string.cards_1_to_18)
-        val cards19to36 = composeTestRule.activity.getString(R.string.cards_19_to_36)
-        val cards37to40 = composeTestRule.activity.getString(R.string.cards_37_to_40)
-
         // Switches are on by default, ensure that they are all on after the test
-        composeTestRule.onNodeWithTag(cards1to18)
+        composeTestRule.onNodeWithTag(EASY_TAG)
             .assertExists()
             .assertIsDisplayed()
             .assertIsOn()
             .performClick()
             .assertIsOff()
 
-        composeTestRule.onNodeWithTag(cards19to36)
+        composeTestRule.onNodeWithTag(HARD_TAG)
             .assertExists()
             .assertIsDisplayed()
             .assertIsOn()
             .performClick()
             .assertIsOff()
 
-        composeTestRule.onNodeWithTag(cards37to40)
+        composeTestRule.onNodeWithTag(EXTRA_TAG)
             .assertExists()
             .assertIsDisplayed()
             .assertIsOn()
@@ -84,7 +89,7 @@ class SettingsScreenTest {
             .assertIsDisplayed()
             .performClick()
 
-        composeTestRule.onNodeWithTag(cards1to18)
+        composeTestRule.onNodeWithTag(EASY_TAG)
             .assertIsOn()
 
         // The dialog should no longer be displayed
@@ -92,15 +97,61 @@ class SettingsScreenTest {
             .assertDoesNotExist()
 
         // The other two switches should still be off. Turn them all again.
-        composeTestRule.onNodeWithTag(cards19to36)
+        composeTestRule.onNodeWithTag(HARD_TAG)
             .assertIsOff()
             .performClick()
             .assertIsOn()
 
-        composeTestRule.onNodeWithTag(cards37to40)
+        composeTestRule.onNodeWithTag(EXTRA_TAG)
             .assertIsOff()
             .performClick()
             .assertIsOn()
+    }
+
+    @Test
+    fun testCardLabelsUpdateWhenFortHendrixToggles() {
+        // Force a deterministic baseline: Fort Hendrix OFF -> labels 1..40 visible.
+        val fortHendrixFirstRangeLabel = composeTestRule.activity.getString(R.string.cards_range, 41, 58)
+        val isFortHendrixEnabled = composeTestRule
+            .onAllNodesWithText(fortHendrixFirstRangeLabel)
+            .fetchSemanticsNodes().isNotEmpty()
+
+        if (isFortHendrixEnabled) {
+            composeTestRule.onNodeWithTag(FORT_HENDRIX_TAG)
+                .assertExists()
+                .performClick()
+        }
+
+        composeTestRule.onNodeWithStringId(R.string.cards_range, 1, 18)
+            .assertExists()
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithStringId(R.string.cards_range, 19, 36)
+            .assertExists()
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithStringId(R.string.cards_range, 37, 40)
+            .assertExists()
+            .assertIsDisplayed()
+
+        composeTestRule.onNodeWithTag(FORT_HENDRIX_TAG)
+            .assertExists()
+            .performClick()
+
+        composeTestRule.onNodeWithStringId(R.string.cards_range, 41, 58)
+            .assertExists()
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithStringId(R.string.cards_range, 59, 76)
+            .assertExists()
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithStringId(R.string.cards_range, 77, 80)
+            .assertExists()
+            .assertIsDisplayed()
+
+        composeTestRule.onNodeWithTag(FORT_HENDRIX_TAG)
+            .performClick()
+
+        composeTestRule.onNodeWithStringId(R.string.cards_range, 1, 18)
+            .assertExists()
+            .assertIsDisplayed()
     }
 
 
@@ -110,7 +161,7 @@ class SettingsScreenTest {
             SemanticsProperties.Role, Role.Switch
         )
         composeTestRule.onAllNodes(mySwitches)
-            .assertCountEquals(3)
+            .assertCountEquals(4)
             .assertAll(isOn())
     }
 }
