@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import org.anne.zombiedeck.R
 
-enum class Abomination(@StringRes val nameRes: Int, @DrawableRes val imageRes: Int, @StringRes val ruleRes: Int) {
+enum class Abomination(@param:StringRes val nameRes: Int, @param:DrawableRes val imageRes: Int, @param:StringRes val ruleRes: Int) {
     HOBOMINATION(R.string.hobomination, R.drawable.abomination_hobomination, R.string.hobomination_rule),
     ABOMINACOP(R.string.abominacop, R.drawable.abomination_abominacop, R.string.abominacop_rule),
     ABOMINAWILD(R.string.abominawild, R.drawable.abomination_abominawild, R.string.abominawild_rule),

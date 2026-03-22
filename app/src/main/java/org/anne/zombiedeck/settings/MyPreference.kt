@@ -2,6 +2,7 @@ package org.anne.zombiedeck.settings
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -20,7 +21,7 @@ open class MyPreference @Inject constructor(@ApplicationContext context : Contex
     }
 
     open fun setBoolean(key: String, value: Boolean) {
-        prefs?.edit()?.putBoolean(key, value)?.apply()
+        prefs?.edit { putBoolean(key, value) }
     }
 
     open fun getSelectedCardRanges(fortHendrixEnabled: Boolean): Set<IntRange> {
@@ -58,7 +59,7 @@ open class MyPreference @Inject constructor(@ApplicationContext context : Contex
 
     open fun setSelectedCardRanges(ranges: Set<IntRange>) {
         val serializedRanges = ranges.map { "${it.first}-${it.last}" }.toSet()
-        prefs?.edit()?.putStringSet(PREF_SELECTED_CARD_RANGES, serializedRanges)?.apply()
+        prefs?.edit { putStringSet(PREF_SELECTED_CARD_RANGES, serializedRanges) }
     }
 
     private fun parseRange(value: String): IntRange? {

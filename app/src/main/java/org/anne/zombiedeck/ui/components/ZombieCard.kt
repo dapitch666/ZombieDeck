@@ -41,6 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.util.Locale
 import org.anne.zombiedeck.R
 import org.anne.zombiedeck.data.Abomination
 import org.anne.zombiedeck.data.Card
@@ -151,7 +152,7 @@ fun ZombieCard(
                         if (!isAbomination) {
                             val cardId = stringResource(
                                 R.string.card_number,
-                                String.format("%03d", card!!.id)
+                                String.format(Locale.getDefault(), "%03d", card!!.id)
                             )
                             Text(
                                 text = cardId,
