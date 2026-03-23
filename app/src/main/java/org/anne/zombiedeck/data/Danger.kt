@@ -4,7 +4,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import org.anne.zombiedeck.R
 
-enum class Danger(val index: Int, @StringRes val nameRes: Int, @ColorRes val colorRes: Int) {
+enum class Danger(val index: Int, @param:StringRes val nameRes: Int, @param:ColorRes val colorRes: Int) {
     BLUE(0, R.string.blue, R.color.danger_blue),
     YELLOW(1, R.string.yellow, R.color.danger_yellow),
     ORANGE(2, R.string.orange, R.color.danger_orange),
