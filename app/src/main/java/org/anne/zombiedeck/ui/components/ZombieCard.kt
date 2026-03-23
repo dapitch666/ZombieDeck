@@ -152,7 +152,7 @@ fun ZombieCard(
                         if (!isAbomination) {
                             val cardId = stringResource(
                                 R.string.card_number,
-                                String.format(Locale.getDefault(), "%03d", card!!.id)
+                                String.format(Locale.ROOT, "%03d", card!!.id)
                             )
                             Text(
                                 text = cardId,
