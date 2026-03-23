@@ -44,10 +44,25 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew :app:assembleRelease
 
+      - name: Read app version
+        id: app_version
+        run: |
+          VERSION_NAME="$(grep '^VERSION_NAME=' version.properties | cut -d'=' -f2)"
+          echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Ensure tag matches app version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          EXPECTED_TAG="v${{ steps.app_version.outputs.version_name }}"
+          if [ "${GITHUB_REF_NAME}" != "$EXPECTED_TAG" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match VERSION_NAME ${EXPECTED_TAG}" >&2
+            exit 1
+          fi
+
       - name: Prepare release assets
         run: |
-          TAG="${GITHUB_REF_NAME:-manual}"
-          APK_NAME="ZombieDeck-${TAG}.apk"
+          TAG_NAME="${GITHUB_REF_NAME:-v${{ steps.app_version.outputs.version_name }}}"
+          APK_NAME="ZombieDeck-${TAG_NAME}.apk"
           cp "$APK_PATH" "$APK_NAME"
           sha256sum "$APK_NAME" > "${APK_NAME}.sha256"
 

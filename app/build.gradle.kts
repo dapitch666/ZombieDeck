@@ -1,4 +1,17 @@
 import com.android.build.api.dsl.ApplicationExtension
+import java.util.Properties
+
+val versionPropertiesFile: File = rootProject.file("version.properties")
+val versionProperties = Properties().apply {
+    if (!versionPropertiesFile.exists()) {
+        error("Missing ${versionPropertiesFile.name}. Create it at project root.")
+    }
+    versionPropertiesFile.inputStream().use(::load)
+}
+val appVersionName = versionProperties.getProperty("VERSION_NAME")
+    ?: error("VERSION_NAME is missing in ${versionPropertiesFile.name}")
+val appVersionCode = versionProperties.getProperty("VERSION_CODE")?.toIntOrNull()
+    ?: error("VERSION_CODE is missing or invalid in ${versionPropertiesFile.name}")
 
 plugins {
     id("com.android.application")
@@ -16,8 +29,8 @@ configure<ApplicationExtension> {
         applicationId = "org.anne.zombiedeck"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
 
         testInstrumentationRunner = "org.anne.zombiedeck.HiltTestRunner"
         vectorDrawables {
@@ -66,6 +79,7 @@ configure<ApplicationExtension> {
     
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     packaging {
         resources {

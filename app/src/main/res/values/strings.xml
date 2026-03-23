@@ -43,4 +43,5 @@
     <string name="increase_danger_level">Increase danger level</string>
     <string name="expansions">Expansions</string>
     <string name="fort_hendrix">Fort Hendrix</string>
+    <string name="app_version_label" translatable="false">v%1$s</string>
 </resources>
