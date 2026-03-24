@@ -8,7 +8,7 @@ data class Card (
     val shooter: Boolean = false
 ) {
     fun getAmount(danger: Danger): Int {
-        return amount[danger.index]
+        return amount.getOrElse(danger.index) { 0 }
     }
     fun isAbomination(): Boolean {
         return zombieType == ZombieType.ABOMINATION

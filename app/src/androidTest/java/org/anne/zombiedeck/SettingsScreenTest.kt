@@ -28,6 +28,7 @@ class SettingsScreenTest {
         private const val HARD_TAG = "hard"
         private const val EXTRA_TAG = "extra"
         private const val FORT_HENDRIX_TAG = "fort_hendrix"
+        private const val DANNY_TREJO_TAG = "danny_trejo"
     }
 
     @get:Rule(order = 0)
@@ -153,6 +154,18 @@ class SettingsScreenTest {
             .assertExists()
             .assertIsDisplayed()
     }
+    
+    @Test
+    fun testDannyTrejoToggles() {
+        composeTestRule.onNodeWithTag(DANNY_TREJO_TAG)
+            .assertExists()
+            .assertIsDisplayed()
+            .assertIsOn()
+            .performClick()
+            .assertIsOff()
+            .performClick()
+            .assertIsOn()
+    }
 
 
     @Test
@@ -161,7 +174,7 @@ class SettingsScreenTest {
             SemanticsProperties.Role, Role.Switch
         )
         composeTestRule.onAllNodes(mySwitches)
-            .assertCountEquals(4)
+            .assertCountEquals(5)
             .assertAll(isOn())
     }
 }

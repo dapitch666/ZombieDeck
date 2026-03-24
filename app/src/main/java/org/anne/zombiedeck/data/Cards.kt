@@ -494,5 +494,41 @@ val allCards: List<Card> = listOf(
         CardType.EXTRA_ACTIVATION,
         ZombieType.RUNNER,
         listOf(0, 1, 1, 1)
+    ),
+    Card(
+        81,
+        CardType.SPAWN,
+        ZombieType.TREJO,
+        listOf()
+    ),
+    Card(
+        82,
+        CardType.SPAWN,
+        ZombieType.TREJO,
+        listOf()
+    ),
+    Card(
+        83,
+        CardType.SPAWN,
+        ZombieType.TREJO,
+        listOf()
+    ),
+    Card(
+        84,
+        CardType.RUSH,
+        ZombieType.TREJO,
+        listOf()
+    ),
+    Card(
+        85,
+        CardType.RUSH,
+        ZombieType.TREJO,
+        listOf()
+    ),
+    Card(
+        86,
+        CardType.RUSH,
+        ZombieType.TREJO,
+        listOf()
     )
 )

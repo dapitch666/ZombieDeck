@@ -22,8 +22,12 @@ class SettingsViewModel @Inject constructor(
         myPreference.getBoolean("fortHendrix")
     )
 
+    val dannyTrejo: MutableStateFlow<Boolean> = MutableStateFlow(
+        myPreference.getBoolean("dannyTrejo")
+    )
+
     private var selectedRanges: Set<IntRange> =
-        myPreference.getSelectedCardRanges(fortHendrix.value)
+        myPreference.getSelectedCardRanges(fortHendrix.value, dannyTrejo.value)
 
     private val _easy: MutableStateFlow<Boolean> = MutableStateFlow(
         selectedRanges.contains(rangeForSwitch("easy", fortHendrix.value))
@@ -46,6 +50,19 @@ class SettingsViewModel @Inject constructor(
                 fortHendrix.value = fortHendrix.value.not()
                 myPreference.setBoolean("fortHendrix", fortHendrix.value)
                 selectedRanges = remapRangesForFortHendrix(selectedRanges, fortHendrix.value)
+                myPreference.setSelectedCardRanges(selectedRanges)
+                refreshSwitchStates()
+            }
+            "dannyTrejo" -> {
+                dannyTrejo.value = dannyTrejo.value.not()
+                myPreference.setBoolean("dannyTrejo", dannyTrejo.value)
+                selectedRanges = selectedRanges.toMutableSet().apply {
+                    if (dannyTrejo.value) {
+                        add(81..86)
+                    } else {
+                        remove(81..86)
+                    }
+                }
                 myPreference.setSelectedCardRanges(selectedRanges)
                 refreshSwitchStates()
             }

@@ -42,6 +42,7 @@ fun SettingsScreen(
         hardState = vm.difficult.collectAsState(),
         extraState = vm.extraActivation.collectAsState(),
         fortHendrixState = vm.fortHendrix.collectAsState(),
+        dannyTrejoState = vm.dannyTrejo.collectAsState(),
         toggleSwitch = vm::toggleSwitch,
         onDismiss = vm::onDismiss,
         backButtonOnClick = navigateUp
@@ -56,6 +57,7 @@ fun SettingsUIScreen(
     hardState: State<Boolean>,
     extraState: State<Boolean>,
     fortHendrixState: State<Boolean>,
+    dannyTrejoState: State<Boolean>,
     toggleSwitch: (String) -> Unit,
     onDismiss: () -> Unit,
     backButtonOnClick: () -> Unit
@@ -102,6 +104,15 @@ fun SettingsUIScreen(
                 ) {
                     // call ViewModel to toggle the value
                     toggleSwitch("fortHendrix")
+                }
+                SettingsSwitchComp(
+                    name = stringResource(R.string.danny_trejo),
+                    testTag = "danny_trejo",
+                    state = dannyTrejoState,
+                    displaySeparator = false
+                ) {
+                    // call ViewModel to toggle the value
+                    toggleSwitch("dannyTrejo")
                 }
             }
             SettingsGroup(name = R.string.tuning_the_difficulty) {
@@ -164,9 +175,10 @@ fun SettingsScreenPreview() {
         hardState = remember { mutableStateOf(true) },
         extraState = remember { mutableStateOf(false) },
         fortHendrixState = remember { mutableStateOf(false) },
+        dannyTrejoState = remember { mutableStateOf(true) },
         toggleSwitch = {},
         onDismiss = {},
-        backButtonOnClick = {}
+        backButtonOnClick = {},
     )
 }
 
@@ -179,9 +191,10 @@ fun SettingsScreenPreviewDialog() {
         hardState = remember { mutableStateOf(true) },
         extraState = remember { mutableStateOf(false) },
         fortHendrixState = remember { mutableStateOf(false) },
+        dannyTrejoState = remember { mutableStateOf(false) },
         toggleSwitch = {},
         onDismiss = {},
-        backButtonOnClick = {}
+        backButtonOnClick = {},
     )
 }
 
@@ -194,8 +207,9 @@ fun SettingsScreenFortHendrixPreview() {
         hardState = remember { mutableStateOf(true) },
         extraState = remember { mutableStateOf(true) },
         fortHendrixState = remember { mutableStateOf(true) },
+        dannyTrejoState = remember { mutableStateOf(false) },
         toggleSwitch = {},
         onDismiss = {},
-        backButtonOnClick = {}
+        backButtonOnClick = {},
     )
 }

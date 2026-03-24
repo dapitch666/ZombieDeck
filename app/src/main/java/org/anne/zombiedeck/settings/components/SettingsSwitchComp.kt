@@ -46,7 +46,7 @@ fun SettingsSwitchComp(
         color = Color.Transparent,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
         onClick = onClick,
     ) {
         Column {
@@ -92,7 +92,7 @@ fun SettingsSwitchComp(
             }
             if (displaySeparator) {
                 HorizontalDivider(
-                    modifier = Modifier.padding(top = 16.dp)
+                    modifier = Modifier.padding(top = 8.dp)
                 )
             }
         }
@@ -129,12 +129,24 @@ fun SettingsSwitchCompPreview() {
 @Preview
 @Composable
 fun SettingsSwitchCompWOSeparatorAndSummaryPreview() {
-    SettingsSwitchComp(
-        name = stringResource(R.string.fort_hendrix),
-        state = remember {
-            mutableStateOf(true)
-        },
-        displaySeparator = false,
-        onClick = {}
-    )
+    SettingsGroup(
+        name = R.string.expansions
+    ) {
+        SettingsSwitchComp(
+            name = stringResource(R.string.fort_hendrix),
+            state = remember {
+                mutableStateOf(true)
+            },
+            displaySeparator = false,
+            onClick = {}
+        )
+        SettingsSwitchComp(
+            name = stringResource(R.string.danny_trejo),
+            state = remember {
+                mutableStateOf(false)
+            },
+            displaySeparator = false,
+            onClick = {}
+        )
+    }
 }

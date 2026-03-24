@@ -36,12 +36,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.util.Locale
 import org.anne.zombiedeck.R
 import org.anne.zombiedeck.data.Abomination
 import org.anne.zombiedeck.data.Card
@@ -50,6 +51,7 @@ import org.anne.zombiedeck.data.Danger
 import org.anne.zombiedeck.data.ZombieType
 import org.anne.zombiedeck.ui.theme.ZombieDeckTheme
 import org.anne.zombiedeck.ui.theme.overpassMonoFont
+import java.util.Locale
 
 @Composable
 fun ZombieCard(
@@ -59,6 +61,7 @@ fun ZombieCard(
     danger: Danger = Danger.BLUE,
 ) {
     val isAbomination = abomination != null
+    val isTrejo = card?.zombieType == ZombieType.TREJO
     val stripeColor = when {
         isAbomination -> colorResource(R.color.danger_yellow)
         card?.cardType == CardType.RUSH -> colorResource(R.color.danger_yellow)
@@ -176,8 +179,8 @@ fun ZombieCard(
                         .offset(if (isAbomination) 0.dp else (-30).dp, 20.dp)
                 )
                 // Zombie count
-                // Hidden if the card is an abomination or an extra activation
-                if (!isAbomination && card?.cardType != CardType.EXTRA_ACTIVATION) {
+                // Hidden if the card is an abomination or an extra activation or a Trejo walker
+                if (!isAbomination && !isTrejo && card?.cardType != CardType.EXTRA_ACTIVATION) {
                     AnimatedContent(
                         targetState = danger,
                         label = "Danger level change",
@@ -237,6 +240,23 @@ fun ZombieCard(
                             .align(Alignment.BottomCenter)
                             .fillMaxWidth()
                             .background(colorResource(id = R.color.black))
+                            .padding(vertical = 16.dp, horizontal = 8.dp),
+                        color = fontColor,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 16.sp
+                    )
+                } else if (isTrejo) {
+                    val txt = stringResource(
+                            id = if (card.cardType == CardType.SPAWN) R.string.trejo_rule else R.string.trejo_rush_rule
+                    )
+                    val clr = if (card.cardType == CardType.SPAWN) R.color.black else R.color.danger_yellow
+                    Text(
+                        text = AnnotatedString.fromHtml(txt),
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth()
+                            .background(colorResource(id = clr))
                             .padding(vertical = 16.dp, horizontal = 8.dp),
                         color = fontColor,
                         fontSize = 14.sp,
@@ -393,6 +413,41 @@ fun DrawZombieCardHobominationPreview() {
     }
 }
 
+@Preview(name = "Trejo")
+@Preview(name = "Trejo fr", locale = "fr")
+@Composable
+fun DrawZombieCardTrejoPreview() {
+    ZombieDeckTheme {
+        ZombieCard(
+            card = Card(
+                81,
+                CardType.SPAWN,
+                ZombieType.TREJO,
+                listOf()
+            ),
+            abomination = null
+        )
+    }
+}
+
+
+@Preview(name = "Trejo rush")
+@Preview(name = "Trejo rush fr", locale = "fr")
+@Composable
+fun DrawZombieCardTrejoRushPreview() {
+    ZombieDeckTheme {
+        ZombieCard(
+            card = Card(
+                86,
+                CardType.RUSH,
+                ZombieType.TREJO,
+                listOf()
+            ),
+            abomination = null
+        )
+    }
+}
+
 @Preview
 @Composable
 fun DrawZombieCardNonePreview() {
@@ -403,3 +458,4 @@ fun DrawZombieCardNonePreview() {
         )
     }
 }
+

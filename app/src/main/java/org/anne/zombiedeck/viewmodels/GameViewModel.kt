@@ -29,7 +29,8 @@ class GameViewModel @Inject constructor(private val myPreference: MyPreference?)
 
     private fun resetDeck() {
         val fortHendrixEnabled = myPreference?.getBoolean("fortHendrix") ?: false
-        val selectedRanges = myPreference?.getSelectedCardRanges(fortHendrixEnabled)
+        val dannyTrejoEnabled = myPreference?.getBoolean("dannyTrejo", defValue = false) ?: false
+        val selectedRanges = myPreference?.getSelectedCardRanges(fortHendrixEnabled, dannyTrejoEnabled)
             ?: setOf(1..18, 19..36, 37..40)
 
         val cards: MutableList<Card> = mutableListOf()

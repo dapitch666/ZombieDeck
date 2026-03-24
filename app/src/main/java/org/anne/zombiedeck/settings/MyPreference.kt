@@ -24,7 +24,7 @@ open class MyPreference @Inject constructor(@ApplicationContext context : Contex
         prefs?.edit { putBoolean(key, value) }
     }
 
-    open fun getSelectedCardRanges(fortHendrixEnabled: Boolean): Set<IntRange> {
+    open fun getSelectedCardRanges(fortHendrixEnabled: Boolean, dannyTrejoEnabled: Boolean): Set<IntRange> {
         val storedRanges = prefs
             ?.getStringSet(PREF_SELECTED_CARD_RANGES, null)
             ?.mapNotNull { parseRange(it) }
@@ -34,24 +34,15 @@ open class MyPreference @Inject constructor(@ApplicationContext context : Contex
             return storedRanges
         }
 
-        // Migrate legacy boolean preferences to explicit ranges on first read.
-        val migratedRanges = mutableSetOf<IntRange>()
-        if (getBoolean("cards_1_to_18")) {
-            migratedRanges += if (fortHendrixEnabled) 41..58 else 1..18
+        val baseRanges: Set<IntRange> = if (fortHendrixEnabled) {
+            setOf(41..58, 59..76, 77..80)
+        } else {
+            setOf(1..18, 19..36, 37..40)
         }
-        if (getBoolean("cards_19_to_36")) {
-            migratedRanges += if (fortHendrixEnabled) 59..76 else 19..36
-        }
-        if (getBoolean("cards_37_to_40")) {
-            migratedRanges += if (fortHendrixEnabled) 77..80 else 37..40
-        }
-
-        val safeRanges = migratedRanges.ifEmpty {
-            if (fortHendrixEnabled) {
-                setOf(41..58, 59..76, 77..80)
-            } else {
-                setOf(1..18, 19..36, 37..40)
-            }
+        val safeRanges: Set<IntRange> = if (dannyTrejoEnabled) {
+            baseRanges + setOf(81..86)
+        } else {
+            baseRanges
         }
         setSelectedCardRanges(safeRanges)
         return safeRanges
