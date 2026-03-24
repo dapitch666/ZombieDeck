@@ -87,7 +87,12 @@ class SettingsViewModel @Inject constructor(
 
     // this is a helper function to ensure that at least one switch is on
     private fun checkSwitches(){
-        if(selectedRanges.isEmpty()){
+        val hasAnyDifficultyEnabled =
+            selectedRanges.contains(rangeForSwitch("easy", fortHendrix.value)) ||
+                selectedRanges.contains(rangeForSwitch("hard", fortHendrix.value)) ||
+                selectedRanges.contains(rangeForSwitch("extra", fortHendrix.value))
+
+        if(!hasAnyDifficultyEnabled){
             _state.update { state ->
                 state.copy(showDialog = true)
             }
