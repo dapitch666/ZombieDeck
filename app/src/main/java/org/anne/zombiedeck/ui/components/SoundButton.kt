@@ -21,6 +21,7 @@ fun SoundButton(
     onClick: () -> Unit = {},
     enabled: Boolean = true,
 ) {
+    // `enabled` represents the current sound state shown by icon + color.
     val icon = if (enabled) R.drawable.sound_on else R.drawable.sound_off
     val colors = if (enabled) {
         IconButtonDefaults.iconButtonColors(
@@ -33,6 +34,8 @@ fun SoundButton(
             contentColor = Color.White
         )
     }
+
+    // Keep icon-only interaction compact while preserving clear state feedback.
     IconButton(
         onClick = { onClick() },
         colors = colors,

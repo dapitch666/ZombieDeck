@@ -10,17 +10,14 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 
-/*
- * This file contains a collection of useful modifiers for Compose UI.
- * You can use these to apply common effects to your composables.
- * https://proandroiddev.com/seeing-your-composable-in-shades-of-grey-8e2e2e5d6ac
- */
+// Reusable modifier helpers shared by multiple UI components.
 
 inline fun Modifier.conditional(
     condition: Boolean,
     ifTrue: Modifier.() -> Modifier,
     ifFalse: Modifier.() -> Modifier = { this },
 ): Modifier = if (condition) {
+    // Apply conditional styling without breaking modifier chaining.
     ifTrue()
 } else {
     ifFalse()
@@ -34,6 +31,7 @@ class GreyScaleModifier : DrawModifier {
             colorFilter = saturationFilter
         }
         drawIntoCanvas {
+            // Draw content through a color-filtered layer to desaturate children.
             it.saveLayer(Rect(0f, 0f, size.width, size.height), paint)
             drawContent()
             it.restore()

@@ -11,6 +11,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -32,6 +33,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -61,373 +63,443 @@ fun ZombieCard(
     danger: Danger = Danger.BLUE,
 ) {
     val isAbomination = abomination != null
-    val isTrejo = card?.zombieType == ZombieType.TREJO
-    val stripeColor = when {
-        isAbomination -> colorResource(R.color.danger_yellow)
-        card?.cardType == CardType.RUSH -> colorResource(R.color.danger_yellow)
-        card?.cardType == CardType.EXTRA_ACTIVATION -> colorResource(R.color.danger_red)
-        else -> colorResource(R.color.white)
-    }
-    val fontColor = when {
-        isAbomination -> colorResource(R.color.danger_yellow)
-        card?.cardType == CardType.RUSH -> colorResource(R.color.black)
-        else -> colorResource(R.color.white)
-    }
-    val topBgColor = when {
-        isAbomination -> colorResource(R.color.black)
-        card?.cardType == CardType.SPAWN -> colorResource(R.color.black)
-        card?.cardType == CardType.EXTRA_ACTIVATION -> colorResource(R.color.danger_red)
-        card?.cardType == CardType.RUSH -> colorResource(R.color.danger_yellow)
-        else -> colorResource(R.color.black)
-    }
-    val amount = card?.getAmount(danger)
+
     Card(
         modifier = modifier
             .aspectRatio(260f / 400f),
         shape = RoundedCornerShape(25.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            if (card != null || abomination != null) {
-                Image(
-                    painter = painterResource(R.drawable.bg_card),
-                    contentDescription = "Card background",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.matchParentSize()
-                )
-                // Top of the card
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.35f)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .rotate(-5f)
-                            .fillMaxSize()
-                            .scale(1.2f)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(55.dp)
-                                .background(topBgColor)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(10.dp)
-                                .background(
-                                    createStripeBrush(
-                                        stripeWidth = 10.dp,
-                                        stripeBg = stripeColor,
-                                    )
-                                )
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(1.dp)
-                                .alpha(0.5f)
-                                .background(colorResource(R.color.black))
-                        )
-                    }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 15.dp, top = 10.dp, end = 10.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = if (isAbomination) {
-                                stringResource(id = abomination.nameRes).uppercase()
-                            } else {
-                                stringResource(id = card!!.zombieType.nameRes).uppercase()
-                            },
-                            color = fontColor,
-                            fontWeight = FontWeight.Black,
-                            fontSize = 22.sp,
-                        )
-                        if (!isAbomination) {
-                            val cardId = stringResource(
-                                R.string.card_number,
-                                String.format(Locale.ROOT, "%03d", card!!.id)
-                            )
-                            Text(
-                                text = cardId,
-                                color = fontColor,
-                                fontWeight = FontWeight.Light,
-                                fontSize = 12.sp,
-                                modifier = Modifier.alpha(0.8f)
-                            )
-                        }
-                    }
-                }
-                // Zombie image
-                Image(
-                    painter = painterResource(
-                        if (isAbomination) abomination.imageRes else card!!.zombieType.imageRes
-                    ),
-                    contentDescription = stringResource(id = R.string.not_important),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .matchParentSize()
-                        .offset(if (isAbomination) 0.dp else (-30).dp, 20.dp)
-                )
-                // Zombie count
-                // Hidden if the card is an abomination or an extra activation or a Trejo walker
-                if (!isAbomination && !isTrejo && card?.cardType != CardType.EXTRA_ACTIVATION) {
-                    AnimatedContent(
-                        targetState = danger,
-                        label = "Danger level change",
-                        transitionSpec = {
-                            if (targetState > initialState) {
-                                slideInVertically { height -> height } + fadeIn() togetherWith
-                                        slideOutVertically { height -> -height } + fadeOut()
-                            } else {
-                                slideInVertically { height -> -height } + fadeIn() togetherWith
-                                        slideOutVertically { height -> height } + fadeOut()
-                            }.using(
-                                // Disable clipping since the faded slide-in/out should
-                                // be displayed out of bounds.
-                                SizeTransform(clip = false)
-                            )
-                        },
-                        modifier = Modifier
-                            .padding(end = 16.dp)
-                            .align(Alignment.CenterEnd)
-                    ) { targetDanger ->
-                        val dangerColor = colorResource(targetDanger.colorRes)
-                        Text(
-                            text = stringResource(
-                                id = R.string.amount,
-                                card!!.getAmount(targetDanger)
-                            ),
-                            color = colorResource(targetDanger.getTextColor()),
-                            fontFamily = sonoMonoFont,
-                            fontSize = 40.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .drawBehind {
-                                    drawRoundRect(
-                                        color = dangerColor,
-                                        cornerRadius = CornerRadius(10.dp.toPx())
-                                    )
-                                }
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                        )
-                    }
-                }
-                // Shooter image
-                if (card?.isShooter() == true) {
-                    Image(
-                        painter = painterResource(R.drawable.shooter_badge),
-                        contentDescription = stringResource(id = R.string.not_important),
-                        modifier = Modifier
-                            .align(Alignment.CenterEnd)
-                            .offset(x = (-10).dp, y = (-45).dp)
-                    )
-                }
-                // Bottom of the card
-                if (isAbomination) {
-                    Text(
-                        text = stringResource(abomination.ruleRes),
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .fillMaxWidth()
-                            .background(colorResource(id = R.color.black))
-                            .padding(vertical = 16.dp, horizontal = 8.dp),
-                        color = fontColor,
-                        fontSize = 14.sp,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 16.sp
-                    )
-                } else if (isTrejo) {
-                    val txt = stringResource(
-                            id = if (card.cardType == CardType.SPAWN) R.string.trejo_rule else R.string.trejo_rush_rule
-                    )
-                    val clr = if (card.cardType == CardType.SPAWN) R.color.black else R.color.danger_yellow
-                    Text(
-                        text = AnnotatedString.fromHtml(txt),
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .fillMaxWidth()
-                            .background(colorResource(id = clr))
-                            .padding(vertical = 16.dp, horizontal = 8.dp),
-                        color = fontColor,
-                        fontSize = 14.sp,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 16.sp
-                    )
-                } else if (card?.cardType != CardType.SPAWN) {
-                    val text = when (card?.cardType) {
-                        CardType.EXTRA_ACTIVATION -> {
-                            if (amount!! > 0) stringResource(id = R.string.one_extra_activation)
-                            else stringResource(id = R.string.no_extra_activation)
-                        }
+        Box(modifier = Modifier.fillMaxSize()) {
+            // If no data is provided, show the generic card back.
+            if (card == null && abomination == null) {
+                ZombieCardBack()
+                return@Box
+            }
 
-                        CardType.RUSH -> stringResource(id = R.string.spawn_then_activate)
-                        else -> ""
-                    }
-                    Text(
-                        text = text,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(16.dp),
-                        color = colorResource(id = R.color.white),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
+            // Resolve style colors once so all sections stay visually consistent.
+            val stripeColor = colorResource(stripeColorRes(card?.cardType, isAbomination))
+            val fontColor = colorResource(fontColorRes(card?.cardType, isAbomination))
+            val topBgColor = colorResource(topBackgroundRes(card?.cardType, isAbomination))
+
+            // Layer order: static background -> header -> artwork -> overlays.
+            ZombieCardFrontBackground()
+            ZombieCardTop(
+                card = card,
+                abomination = abomination,
+                isAbomination = isAbomination,
+                fontColor = fontColor,
+                stripeColor = stripeColor,
+                topBgColor = topBgColor,
+            )
+            ZombieCardImage(card = card, abomination = abomination, isAbomination = isAbomination)
+
+            // Count is intentionally hidden for Trejo and Extra Activation cards.
+            if (shouldShowAmount(card = card, isAbomination = isAbomination)) {
+                ZombieAmount(
+                    card = card,
+                    danger = danger,
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                        .align(Alignment.CenterEnd)
+                )
+            }
+
+            // Shooter badge is an additional overlay, independent of card type visuals.
+            if (card?.isShooter() == true) {
+                ShooterBadge()
+            }
+
+            ZombieCardBottom(
+                card = card,
+                abomination = abomination,
+                danger = danger,
+                fontColor = fontColor,
+            )
+        }
+    }
+}
+
+// Stripe color communicates special behaviors at a glance.
+private fun stripeColorRes(cardType: CardType?, isAbomination: Boolean): Int = when {
+    isAbomination -> R.color.danger_yellow
+    cardType == CardType.RUSH -> R.color.danger_yellow
+    cardType == CardType.EXTRA_ACTIVATION -> R.color.danger_red
+    else -> R.color.white
+}
+
+// Header text color follows card prominence and readability.
+private fun fontColorRes(cardType: CardType?, isAbomination: Boolean): Int = when {
+    isAbomination -> R.color.danger_yellow
+    cardType == CardType.RUSH -> R.color.black
+    else -> R.color.white
+}
+
+// Header background encodes the primary card action.
+private fun topBackgroundRes(cardType: CardType?, isAbomination: Boolean): Int = when {
+    isAbomination -> R.color.black
+    cardType == CardType.EXTRA_ACTIVATION -> R.color.danger_red
+    cardType == CardType.RUSH -> R.color.danger_yellow
+    else -> R.color.black
+}
+
+private fun shouldShowAmount(card: Card?, isAbomination: Boolean): Boolean {
+    // Trejo and Extra Activation cards use custom bottom rules instead of count display.
+    val isTrejo = card?.zombieType == ZombieType.TREJO
+    return !isAbomination && !isTrejo && card?.cardType != CardType.EXTRA_ACTIVATION
+}
+
+@Composable
+private fun BoxScope.ZombieCardBack() {
+    // Back face shown when no card content is available.
+    Image(
+        painter = painterResource(R.drawable.card_back),
+        contentDescription = "Card back",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.matchParentSize()
+    )
+}
+
+@Composable
+private fun BoxScope.ZombieCardFrontBackground() {
+    // Shared textured front background for all revealed cards.
+    Image(
+        painter = painterResource(R.drawable.bg_card),
+        contentDescription = "Card background",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.matchParentSize()
+    )
+}
+
+@Composable
+private fun ZombieCardTop(
+    card: Card?,
+    abomination: Abomination?,
+    isAbomination: Boolean,
+    fontColor: Color,
+    stripeColor: Color,
+    topBgColor: Color,
+) {
+    // Title source depends on whether this is a regular zombie card or an abomination card.
+    val title = when {
+        abomination != null -> stringResource(id = abomination.nameRes).uppercase()
+        card != null -> stringResource(id = card.zombieType.nameRes).uppercase()
+        else -> return
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.35f)
+    ) {
+        // Decorative top strip is rotated/scaled to match the physical card style.
+        Column(
+            modifier = Modifier
+                .rotate(-5f)
+                .fillMaxSize()
+                .scale(1.2f)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(55.dp)
+                    .background(topBgColor)
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(10.dp)
+                    .background(
+                        createStripeBrush(
+                            stripeWidth = 10.dp,
+                            stripeBg = stripeColor,
+                        )
                     )
-                }
-            } else {
-                Image(
-                    painter = painterResource(R.drawable.card_back),
-                    contentDescription = "Card back",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.matchParentSize()
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .alpha(0.5f)
+                    .background(colorResource(R.color.black))
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 15.dp, top = 10.dp, end = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title,
+                color = fontColor,
+                fontWeight = FontWeight.Black,
+                fontSize = 22.sp,
+            )
+            if (!isAbomination && card != null) {
+                // Card number is only meaningful for standard zombie cards.
+                val cardId = stringResource(
+                    R.string.card_number,
+                    String.format(Locale.ROOT, "%03d", card.id)
+                )
+                Text(
+                    text = cardId,
+                    color = fontColor,
+                    fontWeight = FontWeight.Light,
+                    fontSize = 12.sp,
+                    modifier = Modifier.alpha(0.8f)
                 )
             }
         }
     }
 }
 
+@Composable
+private fun BoxScope.ZombieCardImage(card: Card?, abomination: Abomination?, isAbomination: Boolean) {
+    // Artwork source changes with entity type, but placement logic remains shared.
+    val imageRes = when {
+        abomination != null -> abomination.imageRes
+        card != null -> card.zombieType.imageRes
+        else -> return
+    }
+
+    Image(
+        painter = painterResource(imageRes),
+        contentDescription = stringResource(id = R.string.not_important),
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .matchParentSize()
+            .offset(if (isAbomination) 0.dp else (-30).dp, 20.dp)
+    )
+}
+
+@Composable
+private fun ZombieAmount(card: Card?, danger: Danger, modifier: Modifier = Modifier) {
+    if (card == null) return
+
+    AnimatedContent(
+        targetState = danger,
+        label = "Danger level change",
+        transitionSpec = {
+            // Slide direction follows danger progression for better visual feedback.
+            if (targetState > initialState) {
+                slideInVertically { height -> height } + fadeIn() togetherWith
+                        slideOutVertically { height -> -height } + fadeOut()
+            } else {
+                slideInVertically { height -> -height } + fadeIn() togetherWith
+                        slideOutVertically { height -> height } + fadeOut()
+            }.using(
+                // Keep the same transition while allowing content to slide outside bounds.
+                SizeTransform(clip = false)
+            )
+        },
+        modifier = modifier
+    ) { targetDanger ->
+        val dangerColor = colorResource(targetDanger.colorRes)
+        Text(
+            text = stringResource(id = R.string.amount, card.getAmount(targetDanger)),
+            color = colorResource(targetDanger.getTextColor()),
+            fontFamily = sonoMonoFont,
+            fontSize = 40.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .drawBehind {
+                    drawRoundRect(
+                        color = dangerColor,
+                        cornerRadius = CornerRadius(10.dp.toPx())
+                    )
+                }
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+        )
+    }
+}
+
+@Composable
+private fun BoxScope.ShooterBadge() {
+    // Small marker used by special shooter cards.
+    Image(
+        painter = painterResource(R.drawable.shooter_badge),
+        contentDescription = stringResource(id = R.string.not_important),
+        modifier = Modifier
+            .align(Alignment.CenterEnd)
+            .offset(x = (-10).dp, y = (-45).dp)
+    )
+}
+
+@Composable
+private fun BoxScope.ZombieCardBottom(
+    card: Card?,
+    abomination: Abomination?,
+    danger: Danger,
+    fontColor: Color,
+) {
+    // Abominations always display their dedicated rule box at the bottom.
+    if (abomination != null) {
+        Text(
+            text = stringResource(abomination.ruleRes),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .background(colorResource(id = R.color.black))
+                .padding(vertical = 16.dp, horizontal = 8.dp),
+            color = fontColor,
+            fontSize = 14.sp,
+            textAlign = TextAlign.Center,
+            lineHeight = 16.sp
+        )
+        return
+    }
+
+    if (card == null) return
+
+    // Trejo has fully custom text and background depending on SPAWN vs RUSH.
+    if (card.zombieType == ZombieType.TREJO) {
+        val text = stringResource(
+            id = if (card.cardType == CardType.SPAWN) {
+                R.string.trejo_rule
+            } else {
+                R.string.trejo_rush_rule
+            }
+        )
+        val backgroundColor = if (card.cardType == CardType.SPAWN) {
+            R.color.black
+        } else {
+            R.color.danger_yellow
+        }
+        Text(
+            text = AnnotatedString.fromHtml(text),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .background(colorResource(id = backgroundColor))
+                .padding(vertical = 16.dp, horizontal = 8.dp),
+            color = fontColor,
+            fontSize = 14.sp,
+            textAlign = TextAlign.Center,
+            lineHeight = 16.sp
+        )
+        return
+    }
+
+    // SPAWN cards have no additional bottom text in this section.
+    if (card.cardType == CardType.SPAWN) return
+
+    // Non-SPAWN standard cards map to a short action reminder.
+    val text = when (card.cardType) {
+        CardType.EXTRA_ACTIVATION -> {
+            if (card.getAmount(danger) > 0) stringResource(id = R.string.one_extra_activation)
+            else stringResource(id = R.string.no_extra_activation)
+        }
+
+        CardType.RUSH -> stringResource(id = R.string.spawn_then_activate)
+    }
+    Text(
+        text = text,
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(16.dp),
+        color = colorResource(id = R.color.white),
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        textAlign = TextAlign.Center
+    )
+}
+
 @Preview
 @Composable
 fun DrawZombieCardFattyRushPreview() {
-    ZombieDeckTheme {
-        ZombieCard(
-            card = Card(
-                7,
-                CardType.RUSH,
-                ZombieType.FATTY,
-                listOf(0, 4, 6, 8)
-            ),
-            abomination = null,
-            danger = Danger.BLUE
-        )
-
-    }
+    ZombieCardPreview(
+        card = Card(
+            7,
+            CardType.RUSH,
+            ZombieType.FATTY,
+            listOf(0, 4, 6, 8)
+        ),
+        danger = Danger.BLUE
+    )
 }
 
 @Preview
 @Composable
 fun DrawZombieCardRunnerSpawnPreview() {
-    ZombieDeckTheme {
-        ZombieCard(
-            card = Card(
-                7,
-                CardType.SPAWN,
-                ZombieType.RUNNER,
-                listOf(2, 4, 6, 8)
-            ),
-            abomination = null,
-            danger = Danger.ORANGE
-        )
-
-    }
+    ZombieCardPreview(
+        card = Card(
+            7,
+            CardType.SPAWN,
+            ZombieType.RUNNER,
+            listOf(2, 4, 6, 8)
+        ),
+        danger = Danger.ORANGE
+    )
 }
 
 @Preview
 @Composable
 fun DrawZombieCardWalkerExtraPreview() {
-    ZombieDeckTheme {
-        ZombieCard(
-            card = Card(
-                7,
-                CardType.EXTRA_ACTIVATION,
-                ZombieType.WALKER,
-                listOf(2, 4, 6, 8)
-            ),
-            abomination = null,
-            danger = Danger.YELLOW
-        )
-
-    }
+    ZombieCardPreview(
+        card = Card(
+            7,
+            CardType.EXTRA_ACTIVATION,
+            ZombieType.WALKER,
+            listOf(2, 4, 6, 8)
+        ),
+        danger = Danger.YELLOW
+    )
 }
 
 @Preview
 @Composable
 fun DrawZombieCardShooter() {
-    ZombieDeckTheme {
-        ZombieCard(
-            card = Card(
-                72,
-                CardType.SPAWN,
-                ZombieType.FATTY,
-                listOf(1, 2, 3, 4),
-                true
-            ),
-            abomination = null,
-            danger = Danger.BLUE
-        )
-    }
+    ZombieCardPreview(
+        card = Card(
+            72,
+            CardType.SPAWN,
+            ZombieType.FATTY,
+            listOf(1, 2, 3, 4),
+            true
+        ),
+        danger = Danger.BLUE
+    )
 }
 
 
 @Preview
 @Composable
 fun DrawZombieCardAbominawildPreview() {
-    ZombieDeckTheme {
-        ZombieCard(
-            card = null,
-            abomination = Abomination.ABOMINAWILD
-        )
-    }
+    ZombieCardPreview(abomination = Abomination.ABOMINAWILD)
 }
 
 @Preview
 @Composable
 fun DrawZombieCardPatient0Preview() {
-    ZombieDeckTheme {
-        ZombieCard(
-            card = null,
-            abomination = Abomination.PATIENT_0
-        )
-    }
+    ZombieCardPreview(abomination = Abomination.PATIENT_0)
 }
 
 @Preview
 @Composable
 fun DrawZombieCardAbominacopPreview() {
-    ZombieDeckTheme {
-        ZombieCard(
-            card = null,
-            abomination = Abomination.ABOMINACOP
-        )
-    }
+    ZombieCardPreview(abomination = Abomination.ABOMINACOP)
 }
 
 @Preview
 @Composable
 fun DrawZombieCardHobominationPreview() {
-    ZombieDeckTheme {
-        ZombieCard(
-            card = null,
-            abomination = Abomination.HOBOMINATION
-        )
-    }
+    ZombieCardPreview(abomination = Abomination.HOBOMINATION)
 }
 
 @Preview(name = "Trejo")
 @Preview(name = "Trejo fr", locale = "fr")
 @Composable
 fun DrawZombieCardTrejoPreview() {
-    ZombieDeckTheme {
-        ZombieCard(
-            card = Card(
-                81,
-                CardType.SPAWN,
-                ZombieType.TREJO,
-                listOf()
-            ),
-            abomination = null
+    ZombieCardPreview(
+        card = Card(
+            81,
+            CardType.SPAWN,
+            ZombieType.TREJO,
+            listOf()
         )
-    }
+    )
 }
 
 
@@ -435,27 +507,30 @@ fun DrawZombieCardTrejoPreview() {
 @Preview(name = "Trejo rush fr", locale = "fr")
 @Composable
 fun DrawZombieCardTrejoRushPreview() {
-    ZombieDeckTheme {
-        ZombieCard(
-            card = Card(
-                86,
-                CardType.RUSH,
-                ZombieType.TREJO,
-                listOf()
-            ),
-            abomination = null
+    ZombieCardPreview(
+        card = Card(
+            86,
+            CardType.RUSH,
+            ZombieType.TREJO,
+            listOf()
         )
-    }
+    )
 }
 
 @Preview
 @Composable
 fun DrawZombieCardNonePreview() {
+    ZombieCardPreview()
+}
+
+@Composable
+private fun ZombieCardPreview(
+    card: Card? = null,
+    abomination: Abomination? = null,
+    danger: Danger = Danger.BLUE,
+) {
     ZombieDeckTheme {
-        ZombieCard(
-            card = null,
-            abomination = null
-        )
+        ZombieCard(card = card, abomination = abomination, danger = danger)
     }
 }
 

@@ -31,6 +31,7 @@ fun DangerProgressBar(
     danger: Danger,
     modifier: Modifier = Modifier,
 ) {
+    // Animate width changes to avoid abrupt jumps when danger evolves.
     val progress by animateFloatAsState(
         targetValue = currentProgress,
         label = "Progress bar animation"
@@ -43,6 +44,7 @@ fun DangerProgressBar(
             .fillMaxWidth()
             .padding(10.dp, 5.dp)
     ) {
+        // Inner striped layer acts as a moving fill indicator over the base danger color.
         Box(
             modifier = Modifier
                 .clip(RectangleShape)
@@ -56,6 +58,7 @@ fun DangerProgressBar(
                 .fillMaxHeight()
                 .fillMaxWidth(progress)
         )
+        // Keep the danger label centered regardless of current fill percentage.
         Text(
             text = stringResource(R.string.danger_level, stringResource(id = danger.nameRes)),
             color = colorResource(R.color.white),

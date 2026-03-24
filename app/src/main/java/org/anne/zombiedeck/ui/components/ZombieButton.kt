@@ -37,6 +37,7 @@ fun ZombieButton(
 ) {
     Button(
         onClick = onClick,
+        // Visual disabled treatment is applied manually to keep branded styling.
         modifier = modifier.conditional(!enable, { disabled() }),
         elevation = ButtonDefaults.elevatedButtonElevation(
             defaultElevation = 10.dp,
@@ -50,6 +51,7 @@ fun ZombieButton(
     ) {
         Box(
             modifier = Modifier
+                // Outer striped frame keeps the "hazard" visual identity.
                 .background(
                     createStripeBrush(
                         foregroundColor,
@@ -62,6 +64,7 @@ fun ZombieButton(
         ) {
             Box(
                 modifier = Modifier
+                    // Inner panel hosts the label and can stretch on row layouts.
                     .background(backgroundColor)
                     .align(Alignment.Center)
                     .padding(8.dp)

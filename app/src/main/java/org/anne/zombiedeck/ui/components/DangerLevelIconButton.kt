@@ -32,6 +32,7 @@ fun DangerLevelIconButton(
 ) {
     val iconColor = colorResource(color)
     IconButton(
+        // Keep callback signature stable: parent can decide what to do with disabled taps.
         onClick = { onClick(enabled) },
         enabled = enabled,
         colors = IconButtonDefaults.iconButtonColors(
@@ -44,6 +45,7 @@ fun DangerLevelIconButton(
             .minimumInteractiveComponentSize()
             .size(36.dp)
     ) {
+        // Fill the touch target to keep arrow icons visually balanced.
         Icon(
             icon,
             contentDescription = stringResource(id = description),
