@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="shuffle_and_start">Battre les cartes et démarrer</string>
-    <string name="draw_a_card">Piocher</string>
+    <string name="draw_a_card">Piocher une carte</string>
     <string name="danger_level">Niveau de danger %1s</string>
     <string name="spawn_then_activate">Générez, puis activez.</string>
     <string name="one_extra_activation">Une activation supplémentaire.</string>
     <string name="abomination">Abomination</string>
-    <string name="previous_card">Précédente</string>
+    <string name="previous_card">Carte précédente</string>
     <string name="shuffle">Mélanger</string>
     <string name="walker">rôdeur</string>
     <string name="runner">forcené</string>

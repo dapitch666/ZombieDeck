@@ -50,7 +50,7 @@ import org.anne.zombiedeck.data.CardType
 import org.anne.zombiedeck.data.Danger
 import org.anne.zombiedeck.data.ZombieType
 import org.anne.zombiedeck.ui.theme.ZombieDeckTheme
-import org.anne.zombiedeck.ui.theme.overpassMonoFont
+import org.anne.zombiedeck.ui.theme.sonoMonoFont
 import java.util.Locale
 
 @Composable
@@ -208,7 +208,7 @@ fun ZombieCard(
                                 card!!.getAmount(targetDanger)
                             ),
                             color = colorResource(targetDanger.getTextColor()),
-                            fontFamily = overpassMonoFont,
+                            fontFamily = sonoMonoFont,
                             fontSize = 40.sp,
                             textAlign = TextAlign.Center,
                             modifier = Modifier
@@ -275,7 +275,7 @@ fun ZombieCard(
                     }
                     Text(
                         text = text,
-                        modifier = modifier
+                        modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .padding(16.dp),
                         color = colorResource(id = R.color.white),
@@ -289,7 +289,7 @@ fun ZombieCard(
                     painter = painterResource(R.drawable.card_back),
                     contentDescription = "Card back",
                     contentScale = ContentScale.Crop,
-                    modifier = modifier.matchParentSize()
+                    modifier = Modifier.matchParentSize()
                 )
             }
         }

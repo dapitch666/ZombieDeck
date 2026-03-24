@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.anne.zombiedeck.R
-import org.anne.zombiedeck.ui.theme.overpassFamily
+import org.anne.zombiedeck.ui.theme.oswaldFamily
 
 @Composable
 fun ZombieButton(
@@ -77,7 +77,7 @@ fun ZombieButton(
                     text = buttonText,
                     color = foregroundColor,
                     textAlign = TextAlign.Center,
-                    fontFamily = overpassFamily,
+                    fontFamily = oswaldFamily,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
