@@ -44,4 +44,8 @@
     <string name="expansions">Expansions</string>
     <string name="fort_hendrix">Fort Hendrix</string>
     <string name="app_version_label" translatable="false">v%1$s</string>
+    <string name="trejo">TREJO</string>
+    <string name="trejo_rule">&lt;b>DO ONE OF THE FOLLOWING:&lt;/b>&lt;br/>&lt;br/>&lt;b>1 - Trejobomination is on the board:&lt;/b> 1 extra Activation.&lt;br/>&lt;b>2 - Trejo Walker is on the board:&lt;/b> Turns into a Trejobomination.&lt;br/>&lt;b>3 - No Trejobomination or Trejo Walker is on the board:&lt;/b> Spawn a Trejo Walker.&lt;br/></string>
+    <string name="trejo_rush_rule">&lt;b>DO ONE OF THE FOLLOWING:&lt;/b>&lt;br/>&lt;br/>&lt;b>1 - Trejobomination is on the board:&lt;/b> 1 extra Activation.&lt;br/>&lt;b>2 - Trejo Walker is on the board:&lt;/b> Turns into a Trejobomination.&lt;br/>&lt;b>3 - No Trejobomination or Trejo Walker is on the board:&lt;/b> Spawn a Trejo Walker, &lt;b>then activate it&lt;/b>.&lt;br/></string>
+    <string name="danny_trejo">Danny Trejo</string>
 </resources>

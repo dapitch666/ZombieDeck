@@ -19,6 +19,7 @@ fun createStripeBrush(
     val stripeStart = stripeWidthPx / brushSizePx
 
     return Brush.linearGradient(
+        // Using the same stop for both colors creates a hard edge between stripes.
         stripeStart to stripeBg,
         stripeStart to stripeColor,
         start = Offset(0f, 0f),

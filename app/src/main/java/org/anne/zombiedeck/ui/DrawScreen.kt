@@ -114,11 +114,11 @@ fun DrawUIScreen(
     val windowSize = LocalWindowInfo.current.containerSize
     val screenHeightDp = with(density) { windowSize.height.toDp().value.toInt() }
     val screenWidthDp = with(density) { windowSize.width.toDp().value.toInt() }
-    
-    // Determine if we're on a small screen
+
+    // Small layouts move some controls downward to avoid card overlap.
     val isSmallScreen = screenHeightDp < 700
-    
-    // Adapt margins and sizes based on screen height
+
+    // Breakpoints tuned from previews to keep card/actions visible on short devices.
     val topMarginDanger = when {
         screenHeightDp < 600 -> 12.dp
         screenHeightDp < 700 -> 16.dp
@@ -288,14 +288,17 @@ fun DrawUIScreen(
         val isShooterCard = card?.isShooter() == true
 
         LaunchedEffect(card, isAbominationCard, isShooterCard, isForward, abominationJustDrawn, isMuted) {
+            // Abomination sound plays once when a drawable abomination card appears.
             if (!isMuted && isAbominationCard && !abominationJustDrawn) {
                 playAbominationSound()
             }
+            // Shooter cue is tied to forward draws, not backward navigation.
             if (!isMuted && isShooterCard && isForward) {
                 playShooterSound()
             }
         }
 
+        // Button is enabled when an abomination can be drawn or already exists.
         val enable = isAbominationCard || abomination != null
 
         ZombieButton(
@@ -308,6 +311,7 @@ fun DrawUIScreen(
                 if (isAbominationCard && !abominationJustDrawn) {
                     drawAbomination()
                 }
+                // In previews/tests, an explicit param can fully control dialog visibility.
                 if (showAbominationDialog == null) {
                     internalShowAbominationDialog = internalShowAbominationDialog.not()
                 }
@@ -381,7 +385,7 @@ fun DrawUIScreen(
             )
         }
 
-        // Dim background when abomination dialog is shown
+        // Dim layer is rendered under the dialog card and closes on outside tap.
         AnimatedVisibility(
             visible = isAbominationDialogVisible,
             label = "Abomination dialog background",

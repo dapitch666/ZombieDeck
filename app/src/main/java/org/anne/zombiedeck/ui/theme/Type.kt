@@ -1,46 +1,83 @@
 package org.anne.zombiedeck.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import org.anne.zombiedeck.R
 
-val overpassFamily = FontFamily(
-    Font(R.font.overpass_light, FontWeight.Light),
-    Font(R.font.overpass_regular, FontWeight.Normal),
-    Font(R.font.overpass_medium, FontWeight.Medium),
-    Font(R.font.overpass_semibold, FontWeight.SemiBold),
-    Font(R.font.overpass_bold, FontWeight.ExtraBold),
-    Font(R.font.overpass_black, FontWeight.Black)
+// Using FontVariation.Settings to properly handle the variable font weight axis
+@OptIn(ExperimentalTextApi::class)
+val oswaldFamily = FontFamily(
+    Font(
+        R.font.oswald_wght,
+        weight = FontWeight.Light,
+        variationSettings = FontVariation.Settings(FontVariation.weight(300))
+    ),
+    Font(
+        R.font.oswald_wght,
+        weight = FontWeight.Normal,
+        variationSettings = FontVariation.Settings(FontVariation.weight(400))
+    ),
+    Font(
+        R.font.oswald_wght,
+        weight = FontWeight.Medium,
+        variationSettings = FontVariation.Settings(FontVariation.weight(500))
+    ),
+    Font(
+        R.font.oswald_wght,
+        weight = FontWeight.SemiBold,
+        variationSettings = FontVariation.Settings(FontVariation.weight(600))
+    ),
+    Font(
+        R.font.oswald_wght,
+        weight = FontWeight.Bold,
+        variationSettings = FontVariation.Settings(FontVariation.weight(700))
+    ),
+    Font(
+        R.font.oswald_wght,
+        weight = FontWeight.ExtraBold,
+        variationSettings = FontVariation.Settings(FontVariation.weight(800))
+    ),
+    Font(
+        R.font.oswald_wght,
+        weight = FontWeight.Black,
+        variationSettings = FontVariation.Settings(FontVariation.weight(900))
+    )
 )
 
-val overpassMonoFont = FontFamily(
-    Font(R.font.overpass_mono_bold, FontWeight.Bold)
+@OptIn(ExperimentalTextApi::class)
+val sonoMonoFont = FontFamily(
+    Font(
+        R.font.sono_mono_wght,
+        weight = FontWeight.Bold,
+        variationSettings = FontVariation.Settings(FontVariation.weight(700))
+    )
 )
 
 private val defaultTypography = Typography()
 val Typography = Typography(
-    displayLarge = defaultTypography.displayLarge.copy(fontFamily = overpassFamily),
-    displayMedium = defaultTypography.displayMedium.copy(fontFamily = overpassFamily),
-    displaySmall = defaultTypography.displaySmall.copy(fontFamily = overpassFamily),
+    displayLarge = defaultTypography.displayLarge.copy(fontFamily = oswaldFamily),
+    displayMedium = defaultTypography.displayMedium.copy(fontFamily = oswaldFamily),
+    displaySmall = defaultTypography.displaySmall.copy(fontFamily = oswaldFamily),
 
-    headlineLarge = defaultTypography.headlineLarge.copy(fontFamily = overpassFamily),
-    headlineMedium = defaultTypography.headlineMedium.copy(fontFamily = overpassFamily),
-    headlineSmall = defaultTypography.headlineSmall.copy(fontFamily = overpassFamily),
+    headlineLarge = defaultTypography.headlineLarge.copy(fontFamily = oswaldFamily),
+    headlineMedium = defaultTypography.headlineMedium.copy(fontFamily = oswaldFamily),
+    headlineSmall = defaultTypography.headlineSmall.copy(fontFamily = oswaldFamily),
 
-    titleLarge = defaultTypography.titleLarge.copy(fontFamily = overpassFamily),
-    titleMedium = defaultTypography.titleMedium.copy(fontFamily = overpassFamily),
-    titleSmall = defaultTypography.titleSmall.copy(fontFamily = overpassFamily),
+    titleLarge = defaultTypography.titleLarge.copy(fontFamily = oswaldFamily),
+    titleMedium = defaultTypography.titleMedium.copy(fontFamily = oswaldFamily),
+    titleSmall = defaultTypography.titleSmall.copy(fontFamily = oswaldFamily),
 
-    bodyLarge = defaultTypography.bodyLarge.copy(fontFamily = overpassFamily),
-    bodyMedium = defaultTypography.bodyMedium.copy(fontFamily = overpassFamily),
-    bodySmall = defaultTypography.bodySmall.copy(fontFamily = overpassFamily),
+    bodyLarge = defaultTypography.bodyLarge.copy(fontFamily = oswaldFamily),
+    bodyMedium = defaultTypography.bodyMedium.copy(fontFamily = oswaldFamily),
+    bodySmall = defaultTypography.bodySmall.copy(fontFamily = oswaldFamily),
 
-    labelLarge = defaultTypography.labelLarge.copy(fontFamily = overpassFamily),
-    labelMedium = defaultTypography.labelMedium.copy(fontFamily = overpassFamily),
-    labelSmall = defaultTypography.labelSmall.copy(fontFamily = overpassFamily)
-
+    labelLarge = defaultTypography.labelLarge.copy(fontFamily = oswaldFamily),
+    labelMedium = defaultTypography.labelMedium.copy(fontFamily = oswaldFamily),
+    labelSmall = defaultTypography.labelSmall.copy(fontFamily = oswaldFamily)
 )
 
 // Set of Material typography styles to start with

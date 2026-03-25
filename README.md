@@ -5,8 +5,19 @@
 
 ## Description
 
-ZombieDeck is an Android companion app that helps players run the zombie spawn deck from Zombicide 2nd Edition game.
+ZombieDeck is an Android companion app that helps players run the zombie spawn deck for Zombicide 2nd Edition.
 It lets you quickly draw cards, track danger level, and tune deck difficulty with optional expansions.
+
+## Game Compatibility
+
+- Base game required: Zombicide 2nd Edition
+
+Compatible expansions:
+
+- Washington ZC (no new Zombie cards, so naturally compatible)
+- Fort Hendrix
+- Rio Z Janeiro (no new Zombie cards, so naturally compatible)
+- Danny Trejo
 
 ## APK installation
 
@@ -74,7 +85,7 @@ Automated release commands:
 ./gradlew releaseMajor
 ```
 
-Each `release*` task checks for a clean working tree, bumps version, commits `version.properties`, creates tag `vX.Y.Z`, and pushes both branch and tag to `origin`.
+Each `release*` task checks for a clean working tree, bumps the version, commits `version.properties`, creates the `vX.Y.Z` tag, and pushes both the branch and the tag to `origin`.
 
 Release signing is enabled when these environment variables are provided:
 
@@ -83,7 +94,7 @@ Release signing is enabled when these environment variables are provided:
 - `KEY_ALIAS`
 - `KEY_PASSWORD`
 
-## Test
+## Testing
 
 ```bash
 ./gradlew :app:testDebugUnitTest
@@ -91,18 +102,18 @@ Release signing is enabled when these environment variables are provided:
 ./gradlew :app:lintDebug
 ```
 
-## Contribution
+## Contributing
 
 1. Fork the repository and create a branch from `main`.
 2. Make focused changes with clear commit messages.
 3. Run unit tests and lint locally before opening a PR.
-4. Open a Pull Request with context, screenshots (if UI changes), and test notes.
+4. Open a pull request with context, screenshots (if UI changes), and test notes.
 
 ## License
 
 This project is distributed under the terms described in the `LICENSE` file.
 
-## Publish APK to GitHub
+## Publishing APK to GitHub
 
 - Create these GitHub Actions secrets before publishing:
   - `ANDROID_KEYSTORE_BASE64`

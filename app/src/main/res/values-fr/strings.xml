@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="shuffle_and_start">Battre les cartes et démarrer</string>
-    <string name="draw_a_card">Piocher</string>
+    <string name="draw_a_card">Piocher une carte</string>
     <string name="danger_level">Niveau de danger %1s</string>
     <string name="spawn_then_activate">Générez, puis activez.</string>
     <string name="one_extra_activation">Une activation supplémentaire.</string>
     <string name="abomination">Abomination</string>
-    <string name="previous_card">Précédente</string>
+    <string name="previous_card">Carte précédente</string>
     <string name="shuffle">Mélanger</string>
     <string name="walker">rôdeur</string>
     <string name="runner">forcené</string>
@@ -21,6 +21,7 @@
     <string name="hobomination">Cradomination</string>
     <string name="abominacop">Abominaflic</string>
     <string name="abominawild">Abominabête</string>
+    <string name="patient_0">Patient 0</string>
     <string name="hobomination_rule">Les survivants situés dans la zone de la Cradomination ne peuvent pas effectuer d\'action de combat.</string>
     <string name="abominacop_rule">L\'Abominaflic arrive en premier dans l\'ordre de priorité des cibles.</string>
     <string name="abominawild_rule">Dans la zone de l\'Abominabête, les effets Molotov ne tuent que celle-ci. Les autres acteurs ne sont pas affectés et les autres effets sont ignorés.</string>
@@ -40,4 +41,8 @@
     <string name="increase_danger_level">Augmenter le danger</string>
     <string name="expansions">Extensions</string>
     <string name="fort_hendrix">Fort Hendrix</string>
+    <string name="trejo">TREJO</string>
+    <string name="trejo_rule">&lt;b>EFFECTUEZ L\'UNE DES ACTIONS SUIVANTES :&lt;/b>&lt;br/>&lt;br/>&lt;b>1 - La Trejobomination est sur le plateau :&lt;/b> 1 Activation supplémentaire.&lt;br/>&lt;b>2 - Le Trejo Walker est sur le plateau :&lt;/b> Remplacez-le par la Trejobomination.&lt;br/>&lt;b>3 - Aucun des deux n’est sur le plateau :&lt;/b> Placez un Trejo Walker dans la Zone correspondante.&lt;br/></string>
+    <string name="trejo_rush_rule">&lt;b>EFFECTUEZ L\'UNE DES ACTIONS SUIVANTES :&lt;/b>&lt;br/>&lt;br/>&lt;b>1 - La Trejobomination est sur le plateau :&lt;/b> 1 Activation supplémentaire.&lt;br/>&lt;b>2 - Le Trejo Walker est sur le plateau :&lt;/b> Remplacez-le par la Trejobomination.&lt;br/>&lt;b>3 - Aucun des deux n’est sur le plateau :&lt;/b> Placez un Trejo Walker dans la Zone correspondante, &lt;b>puis activez-la&lt;/b>.&lt;br/></string>
+    <string name="danny_trejo">Danny Trejo</string>
 </resources>

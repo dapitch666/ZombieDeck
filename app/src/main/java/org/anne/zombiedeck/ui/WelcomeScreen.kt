@@ -30,6 +30,7 @@ fun WelcomeScreen(
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.fillMaxSize()) {
+        // Full-bleed poster establishes the app atmosphere on first launch.
         Image(
             painter = painterResource(id = R.drawable.poster),
             contentDescription = stringResource(id = R.string.not_important),
@@ -41,6 +42,7 @@ fun WelcomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
+            // Top logo keeps branding visible regardless of screen ratio.
             Image(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = stringResource(id = R.string.not_important),
@@ -55,6 +57,7 @@ fun WelcomeScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(32.dp)
             ) {
+                // Primary actions are grouped in a single block for clear onboarding.
                 ZombieButton(
                     onClick = navigateToDraw,
                     buttonText = stringResource(id = R.string.shuffle_and_start)
@@ -66,6 +69,7 @@ fun WelcomeScreen(
             }
         }
 
+        // Subtle build/version label for support and bug reports.
         Text(
             text = stringResource(R.string.app_version_label, BuildConfig.VERSION_NAME),
             style = MaterialTheme.typography.labelSmall,
