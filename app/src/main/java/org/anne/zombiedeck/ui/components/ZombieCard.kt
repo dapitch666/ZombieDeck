@@ -266,11 +266,14 @@ private fun BoxScope.ZombieCardImage(card: Card?, abomination: Abomination?, isA
 
     Image(
         painter = painterResource(imageRes),
-        contentDescription = stringResource(id = R.string.not_important),
+        contentDescription = null,
         contentScale = ContentScale.Crop,
         modifier = Modifier
             .matchParentSize()
-            .offset(if (isAbomination) 0.dp else (-30).dp, 20.dp)
+            .offset(
+                if (isAbomination) 0.dp else (-30).dp,
+                if (isAbomination) 0.dp else 20.dp
+            )
     )
 }
 
@@ -463,7 +466,6 @@ fun DrawZombieCardShooter() {
     )
 }
 
-
 @Preview
 @Composable
 fun DrawZombieCardAbominawildPreview() {
@@ -486,6 +488,30 @@ fun DrawZombieCardAbominacopPreview() {
 @Composable
 fun DrawZombieCardHobominationPreview() {
     ZombieCardPreview(abomination = Abomination.HOBOMINATION)
+}
+
+@Preview
+@Composable
+fun DrawZombieCardKillerClownPreview() {
+    ZombieCardPreview(abomination = Abomination.KILLER_CLOWN)
+}
+
+@Preview
+@Composable
+fun DrawZombieCardAbductorPreview() {
+    ZombieCardPreview(abomination = Abomination.ABDUCTOR)
+}
+
+@Preview
+@Composable
+fun DrawZombieCardChupacabraPreview() {
+    ZombieCardPreview(abomination = Abomination.CHUPACABRA)
+}
+
+@Preview
+@Composable
+fun DrawZombieCardSewerCrocodilePreview() {
+    ZombieCardPreview(abomination = Abomination.SEWER_CROCODILE)
 }
 
 @Preview(name = "Trejo")

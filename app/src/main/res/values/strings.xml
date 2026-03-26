@@ -43,9 +43,18 @@
     <string name="increase_danger_level">Increase danger level</string>
     <string name="expansions">Expansions</string>
     <string name="fort_hendrix">Fort Hendrix</string>
+    <string name="urban_legends">Urban Legends</string>
     <string name="app_version_label" translatable="false">v%1$s</string>
     <string name="trejo">TREJO</string>
     <string name="trejo_rule">&lt;b>DO ONE OF THE FOLLOWING:&lt;/b>&lt;br/>&lt;br/>&lt;b>1 - Trejobomination is on the board:&lt;/b> 1 extra Activation.&lt;br/>&lt;b>2 - Trejo Walker is on the board:&lt;/b> Turns into a Trejobomination.&lt;br/>&lt;b>3 - No Trejobomination or Trejo Walker is on the board:&lt;/b> Spawn a Trejo Walker.&lt;br/></string>
     <string name="trejo_rush_rule">&lt;b>DO ONE OF THE FOLLOWING:&lt;/b>&lt;br/>&lt;br/>&lt;b>1 - Trejobomination is on the board:&lt;/b> 1 extra Activation.&lt;br/>&lt;b>2 - Trejo Walker is on the board:&lt;/b> Turns into a Trejobomination.&lt;br/>&lt;b>3 - No Trejobomination or Trejo Walker is on the board:&lt;/b> Spawn a Trejo Walker, &lt;b>then activate it&lt;/b>.&lt;br/></string>
     <string name="danny_trejo">Danny Trejo</string>
+    <string name="abductor">Abductor</string>
+    <string name="abductor_rule">- Ignores Dark Zone and Night rules for Line of Sight.\n- At the end of its Activation, remove from the board 1 Survivor it has LoS to (players choose). At the end of its next Activation, return the Survivor to the same Zone. Another Survivor is then abducted (it can be the same one).</string>
+    <string name="chupacabra">Chupacabra</string>
+    <string name="chupacabra_rule">The Chupacabra cannot be eliminated as long as it is in a Dark Zone.</string>
+    <string name="killer_clown">Killer Clown</string>
+    <string name="killer_clown_rule">Survivors cannot use the last Skill they earned through Adrenaline (does not apply to Blue Level Skills).</string>
+    <string name="sewer_crocodile">Sewer Crocodile</string>
+    <string name="sewer_crocodile_rule">- Give this card to a Survivor at random.\n- The Sewer Crocodile considers the designated Survivor\'s Zone as its target Zone, ignoring other Survivors.\n- The Sewer Crocodile has 2 Actions.</string>
 </resources>
