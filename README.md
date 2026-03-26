@@ -1,11 +1,11 @@
-# ZombieDeck
-[![Android Instrumented Tests](https://github.com/dapitch666/ZombieDeck/actions/workflows/android_instrumented_tests.yaml/badge.svg)](https://github.com/dapitch666/ZombieDeck/actions/workflows/android_instrumented_tests.yaml)
-[![Unit Tests](https://github.com/dapitch666/ZombieDeck/actions/workflows/unit_tests.yaml/badge.svg)](https://github.com/dapitch666/ZombieDeck/actions/workflows/unit_tests.yaml)
-[![Release APK](https://github.com/dapitch666/ZombieDeck/actions/workflows/release_apk.yaml/badge.svg)](https://github.com/dapitch666/ZombieDeck/actions/workflows/release_apk.yaml)
+# ZombiDeck
+[![Android Instrumented Tests](https://github.com/dapitch666/ZombiDeck/actions/workflows/android_instrumented_tests.yaml/badge.svg)](https://github.com/dapitch666/ZombiDeck/actions/workflows/android_instrumented_tests.yaml)
+[![Unit Tests](https://github.com/dapitch666/ZombiDeck/actions/workflows/unit_tests.yaml/badge.svg)](https://github.com/dapitch666/ZombiDeck/actions/workflows/unit_tests.yaml)
+[![Release APK](https://github.com/dapitch666/ZombiDeck/actions/workflows/release_apk.yaml/badge.svg)](https://github.com/dapitch666/ZombiDeck/actions/workflows/release_apk.yaml)
 
 ## Description
 
-ZombieDeck is an Android companion app that helps players run the zombie spawn deck for Zombicide 2nd Edition.
+ZombiDeck is an Android companion app that helps players run the zombie spawn deck for Zombicide 2nd Edition.
 It lets you quickly draw cards, track danger level, and tune deck difficulty with optional expansions.
 
 ## Game Compatibility
@@ -45,8 +45,8 @@ Prerequisites:
 Project setup:
 
 ```bash
-git clone https://github.com/dapitch666/ZombieDeck.git
-cd ZombieDeck
+git clone https://github.com/dapitch666/ZombiDeck.git
+cd ZombiDeck
 ./gradlew tasks
 ```
 

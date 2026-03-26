@@ -1,7 +1,7 @@
 
-import zombiedeck.versioning.BumpVersionTask
-import zombiedeck.versioning.PrintVersionTask
-import zombiedeck.versioning.ReleaseVersionTask
+import zombideck.versioning.BumpVersionTask
+import zombideck.versioning.PrintVersionTask
+import zombideck.versioning.ReleaseVersionTask
 
 // Top-level build file where you can add configuration options common to all subprojects/modules.
 plugins {

@@ -16,5 +16,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ZombieDeck"
+rootProject.name = "ZombiDeck"
 include(":app")

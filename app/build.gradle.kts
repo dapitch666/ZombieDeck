@@ -22,17 +22,17 @@ plugins {
 }
 
 configure<ApplicationExtension> {
-    namespace = "org.anne.zombiedeck"
+    namespace = "org.anne.zombideck"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "org.anne.zombiedeck"
+        applicationId = "org.anne.zombideck"
         minSdk = 26
         targetSdk = 36
         versionCode = appVersionCode
         versionName = appVersionName
 
-        testInstrumentationRunner = "org.anne.zombiedeck.HiltTestRunner"
+        testInstrumentationRunner = "org.anne.zombideck.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
