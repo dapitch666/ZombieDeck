@@ -26,6 +26,10 @@ class SettingsViewModel @Inject constructor(
         myPreference.getBoolean("dannyTrejo")
     )
 
+    val urbanLegends: MutableStateFlow<Boolean> = MutableStateFlow(
+        myPreference.getBoolean("urbanLegends", defValue = false)
+    )
+
     private var selectedRanges: Set<IntRange> =
         myPreference.getSelectedCardRanges(fortHendrix.value, dannyTrejo.value)
 
@@ -65,6 +69,10 @@ class SettingsViewModel @Inject constructor(
                 }
                 myPreference.setSelectedCardRanges(selectedRanges)
                 refreshSwitchStates()
+            }
+            "urbanLegends" -> {
+                urbanLegends.value = urbanLegends.value.not()
+                myPreference.setBoolean("urbanLegends", urbanLegends.value)
             }
             "easy" -> {
                 selectedRanges = toggleRangeSelection(selectedRanges, rangeForSwitch(toggleSettingOption, fortHendrix.value))
