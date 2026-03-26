@@ -62,7 +62,7 @@ jobs:
       - name: Prepare release assets
         run: |
           TAG_NAME="${GITHUB_REF_NAME:-v${{ steps.app_version.outputs.version_name }}}"
-          APK_NAME="ZombieDeck-${TAG_NAME}.apk"
+          APK_NAME="ZombiDeck-${TAG_NAME}.apk"
           cp "$APK_PATH" "$APK_NAME"
           sha256sum "$APK_NAME" > "${APK_NAME}.sha256"
 
@@ -71,15 +71,15 @@ jobs:
         with:
           name: release-apk
           path: |
-            ZombieDeck-*.apk
-            ZombieDeck-*.apk.sha256
+            ZombiDeck-*.apk
+            ZombiDeck-*.apk.sha256
 
       - name: Publish GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            ZombieDeck-*.apk
-            ZombieDeck-*.apk.sha256
+            ZombiDeck-*.apk
+            ZombiDeck-*.apk.sha256
           generate_release_notes: true
 

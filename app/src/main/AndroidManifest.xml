@@ -3,13 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
-        android:name=".ZombieDeckApplication"
+        android:name=".ZombiDeckApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ZombieDeck"
+        android:theme="@style/Theme.ZombiDeck"
         tools:targetApi="31"
         android:icon="@mipmap/ic_launcher">
         <activity
