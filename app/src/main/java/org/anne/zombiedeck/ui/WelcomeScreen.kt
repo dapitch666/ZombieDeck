@@ -44,7 +44,7 @@ fun WelcomeScreen(
         ) {
             // Top logo keeps branding visible regardless of screen ratio.
             Image(
-                painter = painterResource(id = R.drawable.logo_new),
+                painter = painterResource(id = R.drawable.logo),
                 contentDescription = stringResource(id = R.string.not_important),
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
