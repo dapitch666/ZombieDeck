@@ -40,10 +40,10 @@ fun ZombieButton(
         // Visual disabled treatment is applied manually to keep branded styling.
         modifier = modifier.conditional(!enable, { disabled() }),
         elevation = ButtonDefaults.elevatedButtonElevation(
-            defaultElevation = 10.dp,
-            pressedElevation = 10.dp,
-            hoveredElevation = 10.dp,
-            focusedElevation = 10.dp
+            defaultElevation = 6.dp,
+            pressedElevation = 6.dp,
+            hoveredElevation = 6.dp,
+            focusedElevation = 6.dp
         ),
         enabled = enable,
         shape = RoundedCornerShape(8.dp),

@@ -8,6 +8,6 @@ enum class ZombieType(@param:StringRes val nameRes: Int, @param:DrawableRes val 
     WALKER(R.string.walker, R.drawable.zombie_walker),
     RUNNER(R.string.runner, R.drawable.zombie_runner),
     FATTY(R.string.fatty, R.drawable.zombie_fatty),
-    ABOMINATION(R.string.abomination, R.drawable.zombie_abomination),
+    ABOMINATION(R.string.abomination, R.drawable.abomination_hobomination),
     TREJO(R.string.trejo, R.drawable.zombie_trejo)
 }

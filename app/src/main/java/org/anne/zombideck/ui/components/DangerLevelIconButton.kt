@@ -4,12 +4,14 @@ import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -31,27 +33,31 @@ fun DangerLevelIconButton(
     enabled: Boolean = true,
 ) {
     val iconColor = colorResource(color)
-    IconButton(
-        // Keep callback signature stable: parent can decide what to do with disabled taps.
-        onClick = { onClick(enabled) },
-        enabled = enabled,
-        colors = IconButtonDefaults.iconButtonColors(
-            containerColor = iconColor,
-            contentColor = Color.White,
-            disabledContentColor = Color.White.copy(alpha = 0.9f),
-            disabledContainerColor = Color.Gray.copy(alpha = 0.6f)
-        ),
+    Surface(
+        shape = CircleShape,
+        shadowElevation = 10.dp,
+        color = Color.Transparent,
         modifier = modifier
             .minimumInteractiveComponentSize()
             .size(36.dp)
     ) {
-        // Fill the touch target to keep arrow icons visually balanced.
-        Icon(
-            icon,
-            contentDescription = stringResource(id = description),
-            modifier = Modifier
-                .fillMaxSize()
-        )
+        IconButton(
+            onClick = { onClick(enabled) },
+            enabled = enabled,
+            colors = IconButtonDefaults.iconButtonColors(
+                containerColor = iconColor,
+                contentColor = Color.White,
+                disabledContentColor = Color.White.copy(alpha = 0.9f),
+                disabledContainerColor = Color.Gray.copy(alpha = 0.6f)
+            ),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Icon(
+                icon,
+                contentDescription = stringResource(id = description),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
 

@@ -1,10 +1,14 @@
 package org.anne.zombideck.ui.components
 
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,17 +40,25 @@ fun SoundButton(
     }
 
     // Keep icon-only interaction compact while preserving clear state feedback.
-    IconButton(
-        onClick = { onClick() },
-        colors = colors,
+    Surface(
+        shape = CircleShape,
+        shadowElevation = 6.dp,
+        color = Color.Transparent,
         modifier = modifier
+            .minimumInteractiveComponentSize()
+            .size(36.dp)
     ) {
-        Icon(
-            painter = painterResource(id = icon),
-            contentDescription = stringResource(id = R.string.toggle_sound_on_off),
-            modifier = Modifier
-                .size(32.dp)
-        )
+        IconButton(
+            onClick = { onClick() },
+            colors = colors,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Icon(
+                painter = painterResource(id = icon),
+                contentDescription = stringResource(id = R.string.toggle_sound_on_off),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
 

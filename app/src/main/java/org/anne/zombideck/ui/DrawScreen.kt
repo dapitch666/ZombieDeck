@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -28,12 +27,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.ImageShader
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,6 +60,7 @@ import org.anne.zombideck.ui.components.ZombieButton
 import org.anne.zombideck.ui.components.ZombieCard
 import org.anne.zombideck.ui.theme.ZombiDeckTheme
 import org.anne.zombideck.viewmodels.GameViewModel
+import kotlin.random.Random
 
 @Composable
 fun DrawScreen(
@@ -171,34 +178,85 @@ fun DrawUIScreen(
         else -> 16.dp
     }
 
+    val bgBitmap = ImageBitmap.imageResource(id = R.drawable.bg_sheet)
+
+    val allBloodStains = listOf(
+        R.drawable.blood_00, R.drawable.blood_01, R.drawable.blood_02, R.drawable.blood_03,
+        R.drawable.blood_04, R.drawable.blood_05, R.drawable.blood_06, R.drawable.blood_07,
+        R.drawable.blood_08, R.drawable.blood_09, R.drawable.blood_10, R.drawable.blood_11,
+        R.drawable.blood_12, R.drawable.blood_13, R.drawable.blood_14, R.drawable.blood_15,
+    )
+
+    // Sélection et placement déterministes — recalculés uniquement si la taille change
+    val bloodConfig = remember(screenWidthDp, screenHeightDp) {
+        val rng = Random(seed = screenWidthDp * 31 + screenHeightDp)
+
+        // 4 taches tirées aléatoirement parmi les 16
+        val chosen = allBloodStains.shuffled(rng).take(4)
+
+        // Positions en pourcentage de l'écran, réparties dans 4 quadrants
+        // pour éviter les superpositions et couvrir l'écran harmonieusement
+        val quadrants = listOf(
+            Pair(0.05f..0.45f, 0.05f..0.45f), // haut-gauche
+            Pair(0.50f..0.90f, 0.05f..0.45f), // haut-droite
+            Pair(0.05f..0.45f, 0.50f..0.90f), // bas-gauche
+            Pair(0.50f..0.90f, 0.50f..0.90f), // bas-droite
+        )
+
+        chosen.zip(quadrants).map { (resId, quadrant) ->
+            val (xRange, yRange) = quadrant
+            Triple(
+                resId,
+                rng.nextFloat() * (xRange.endInclusive - xRange.start) + xRange.start,
+                rng.nextFloat() * (yRange.endInclusive - yRange.start) + yRange.start,
+            )
+        }
+    }
+
+    // Chargement des bitmaps des taches sélectionnées
+    val bloodBitmaps = bloodConfig.map { (resId, _, _) ->
+        ImageBitmap.imageResource(id = resId)
+    }
+
     ConstraintLayout(
         modifier = modifier
             .fillMaxSize()
+            .drawBehind {
+                // Texture de fond tuilée
+                val paint = Paint().asFrameworkPaint()
+                val shader = ImageShader(
+                    image = bgBitmap,
+                    tileModeX = TileMode.Repeated,
+                    tileModeY = TileMode.Repeated
+                )
+                drawIntoCanvas { canvas ->
+                    paint.shader = shader
+                    canvas.nativeCanvas.drawRect(0f, 0f, size.width, size.height, paint)
+                }
+
+                // Taches de sang
+                bloodConfig.zip(bloodBitmaps).forEach { (config, bitmap) ->
+                    val (_, xPercent, yPercent) = config
+                    drawImage(
+                        image = bitmap,
+                        topLeft = Offset(
+                            x = size.width * xPercent - bitmap.width / 2f,
+                            y = size.height * yPercent - bitmap.height / 2f,
+                        )
+                    )
+                }
+            }
+
     ) {
         // Create references for the composables
         val (
-            backgroundImage, soundButton, dangerRow, cardContent,
+            soundButton, dangerRow, cardContent,
             abominationButton, previousButton, nextButton, abominationDialog
         ) = createRefs()
         // Local state is used in runtime; previews can force visibility via parameter.
         var internalShowAbominationDialog by remember { mutableStateOf(false) }
         val isAbominationDialogVisible = showAbominationDialog ?: internalShowAbominationDialog
         val interactionSource = remember { MutableInteractionSource() }
-
-        // Background image
-        Image(
-            painter = painterResource(id = R.drawable.bg_sheet),
-            contentDescription = "Background image",
-            contentScale = ContentScale.FillHeight,
-            modifier = Modifier.constrainAs(backgroundImage) {
-                top.linkTo(parent.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                bottom.linkTo(parent.bottom)
-                width = Dimension.fillToConstraints
-                height = Dimension.fillToConstraints
-            }
-        )
 
         // Sound button
         SoundButton(
@@ -287,7 +345,14 @@ fun DrawUIScreen(
         val isAbominationCard = card?.isAbomination() == true && amount > 0
         val isShooterCard = card?.isShooter() == true
 
-        LaunchedEffect(card, isAbominationCard, isShooterCard, isForward, abominationJustDrawn, isMuted) {
+        LaunchedEffect(
+            card,
+            isAbominationCard,
+            isShooterCard,
+            isForward,
+            abominationJustDrawn,
+            isMuted
+        ) {
             // Abomination sound plays once when a drawable abomination card appears.
             if (!isMuted && isAbominationCard && !abominationJustDrawn) {
                 playAbominationSound()
@@ -395,7 +460,11 @@ fun DrawUIScreen(
                 .fillMaxSize()
         ) {
             Box(
-                modifier = Modifier.background(color = Color.Black.copy(alpha = 0.6f), RectangleShape)
+                modifier = Modifier
+                    .background(
+                        color = Color.Black.copy(alpha = 0.6f),
+                        RectangleShape
+                    )
                     .zIndex(1f)
                     .clickable(
                         interactionSource = interactionSource,
@@ -411,9 +480,19 @@ fun DrawUIScreen(
     }
 }
 
-@Preview(name = "Small phone", locale = "fr", device = "id:small_phone", showSystemUi = true) // spec:width=360dp,height=640dp,dpi=240
+@Preview(
+    name = "Small phone",
+    locale = "fr",
+    device = "id:small_phone",
+    showSystemUi = true
+) // spec:width=360dp,height=640dp,dpi=240
 @Preview(name = "Medium phone", device = "id:medium_phone", showSystemUi = true)
-@Preview(name = "A56 French", locale = "fr", device = "spec:width=384dp,height=832dp,dpi=450", showSystemUi = true)
+@Preview(
+    name = "A56 French",
+    locale = "fr",
+    device = "spec:width=384dp,height=832dp,dpi=450",
+    showSystemUi = true
+)
 @Composable
 fun DrawScreenPreview() {
     ZombiDeckTheme {
