@@ -1,11 +1,14 @@
 name: Unit Tests
 
 on:
-  push
+  push:
+    branches-ignore:
+      - main
+  workflow_call:
 
 jobs:
   test:
-    runs-on: macOS-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
