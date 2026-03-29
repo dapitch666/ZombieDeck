@@ -61,9 +61,14 @@ class DrawScreenTest {
         val runner = composeTestRule.activity.getString(R.string.runner).uppercase()
         val fatty = composeTestRule.activity.getString(R.string.fatty).uppercase()
         val abomination = composeTestRule.activity.getString(R.string.abomination).uppercase()
-        
+        val trejo = composeTestRule.activity.getString(R.string.trejo).uppercase()
+
         composeTestRule.onNode(
-            hasText(walker) or hasText(runner) or hasText(fatty) or hasText(abomination)
+            hasText(walker, substring = true)
+                    or hasText(runner, substring = true)
+                    or hasText(fatty, substring = true)
+                    or hasText(abomination)
+                    or hasText(trejo, substring = true)
         ).assertExists()
     }
 
