@@ -11,6 +11,7 @@
     <string name="walker">rôdeur</string>
     <string name="runner">forcené</string>
     <string name="fatty">balèze</string>
+    <string name="rush">Ruée de %1$s</string>
     <string name="configure_the_deck">Configurer le jeu</string>
     <string name="tuning_the_difficulty">Ajuster la difficulté</string>
     <string name="cards_range">Inclure les cartes %1$d à %2$d</string>
@@ -43,15 +44,15 @@
     <string name="fort_hendrix">Fort Hendrix</string>
     <string name="urban_legends">Urban Legends</string>
     <string name="trejo">TREJO</string>
-    <string name="trejo_rule">&lt;b>EFFECTUEZ L\'UNE DES ACTIONS SUIVANTES :&lt;/b>&lt;br/>&lt;br/>&lt;b>1 - La Trejobomination est sur le plateau :&lt;/b> 1 Activation supplémentaire.&lt;br/>&lt;b>2 - Le Trejo Walker est sur le plateau :&lt;/b> Remplacez-le par la Trejobomination.&lt;br/>&lt;b>3 - Aucun des deux n’est sur le plateau :&lt;/b> Placez un Trejo Walker dans la Zone correspondante.&lt;br/></string>
-    <string name="trejo_rush_rule">&lt;b>EFFECTUEZ L\'UNE DES ACTIONS SUIVANTES :&lt;/b>&lt;br/>&lt;br/>&lt;b>1 - La Trejobomination est sur le plateau :&lt;/b> 1 Activation supplémentaire.&lt;br/>&lt;b>2 - Le Trejo Walker est sur le plateau :&lt;/b> Remplacez-le par la Trejobomination.&lt;br/>&lt;b>3 - Aucun des deux n’est sur le plateau :&lt;/b> Placez un Trejo Walker dans la Zone correspondante, &lt;b>puis activez-la&lt;/b>.&lt;br/></string>
+    <string name="trejo_rule">&lt;b>EFFECTUEZ L\'UNE DES ACTIONS SUIVANTES :&lt;/b>&lt;br/>&lt;b>1 - La Trejobomination est sur le plateau :&lt;/b> 1 Activation supplémentaire.&lt;br/>&lt;b>2 - Le Rôdeur Trejo est sur le plateau :&lt;/b> Remplacez-le par la Trejobomination.&lt;br/>&lt;b>3 - Aucun des deux n’est sur le plateau :&lt;/b> Placez un Rôdeur Trejo dans la Zone.</string>
+    <string name="trejo_rush_rule">&lt;b>EFFECTUEZ L\'UNE DES ACTIONS SUIVANTES :&lt;/b>&lt;br/>&lt;b>1 - La Trejobomination est sur le plateau :&lt;/b> 1 Activation supplémentaire.&lt;br/>&lt;b>2 - Le Rôdeur Trejo est sur le plateau :&lt;/b> Remplacez-le par la Trejobomination.&lt;br/>&lt;b>3 - Aucun des deux n’est sur le plateau :&lt;/b> Placez un Rôdeur Trejo dans la Zone, &lt;b>puis activez-le&lt;/b>.</string>
     <string name="danny_trejo">Danny Trejo</string>
     <string name="abductor">Abductor</string>
-    <string name="abductor_rule">- Ignore les règles de Zone d\'Ombre et de Nuit pour la Ligne de Vue.\n- Après chaque activation, il fait disparaître un Survivant qu\'il a en Ligne de Vue (au choix des joueurs).\nAprès l\'activation suivante, le Survivant revient dans la même Zone. Un autre Survivant est alors enlevé (ça peut être le même Survivant).</string>
+    <string name="abductor_rule">- Ignore les règles de Zone d\'Ombre et de Nuit pour la Ligne de Vue.&lt;br/>- Après chaque activation, il fait disparaître un Survivant qu\'il a en Ligne de Vue (au choix des joueurs).&lt;br/>Après l\'activation suivante, le Survivant revient dans la même Zone. Un autre Survivant est alors enlevé (ça peut être le même Survivant).</string>
     <string name="chupacabra">Chupacabra</string>
     <string name="chupacabra_rule">Le Chupacabra ne peut pas être éliminé tant qu\'il se trouve dans une Zone d\'Ombre</string>
     <string name="killer_clown">Killer Clown</string>
     <string name="killer_clown_rule">Les Survivants ne peuvent pas utiliser leur dernière compétence aquise par l\'adrénaline (sauf celle du niveau bleu) lorsqu\'il est sur le plateau.</string>
     <string name="sewer_crocodile">Sewer Crocodile</string>
-    <string name="sewer_crocodile_rule">Lorsqu\'il apparaît, sa carte est attribuée à un Survivant au hasard. Ce Survivant devient sa cible exclusive jusqu\'à ce que l\'Abomination soit tuée. Le Sewer Crocodile a 2 actions.</string>
+    <string name="sewer_crocodile_rule">- Donnez cette carte à un Survivant au hasard.&lt;br/>- La Zone de ce Survivant devient sa cible exclusive.&lt;br/>- Le Sewer Crocodile a 2 actions.</string>
 </resources>

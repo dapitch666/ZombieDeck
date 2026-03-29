@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,47 +37,54 @@ fun DangerProgressBar(
         targetValue = currentProgress,
         label = "Progress bar animation"
     )
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(colorResource(id = danger.colorRes))
-            .height(36.dp)
-            .fillMaxWidth()
-            .padding(10.dp, 5.dp)
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        shadowElevation = 6.dp,
+        modifier = modifier.height(36.dp).fillMaxWidth()
     ) {
-        // Inner striped layer acts as a moving fill indicator over the base danger color.
         Box(
             modifier = Modifier
-                .clip(RectangleShape)
-                .background(
-                    createStripeBrush(
-                        colorResource(id = R.color.black),
-                        colorResource(id = danger.colorRes),
-                        10.dp
-                    )
-                )
-                .fillMaxHeight()
-                .fillMaxWidth(progress)
-        )
-        // Keep the danger label centered regardless of current fill percentage.
-        Text(
-            text = stringResource(R.string.danger_level, stringResource(id = danger.nameRes)),
-            color = colorResource(R.color.white),
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
-            modifier = Modifier
+                .background(colorResource(id = danger.colorRes))
+                .height(36.dp)
                 .fillMaxWidth()
-                .align(Alignment.Center)
-        )
+                .padding(10.dp, 5.dp)
+        ) {
+            // Inner striped layer acts as a moving fill indicator over the base danger color.
+            Box(
+                modifier = Modifier
+                    .clip(RectangleShape)
+                    .background(
+                        createStripeBrush(
+                            colorResource(id = R.color.black),
+                            colorResource(id = danger.colorRes),
+                            10.dp
+                        )
+                    )
+                    .fillMaxHeight()
+                    .fillMaxWidth(progress)
+            )
+            // Keep the danger label centered regardless of current fill percentage.
+            Text(
+                text = stringResource(R.string.danger_level, stringResource(id = danger.nameRes)),
+                color = colorResource(R.color.white),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center)
+            )
+        }
     }
 }
 
 @Preview
 @Composable
 fun DangerProgressBarPreview() {
-    DangerProgressBar(
-        currentProgress = 0.5f,
-        danger = Danger.ORANGE
-    )
+    Box(modifier = Modifier.padding(16.dp)) {
+        DangerProgressBar(
+            currentProgress = 0.5f,
+            danger = Danger.ORANGE
+        )
+    }
 }
