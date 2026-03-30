@@ -8,14 +8,14 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
-import androidx.compose.ui.test.isOn
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.rememberNavController
+import androidx.preference.PreferenceManager
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import org.anne.zombideck.data.Expansion
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -23,11 +23,9 @@ import org.junit.Test
 @HiltAndroidTest
 class SettingsScreenTest {
     companion object {
-        private const val EASY_TAG = "easy"
-        private const val HARD_TAG = "hard"
+        private const val EASY_TAG  = "easy"
+        private const val HARD_TAG  = "hard"
         private const val EXTRA_TAG = "extra"
-        private const val FORT_HENDRIX_TAG = "fort_hendrix"
-        private const val DANNY_TREJO_TAG = "danny_trejo"
     }
 
     @get:Rule(order = 0)
@@ -40,11 +38,18 @@ class SettingsScreenTest {
     fun setUp() {
         hiltRule.inject()
 
+        // Clear all shared preferences so every test starts from a known baseline.
+        PreferenceManager
+            .getDefaultSharedPreferences(composeTestRule.activity)
+            .edit()
+            .clear()
+            .commit()
+
         composeTestRule.activity.setContent {
             ZombiDeckApp(
-                navController = rememberNavController(),
+                navController        = rememberNavController(),
                 playAbominationSound = { },
-                playShooterSound = { }
+                playShooterSound     = { },
             )
         }
 
@@ -56,128 +61,79 @@ class SettingsScreenTest {
 
     @Test
     fun testDialogOpensOnAllSwitchesOff() {
-        // Switches are on by default, ensure that they are all on after the test
-        composeTestRule.onNodeWithTag(EASY_TAG)
-            .assertExists()
-            .assertIsDisplayed()
-            .assertIsOn()
-            .performClick()
-            .assertIsOff()
+        // All three difficulty switches are on by default — turn them off one by one.
+        composeTestRule.onNodeWithTag(EASY_TAG).assertIsOn().performClick().assertIsOff()
+        composeTestRule.onNodeWithTag(HARD_TAG).assertIsOn().performClick().assertIsOff()
+        composeTestRule.onNodeWithTag(EXTRA_TAG).assertIsOn().performClick().assertIsOff()
 
-        composeTestRule.onNodeWithTag(HARD_TAG)
-            .assertExists()
-            .assertIsDisplayed()
-            .assertIsOn()
-            .performClick()
-            .assertIsOff()
-
-        composeTestRule.onNodeWithTag(EXTRA_TAG)
-            .assertExists()
-            .assertIsDisplayed()
-            .assertIsOn()
-            .performClick()
-            .assertIsOff()
-
-        // All three switches are off, so the dialog should be displayed
+        // All off → dialog must appear.
         composeTestRule.onNodeWithStringId(R.string.preferences_alert)
             .assertExists()
             .assertIsDisplayed()
 
-        // Clicking the OK button should dismiss the dialog and toggle the first switch back on
+        // Dismissing re-enables easy.
         composeTestRule.onNodeWithStringId(android.R.string.ok)
             .assertExists()
-            .assertIsDisplayed()
             .performClick()
 
-        composeTestRule.onNodeWithTag(EASY_TAG)
-            .assertIsOn()
+        composeTestRule.onNodeWithTag(EASY_TAG).assertIsOn()
+        composeTestRule.onNodeWithStringId(R.string.preferences_alert).assertDoesNotExist()
 
-        // The dialog should no longer be displayed
-        composeTestRule.onNodeWithStringId(R.string.preferences_alert)
-            .assertDoesNotExist()
-
-        // The other two switches should still be off. Turn them all again.
-        composeTestRule.onNodeWithTag(HARD_TAG)
-            .assertIsOff()
-            .performClick()
-            .assertIsOn()
-
-        composeTestRule.onNodeWithTag(EXTRA_TAG)
-            .assertIsOff()
-            .performClick()
-            .assertIsOn()
+        // Restore hard and extra so we leave no dirty state.
+        composeTestRule.onNodeWithTag(HARD_TAG).assertIsOff().performClick().assertIsOn()
+        composeTestRule.onNodeWithTag(EXTRA_TAG).assertIsOff().performClick().assertIsOn()
     }
 
     @Test
     fun testCardLabelsUpdateWhenFortHendrixToggles() {
-        // Force a deterministic baseline: Fort Hendrix OFF -> labels 1..40 visible.
-        val fortHendrixFirstRangeLabel = composeTestRule.activity.getString(R.string.cards_range, 41, 58)
-        val isFortHendrixEnabled = composeTestRule
-            .onAllNodesWithText(fortHendrixFirstRangeLabel)
-            .fetchSemanticsNodes().isNotEmpty()
+        val base = Expansion.BASE
+        val fort = Expansion.FORT_HENDRIX
 
-        if (isFortHendrixEnabled) {
-            composeTestRule.onNodeWithTag(FORT_HENDRIX_TAG)
-                .assertExists()
-                .performClick()
-        }
+        // Baseline: Fort Hendrix is OFF (guaranteed by @Before clearing prefs).
+        composeTestRule.onNodeWithStringId(R.string.cards_range, base.easyRange!!.first,  base.easyRange.last).assertIsDisplayed()
+        composeTestRule.onNodeWithStringId(R.string.cards_range, base.hardRange!!.first,  base.hardRange.last).assertIsDisplayed()
+        composeTestRule.onNodeWithStringId(R.string.cards_range, base.extraRange!!.first, base.extraRange.last).assertIsDisplayed()
 
-        composeTestRule.onNodeWithStringId(R.string.cards_range, 1, 18)
-            .assertExists()
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithStringId(R.string.cards_range, 19, 36)
-            .assertExists()
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithStringId(R.string.cards_range, 37, 40)
-            .assertExists()
-            .assertIsDisplayed()
+        // Enable Fort Hendrix → labels switch to Fort Hendrix ranges.
+        composeTestRule.onNodeWithTag(fort.prefKey).performClick()
 
-        composeTestRule.onNodeWithTag(FORT_HENDRIX_TAG)
-            .assertExists()
-            .performClick()
+        composeTestRule.onNodeWithStringId(R.string.cards_range, fort.easyRange!!.first,  fort.easyRange.last).assertIsDisplayed()
+        composeTestRule.onNodeWithStringId(R.string.cards_range, fort.hardRange!!.first,  fort.hardRange.last).assertIsDisplayed()
+        composeTestRule.onNodeWithStringId(R.string.cards_range, fort.extraRange!!.first, fort.extraRange.last).assertIsDisplayed()
 
-        composeTestRule.onNodeWithStringId(R.string.cards_range, 41, 58)
-            .assertExists()
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithStringId(R.string.cards_range, 59, 76)
-            .assertExists()
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithStringId(R.string.cards_range, 77, 80)
-            .assertExists()
-            .assertIsDisplayed()
+        // Disable Fort Hendrix → labels revert to BASE ranges.
+        composeTestRule.onNodeWithTag(fort.prefKey).performClick()
 
-        composeTestRule.onNodeWithTag(FORT_HENDRIX_TAG)
-            .performClick()
-
-        composeTestRule.onNodeWithStringId(R.string.cards_range, 1, 18)
-            .assertExists()
-            .assertIsDisplayed()
+        composeTestRule.onNodeWithStringId(R.string.cards_range, base.easyRange.first,  base.easyRange.last).assertIsDisplayed()
+        composeTestRule.onNodeWithStringId(R.string.cards_range, base.hardRange.first,  base.hardRange.last).assertIsDisplayed()
+        composeTestRule.onNodeWithStringId(R.string.cards_range, base.extraRange.first, base.extraRange.last).assertIsDisplayed()
     }
-    
+
     @Test
     fun testDannyTrejoToggles() {
-        composeTestRule.onNodeWithTag(DANNY_TREJO_TAG)
-            .assertExists()
+        // Baseline: Danny Trejo is OFF (guaranteed by @Before clearing prefs).
+        composeTestRule.onNodeWithTag(Expansion.DANNY_TREJO.prefKey)
             .assertIsDisplayed()
-            .assertIsOn()
-            .performClick()
             .assertIsOff()
             .performClick()
             .assertIsOn()
+            .performClick()
+            .assertIsOff()
     }
 
-
     @Test
-    fun testSwitchesExistAndAtLeastThreeAreOn() {
-        val mySwitches = SemanticsMatcher.expectValue(
-            SemanticsProperties.Role, Role.Switch
-        )
-        composeTestRule.onAllNodes(mySwitches)
-            .assertCountEquals(6)
-        
-        val onSwitchesCount = composeTestRule.onAllNodes(mySwitches and isOn()).fetchSemanticsNodes().size
-        assert(onSwitchesCount >= 3) {
-            "Expected at least 3 switches to be ON, but found $onSwitchesCount"
-        }
+    fun testAllSixSwitchesExistAndDefaultStateIsCorrect() {
+        val switchMatcher = SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Switch)
+
+        // Exactly 6 switches: 3 expansions + 3 difficulty.
+        composeTestRule.onAllNodes(switchMatcher).assertCountEquals(6)
+
+        // Default state: all 3 difficulty switches ON, all 3 expansion switches OFF.
+        composeTestRule.onNodeWithTag(EASY_TAG).assertIsOn()
+        composeTestRule.onNodeWithTag(HARD_TAG).assertIsOn()
+        composeTestRule.onNodeWithTag(EXTRA_TAG).assertIsOn()
+        composeTestRule.onNodeWithTag(Expansion.FORT_HENDRIX.prefKey).assertIsOff()
+        composeTestRule.onNodeWithTag(Expansion.DANNY_TREJO.prefKey).assertIsOff()
+        composeTestRule.onNodeWithTag(Expansion.URBAN_LEGENDS.prefKey).assertIsOff()
     }
 }

@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import org.anne.zombideck.data.Expansion
 import javax.inject.Inject
-
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
@@ -18,143 +18,147 @@ class SettingsViewModel @Inject constructor(
     val state: StateFlow<MyState>
         get() = _state.asStateFlow()
 
+    // ── Expansion toggles ────────────────────────────────────────────────────────
+
     val fortHendrix: MutableStateFlow<Boolean> = MutableStateFlow(
-        myPreference.getBoolean("fortHendrix")
+        myPreference.getBoolean(Expansion.FORT_HENDRIX.prefKey, defValue = false)
     )
 
     val dannyTrejo: MutableStateFlow<Boolean> = MutableStateFlow(
-        myPreference.getBoolean("dannyTrejo")
+        myPreference.getBoolean(Expansion.DANNY_TREJO.prefKey, defValue = false)
     )
 
     val urbanLegends: MutableStateFlow<Boolean> = MutableStateFlow(
-        myPreference.getBoolean("urbanLegends", defValue = false)
+        myPreference.getBoolean(Expansion.URBAN_LEGENDS.prefKey, defValue = false)
     )
+
+    // ── Difficulty sub-range toggles ─────────────────────────────────────────────
+    //
+    // "easy / hard / extra" only make sense when an expansion with difficulty
+    // ranges is active (BASE or FORT_HENDRIX). The active expansion is whichever
+    // one is currently selected; when Fort Hendrix is ON, Fort Hendrix ranges are
+    // used, otherwise BASE ranges are used.
+
+    private val activeExpansion: Expansion
+        get() = if (fortHendrix.value) Expansion.FORT_HENDRIX else Expansion.BASE
 
     private var selectedRanges: Set<IntRange> =
-        myPreference.getSelectedCardRanges(fortHendrix.value, dannyTrejo.value)
+        myPreference.getSelectedCardRanges(enabledExpansions())
 
-    private val _easy: MutableStateFlow<Boolean> = MutableStateFlow(
-        selectedRanges.contains(rangeForSwitch("easy", fortHendrix.value))
-    )
-    var easy = _easy.asStateFlow()
+    private val _easy = MutableStateFlow(selectedRanges.contains(activeExpansion.easyRange))
+    val easy: StateFlow<Boolean> = _easy.asStateFlow()
 
-    private val _hard: MutableStateFlow<Boolean> = MutableStateFlow(
-        selectedRanges.contains(rangeForSwitch("hard", fortHendrix.value))
-    )
-    var difficult = _hard.asStateFlow()
+    private val _hard = MutableStateFlow(selectedRanges.contains(activeExpansion.hardRange))
+    val difficult: StateFlow<Boolean> = _hard.asStateFlow()
 
-    private val _extra: MutableStateFlow<Boolean> = MutableStateFlow(
-        selectedRanges.contains(rangeForSwitch("extra", fortHendrix.value))
-    )
-    var extraActivation = _extra.asStateFlow()
+    private val _extra = MutableStateFlow(selectedRanges.contains(activeExpansion.extraRange))
+    val extraActivation: StateFlow<Boolean> = _extra.asStateFlow()
 
-    fun toggleSwitch(toggleSettingOption: String){
-        when(toggleSettingOption){
-            "fortHendrix" -> {
-                fortHendrix.value = fortHendrix.value.not()
-                myPreference.setBoolean("fortHendrix", fortHendrix.value)
-                selectedRanges = remapRangesForFortHendrix(selectedRanges, fortHendrix.value)
-                myPreference.setSelectedCardRanges(selectedRanges)
-                refreshSwitchStates()
-            }
-            "dannyTrejo" -> {
-                dannyTrejo.value = dannyTrejo.value.not()
-                myPreference.setBoolean("dannyTrejo", dannyTrejo.value)
-                selectedRanges = selectedRanges.toMutableSet().apply {
-                    if (dannyTrejo.value) {
-                        add(81..86)
-                    } else {
-                        remove(81..86)
-                    }
-                }
-                myPreference.setSelectedCardRanges(selectedRanges)
-                refreshSwitchStates()
-            }
-            "urbanLegends" -> {
-                urbanLegends.value = urbanLegends.value.not()
-                myPreference.setBoolean("urbanLegends", urbanLegends.value)
-            }
-            "easy" -> {
-                selectedRanges = toggleRangeSelection(selectedRanges, rangeForSwitch(toggleSettingOption, fortHendrix.value))
-                myPreference.setSelectedCardRanges(selectedRanges)
-                refreshSwitchStates()
-            }
-            "hard" -> {
-                selectedRanges = toggleRangeSelection(selectedRanges, rangeForSwitch(toggleSettingOption, fortHendrix.value))
-                myPreference.setSelectedCardRanges(selectedRanges)
-                refreshSwitchStates()
-            }
-            "extra" -> {
-                selectedRanges = toggleRangeSelection(selectedRanges, rangeForSwitch(toggleSettingOption, fortHendrix.value))
-                myPreference.setSelectedCardRanges(selectedRanges)
-                refreshSwitchStates()
-            }
+    // ── Public API ───────────────────────────────────────────────────────────────
+
+    fun toggleSwitch(toggleSettingOption: String) {
+        when (toggleSettingOption) {
+            Expansion.FORT_HENDRIX.prefKey -> toggleFortHendrix()
+            Expansion.DANNY_TREJO.prefKey  -> toggleDannyTrejo()
+            Expansion.URBAN_LEGENDS.prefKey -> toggleUrbanLegends()
+            "easy"  -> toggleDifficultyRange { activeExpansion.easyRange }
+            "hard"  -> toggleDifficultyRange { activeExpansion.hardRange }
+            "extra" -> toggleDifficultyRange { activeExpansion.extraRange }
         }
         checkSwitches()
     }
 
-    // this is a helper function to ensure that at least one switch is on
-    private fun checkSwitches(){
-        val hasAnyDifficultyEnabled =
-            selectedRanges.contains(rangeForSwitch("easy", fortHendrix.value)) ||
-                selectedRanges.contains(rangeForSwitch("hard", fortHendrix.value)) ||
-                selectedRanges.contains(rangeForSwitch("extra", fortHendrix.value))
-
-        if(!hasAnyDifficultyEnabled){
-            _state.update { state ->
-                state.copy(showDialog = true)
-            }
+    fun onDismiss() {
+        _state.value = _state.value.copy(showDialog = false)
+        // Re-enable "easy" as a safety fallback so the deck is never empty.
+        activeExpansion.easyRange?.let { easyRange ->
+            selectedRanges = selectedRanges.toMutableSet().apply { add(easyRange) }
+            myPreference.setSelectedCardRanges(selectedRanges)
+            refreshSwitchStates()
         }
     }
 
-    fun onDismiss(){
-        _state.value = _state.value.copy(showDialog = false)
+    // ── Private helpers ──────────────────────────────────────────────────────────
+
+    private fun toggleFortHendrix() {
+        fortHendrix.value = !fortHendrix.value
+        myPreference.setBoolean(Expansion.FORT_HENDRIX.prefKey, fortHendrix.value)
+        // Remap difficulty ranges to the newly active expansion.
+        selectedRanges = remapDifficultyRanges(selectedRanges, fortHendrix.value)
+        myPreference.setSelectedCardRanges(selectedRanges)
+        refreshSwitchStates()
+    }
+
+    private fun toggleDannyTrejo() {
+        dannyTrejo.value = !dannyTrejo.value
+        myPreference.setBoolean(Expansion.DANNY_TREJO.prefKey, dannyTrejo.value)
+        val trejoRange = Expansion.DANNY_TREJO.cardRange ?: return
         selectedRanges = selectedRanges.toMutableSet().apply {
-            add(rangeForSwitch("easy", fortHendrix.value))
+            if (dannyTrejo.value) add(trejoRange) else remove(trejoRange)
         }
         myPreference.setSelectedCardRanges(selectedRanges)
         refreshSwitchStates()
+    }
 
+    private fun toggleUrbanLegends() {
+        urbanLegends.value = !urbanLegends.value
+        myPreference.setBoolean(Expansion.URBAN_LEGENDS.prefKey, urbanLegends.value)
+        // Urban Legends has no cards, so no selectedRanges update needed.
+    }
+
+    private fun toggleDifficultyRange(rangeProvider: () -> IntRange?) {
+        val range = rangeProvider() ?: return
+        selectedRanges = selectedRanges.toMutableSet().apply {
+            if (!remove(range)) add(range)
+        }
+        myPreference.setSelectedCardRanges(selectedRanges)
+        refreshSwitchStates()
     }
 
     private fun refreshSwitchStates() {
-        _easy.value = selectedRanges.contains(rangeForSwitch("easy", fortHendrix.value))
-        _hard.value = selectedRanges.contains(rangeForSwitch("hard", fortHendrix.value))
-        _extra.value = selectedRanges.contains(rangeForSwitch("extra", fortHendrix.value))
+        _easy.value  = selectedRanges.contains(activeExpansion.easyRange)
+        _hard.value  = selectedRanges.contains(activeExpansion.hardRange)
+        _extra.value = selectedRanges.contains(activeExpansion.extraRange)
     }
 
-    private fun rangeForSwitch(cardsRange: String, fortEnabled: Boolean): IntRange {
-        return when (cardsRange) {
-            "easy" -> if (fortEnabled) 41..58 else 1..18
-            "hard" -> if (fortEnabled) 59..76 else 19..36
-            else -> if (fortEnabled) 77..80 else 37..40
+    private fun enabledExpansions(): Set<Expansion> =
+        Expansion.entries.filterTo(mutableSetOf()) { expansion ->
+            expansion == Expansion.BASE ||
+                    myPreference.getBoolean(expansion.prefKey, defValue = false)
         }
-    }
 
-    private fun toggleRangeSelection(currentRanges: Set<IntRange>, range: IntRange): Set<IntRange> {
-        return currentRanges.toMutableSet().apply {
-            if (!remove(range)) {
-                add(range)
-            }
-        }
-    }
+    /**
+     * Remaps difficulty sub-ranges when the Fort Hendrix expansion is toggled.
+     * BASE sub-ranges (1–18, 19–36, 37–40) ↔ FORT_HENDRIX sub-ranges (41–58, 59–76, 77–80).
+     */
+    private fun remapDifficultyRanges(current: Set<IntRange>, fortEnabled: Boolean): Set<IntRange> {
+        val from = if (fortEnabled) Expansion.BASE else Expansion.FORT_HENDRIX
+        val to   = if (fortEnabled) Expansion.FORT_HENDRIX else Expansion.BASE
 
-    private fun remapRangesForFortHendrix(currentRanges: Set<IntRange>, fortEnabled: Boolean): Set<IntRange> {
-        return currentRanges.map { range ->
+        return current.map { range ->
             when (range) {
-                1..18 -> if (fortEnabled) 41..58 else range
-                19..36 -> if (fortEnabled) 59..76 else range
-                37..40 -> if (fortEnabled) 77..80 else range
-                41..58 -> if (fortEnabled) range else 1..18
-                59..76 -> if (fortEnabled) range else 19..36
-                77..80 -> if (fortEnabled) range else 37..40
-                else -> range
+                from.easyRange  -> to.easyRange  ?: range
+                from.hardRange  -> to.hardRange  ?: range
+                from.extraRange -> to.extraRange ?: range
+                else            -> range
             }
         }.toSet()
+    }
 
+    /** Shows a dialog if the player disabled all difficulty ranges (deck would be empty). */
+    private fun checkSwitches() {
+        val exp = activeExpansion
+        val hasAnyEnabled =
+            selectedRanges.contains(exp.easyRange) ||
+                    selectedRanges.contains(exp.hardRange) ||
+                    selectedRanges.contains(exp.extraRange)
+
+        if (!hasAnyEnabled) {
+            _state.update { it.copy(showDialog = true) }
+        }
     }
 }
 
-data class MyState (
-    val showDialog: Boolean
+data class MyState(
+    val showDialog: Boolean,
 )

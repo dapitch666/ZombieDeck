@@ -6,6 +6,7 @@ import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.anne.zombideck.data.Danger
+import org.anne.zombideck.data.Expansion
 import org.anne.zombideck.settings.MyPreference
 import org.junit.Assert.assertThrows
 import org.junit.Before
@@ -125,45 +126,38 @@ class GameViewModelTest {
 
     @Test
     fun gameViewModel_filterCards_DeckSizeReduced() {
+        // Only BASE easy (1..18) enabled — deck should contain 18 cards.
         val fakePrefs = object : MyPreference(null) {
-            override fun getSelectedCardRanges(
-                fortHendrixEnabled: Boolean,
-                dannyTrejoEnabled: Boolean,
-            ): Set<IntRange> = setOf(1..18, 19..36)
+            override fun getBoolean(key: String, defValue: Boolean): Boolean = when (key) {
+                Expansion.FORT_HENDRIX.prefKey -> false
+                Expansion.DANNY_TREJO.prefKey  -> false
+                else -> defValue
+            }
+
+            override fun getSelectedCardRanges(enabledExpansions: Set<Expansion>): Set<IntRange> =
+                setOf(Expansion.BASE.easyRange!!)
         }
-        
+
         val filteredViewModel = GameViewModel(fakePrefs)
-        repeat(36) {
-            filteredViewModel.nextCard()
-        }
+        repeat(18) { filteredViewModel.nextCard() }
         assertTrue(filteredViewModel.isLastCard())
         assertEquals(1f, filteredViewModel.getProgress())
     }
 
     @Test
     fun gameViewModel_dannyTrejoEnabled_DeckIncludesExpansionCards() {
+        // BASE (40 cards) + Danny Trejo (6 cards) = 46 cards total.
         val fakePrefs = object : MyPreference(null) {
             override fun getBoolean(key: String, defValue: Boolean): Boolean = when (key) {
-                "dannyTrejo" -> true
-                "fortHendrix" -> false
+                Expansion.DANNY_TREJO.prefKey  -> true
+                Expansion.FORT_HENDRIX.prefKey -> false
                 else -> defValue
-            }
-
-            override fun getSelectedCardRanges(
-                fortHendrixEnabled: Boolean,
-                dannyTrejoEnabled: Boolean,
-            ): Set<IntRange> = if (dannyTrejoEnabled) {
-                setOf(1..18, 19..36, 37..40, 81..86)
-            } else {
-                setOf(1..18, 19..36, 37..40)
             }
         }
 
         val trejoViewModel = GameViewModel(fakePrefs)
-        repeat(46) {
-            trejoViewModel.nextCard()
-        }
-
+        repeat(46) { trejoViewModel.nextCard() }
         assertTrue(trejoViewModel.isLastCard())
+        assertEquals(1f, trejoViewModel.getProgress())
     }
 }

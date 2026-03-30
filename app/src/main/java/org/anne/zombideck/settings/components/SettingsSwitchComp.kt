@@ -17,9 +17,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,9 +35,9 @@ fun SettingsSwitchComp(
     name: String,
     @StringRes summary: Int? = null,
     testTag: String? = null,
-    state: State<Boolean>,
+    checked: Boolean,
     displaySeparator: Boolean = true,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Surface(
         color = Color.Transparent,
@@ -52,17 +49,15 @@ fun SettingsSwitchComp(
         Column {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Column {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         if (icon != null && iconDesc != null) {
                             Icon(
                                 painterResource(id = icon),
                                 contentDescription = stringResource(id = iconDesc),
-                                modifier = Modifier.size(24.dp)
+                                modifier = Modifier.size(24.dp),
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                         }
@@ -76,8 +71,7 @@ fun SettingsSwitchComp(
                     if (summary != null) {
                         Text(
                             text = stringResource(id = summary),
-                            modifier = Modifier
-                                .width(250.dp),
+                            modifier = Modifier.width(250.dp),
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.DarkGray,
                         )
@@ -85,15 +79,13 @@ fun SettingsSwitchComp(
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 Switch(
-                    checked = state.value,
+                    checked = checked,
                     onCheckedChange = { onClick() },
-                    modifier = Modifier.testTag(testTag ?: name)
+                    modifier = Modifier.testTag(testTag ?: name),
                 )
             }
             if (displaySeparator) {
-                HorizontalDivider(
-                    modifier = Modifier.padding(top = 8.dp)
-                )
+                HorizontalDivider(modifier = Modifier.padding(top = 8.dp))
             }
         }
     }
@@ -106,10 +98,8 @@ fun SettingsSwitchCompWithIconPreview() {
         icon = android.R.drawable.ic_menu_camera,
         iconDesc = android.R.string.ok,
         name = stringResource(android.R.string.cancel),
-        state = remember {
-            mutableStateOf(true)
-        },
-        onClick = {}
+        checked = true,
+        onClick = {},
     )
 }
 
@@ -119,34 +109,26 @@ fun SettingsSwitchCompPreview() {
     SettingsSwitchComp(
         name = stringResource(R.string.cards_range, 1, 18),
         summary = R.string.easy_cards_summary,
-        state = remember {
-            mutableStateOf(true)
-        },
-        onClick = {}
+        checked = true,
+        onClick = {},
     )
 }
 
 @Preview
 @Composable
 fun SettingsSwitchCompWOSeparatorAndSummaryPreview() {
-    SettingsGroup(
-        name = R.string.expansions
-    ) {
+    SettingsGroup(name = R.string.expansions) {
         SettingsSwitchComp(
             name = stringResource(R.string.fort_hendrix),
-            state = remember {
-                mutableStateOf(true)
-            },
+            checked = true,
             displaySeparator = false,
-            onClick = {}
+            onClick = {},
         )
         SettingsSwitchComp(
             name = stringResource(R.string.danny_trejo),
-            state = remember {
-                mutableStateOf(false)
-            },
+            checked = false,
             displaySeparator = false,
-            onClick = {}
+            onClick = {},
         )
     }
 }
