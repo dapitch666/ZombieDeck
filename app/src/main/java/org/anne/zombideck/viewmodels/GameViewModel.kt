@@ -8,12 +8,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import org.anne.zombideck.data.AbominationRepository
 import org.anne.zombideck.data.Card
 import org.anne.zombideck.data.DeckState
+import org.anne.zombideck.data.Expansion
 import org.anne.zombideck.data.allCards
 import org.anne.zombideck.settings.MyPreference
 import javax.inject.Inject
 
 @HiltViewModel
-class GameViewModel @Inject constructor(private val myPreference: MyPreference?) : ViewModel() {
+class GameViewModel @Inject constructor(
+    private val myPreference: MyPreference?,
+) : ViewModel() {
+
     private val _uiState = MutableStateFlow(DeckState())
     val uiState: StateFlow<DeckState> = _uiState.asStateFlow()
 
@@ -28,45 +32,64 @@ class GameViewModel @Inject constructor(private val myPreference: MyPreference?)
         resetDeck()
     }
 
-    private fun resetDeck() {
-        val fortHendrixEnabled = myPreference?.getBoolean("fortHendrix") ?: false
-        val dannyTrejoEnabled = myPreference?.getBoolean("dannyTrejo", defValue = false) ?: false
-        val selectedRanges = myPreference?.getSelectedCardRanges(fortHendrixEnabled, dannyTrejoEnabled)
-            ?: setOf(1..18, 19..36, 37..40)
+    // ── Deck management ──────────────────────────────────────────────────────────
 
-        val cards: MutableList<Card> = mutableListOf()
-        selectedRanges.sortedBy { it.first }.forEach { range ->
-            val startIndex = (range.first - 1).coerceIn(0, allCards.size)
-            val endIndex = range.last.coerceIn(startIndex, allCards.size)
-            if (startIndex < endIndex) {
-                cards.addAll(allCards.subList(startIndex, endIndex))
-            }
-        }
-        deck = cards.shuffled()
+    private fun resetDeck() {
+        val enabledExpansions = enabledExpansions()
+        val enabledSubRanges = enabledSubRanges(enabledExpansions)
+
+        deck = allCards
+            .filter { card -> card.expansion in enabledExpansions }
+            .filter { card -> card.id in enabledSubRanges }
+            .shuffled()
     }
+
+    /**
+     * Returns the set of expansions the player has switched on.
+     * BASE is always included.
+     */
+    private fun enabledExpansions(): Set<Expansion> =
+        Expansion.entries.filterTo(mutableSetOf()) { expansion ->
+            expansion == Expansion.BASE ||
+                    (myPreference?.getBoolean(expansion.prefKey, defValue = false) ?: false)
+        }
+
+    /**
+     * Returns the union of all difficulty sub-ranges the player has selected,
+     * or null if sub-range filtering should not apply (e.g. Danny Trejo, which
+     * has no difficulty sub-ranges — its cards are always included entirely).
+     *
+     * The sub-range selection is only meaningful for expansions that declare
+     * easyRange / hardRange / extraRange (BASE and FORT_HENDRIX).
+     */
+    private fun enabledSubRanges(enabledExpansions: Set<Expansion>): Set<Int> {
+
+         val selectedRanges = myPreference
+            ?.getSelectedCardRanges(enabledExpansions)
+            ?: setOf(
+                Expansion.BASE.easyRange!!,
+                Expansion.BASE.hardRange!!,
+                Expansion.BASE.extraRange!!,
+            )
+
+        // Flatten all IntRanges into a single Set<Int> for O(1) lookup.
+        return selectedRanges.flatMapTo(mutableSetOf()) { it.toList() }
+    }
+
+    // ── Navigation ───────────────────────────────────────────────────────────────
 
     fun nextCard() {
         var currentCardIndex = _uiState.value.currentCardIndex
-        // If we are at the last card, shuffle the deck and start over
         if (isLastCard()) {
             resetDeck()
             currentCardIndex = -1
         }
         val nextCardIndex = currentCardIndex + 1
-        val nextCard = deck[nextCardIndex]
         isForward = true
         _uiState.value = _uiState.value.copy(
             currentCardIndex = nextCardIndex,
-            currentCard = nextCard,
+            currentCard = deck[nextCardIndex],
             abominationJustDrawn = false,
-        )
-    }
-
-    fun drawNewAbomination() {
-        val currentAbomination = abominationRepository.getAvailableAbominations().random()
-        _uiState.value = _uiState.value.copy(
-            currentAbomination = currentAbomination,
-            abominationJustDrawn = true
         )
     }
 
@@ -74,45 +97,51 @@ class GameViewModel @Inject constructor(private val myPreference: MyPreference?)
         val currentCardIndex = _uiState.value.currentCardIndex
         if (currentCardIndex <= 0) return
         val previousCardIndex = currentCardIndex - 1
-        val previousCard = deck[previousCardIndex]
         isForward = false
         _uiState.value = _uiState.value.copy(
             currentCardIndex = previousCardIndex,
-            currentCard = previousCard,
+            currentCard = deck[previousCardIndex],
             abominationJustDrawn = false,
         )
     }
 
-    fun toggleMute() {
-        _isMuted.value = _isMuted.value.not()
-        myPreference?.setBoolean("isMuted", _isMuted.value)
+    // ── Abomination ──────────────────────────────────────────────────────────────
+
+    fun drawNewAbomination() {
+        val currentAbomination = abominationRepository.getAvailableAbominations().random()
+        _uiState.value = _uiState.value.copy(
+            currentAbomination = currentAbomination,
+            abominationJustDrawn = true,
+        )
     }
 
-    fun getIsMuted(): Boolean {
-        return _isMuted.value
-    }
-
-    fun getProgress(): Float {
-        return (_uiState.value.currentCardIndex.toFloat() + 1) / deck.size
-    }
-
-    fun isLastCard(): Boolean {
-        return _uiState.value.currentCardIndex == deck.size - 1
-    }
-
-    fun isFirstCard(): Boolean {
-        return _uiState.value.currentCardIndex <= 0
-    }
-
-    fun isForward(): Boolean {
-        return isForward
-    }
+    // ── Danger level ─────────────────────────────────────────────────────────────
 
     fun increaseDangerLevel() {
         _uiState.value = _uiState.value.copy(currentDanger = _uiState.value.currentDanger.next())
     }
 
     fun decreaseDangerLevel() {
-        _uiState.value = _uiState.value.copy(currentDanger = _uiState.value.currentDanger.previous())
+        _uiState.value =
+            _uiState.value.copy(currentDanger = _uiState.value.currentDanger.previous())
     }
+
+    // ── Mute ─────────────────────────────────────────────────────────────────────
+
+    fun toggleMute() {
+        _isMuted.value = !_isMuted.value
+        myPreference?.setBoolean("isMuted", _isMuted.value)
+    }
+
+    fun getIsMuted(): Boolean = _isMuted.value
+
+    // ── State queries ─────────────────────────────────────────────────────────────
+
+    fun getProgress(): Float = (_uiState.value.currentCardIndex.toFloat() + 1) / deck.size
+
+    fun isLastCard(): Boolean = _uiState.value.currentCardIndex == deck.size - 1
+
+    fun isFirstCard(): Boolean = _uiState.value.currentCardIndex <= 0
+
+    fun isForward(): Boolean = isForward
 }

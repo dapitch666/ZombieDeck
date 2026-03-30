@@ -5,12 +5,14 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import dagger.hilt.android.qualifiers.ApplicationContext
+import org.anne.zombideck.data.Expansion
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-open class MyPreference @Inject constructor(@ApplicationContext context : Context?){
-    private val prefs: SharedPreferences? = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
+open class MyPreference @Inject constructor(@ApplicationContext context: Context?) {
+    private val prefs: SharedPreferences? =
+        context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
 
     private companion object {
         const val PREF_SELECTED_CARD_RANGES = "selected_card_ranges"
@@ -24,7 +26,7 @@ open class MyPreference @Inject constructor(@ApplicationContext context : Contex
         prefs?.edit { putBoolean(key, value) }
     }
 
-    open fun getSelectedCardRanges(fortHendrixEnabled: Boolean, dannyTrejoEnabled: Boolean): Set<IntRange> {
+    open fun getSelectedCardRanges(enabledExpansions: Set<Expansion>): Set<IntRange> {
         val storedRanges = prefs
             ?.getStringSet(PREF_SELECTED_CARD_RANGES, null)
             ?.mapNotNull { parseRange(it) }
@@ -34,18 +36,8 @@ open class MyPreference @Inject constructor(@ApplicationContext context : Contex
             return storedRanges
         }
 
-        val baseRanges: Set<IntRange> = if (fortHendrixEnabled) {
-            setOf(41..58, 59..76, 77..80)
-        } else {
-            setOf(1..18, 19..36, 37..40)
-        }
-        val safeRanges: Set<IntRange> = if (dannyTrejoEnabled) {
-            baseRanges + setOf(81..86)
-        } else {
-            baseRanges
-        }
-        setSelectedCardRanges(safeRanges)
-        return safeRanges
+        return buildDefaultRanges(enabledExpansions)
+            .also { setSelectedCardRanges(it) }
     }
 
     open fun setSelectedCardRanges(ranges: Set<IntRange>) {
@@ -53,11 +45,33 @@ open class MyPreference @Inject constructor(@ApplicationContext context : Contex
         prefs?.edit { putStringSet(PREF_SELECTED_CARD_RANGES, serializedRanges) }
     }
 
+    // ── Private helpers ──────────────────────────────────────────────────────────
+
+    /**
+     * Builds the default selected ranges for a fresh install (or after a prefs wipe).
+     * - Expansions with difficulty sub-ranges (BASE, FORT_HENDRIX): all three sub-ranges enabled.
+     * - Expansions with only a cardRange (DANNY_TREJO): the full range is included.
+     * - Expansions with no cardRange (URBAN_LEGENDS): nothing to add.
+     */
+    private fun buildDefaultRanges(enabledExpansions: Set<Expansion>): Set<IntRange> {
+        val defaults = mutableSetOf<IntRange>()
+        for (expansion in enabledExpansions) {
+            if (expansion.hasDifficultyRanges) {
+                expansion.easyRange?.let  { defaults.add(it) }
+                expansion.hardRange?.let  { defaults.add(it) }
+                expansion.extraRange?.let { defaults.add(it) }
+            } else {
+                expansion.cardRange?.let { defaults.add(it) }
+            }
+        }
+        return defaults
+    }
+
     private fun parseRange(value: String): IntRange? {
-        val split = value.split("-")
-        if (split.size != 2) return null
-        val start = split[0].toIntOrNull() ?: return null
-        val end = split[1].toIntOrNull() ?: return null
+        val parts = value.split("-")
+        if (parts.size != 2) return null
+        val start = parts[0].toIntOrNull() ?: return null
+        val end   = parts[1].toIntOrNull() ?: return null
         if (start > end) return null
         return start..end
     }

@@ -1,6 +1,7 @@
 package org.anne.zombideck.data
 
 val allCards: List<Card> = listOf(
+    // ─── BASE (IDs 1–40) ────────────────────────────────────────────────
     Card(
         1,
         CardType.SPAWN,
@@ -241,294 +242,342 @@ val allCards: List<Card> = listOf(
         ZombieType.RUNNER,
         listOf(0, 1, 1, 1)
     ),
+    // ─── FORT HENDRIX (IDs 41–80) ──────────────────────────────────────────────
     Card(
         41,
         CardType.SPAWN,
         ZombieType.WALKER,
         listOf(1, 2, 4, 6),
-        true
+        true,
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         42,
         CardType.SPAWN,
         ZombieType.WALKER,
         listOf(2, 3, 5, 7),
-        true
+        true,
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         43,
         CardType.SPAWN,
         ZombieType.WALKER,
-        listOf(3, 5, 7, 9)
+        listOf(3, 5, 7, 9),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         44,
         CardType.SPAWN,
         ZombieType.WALKER,
-        listOf(4, 6, 8, 10)
+        listOf(4, 6, 8, 10),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         45,
         CardType.RUSH,
         ZombieType.WALKER,
         listOf(1, 2, 4, 6),
-        true
+        true,
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         46,
         CardType.RUSH,
         ZombieType.WALKER,
         listOf(2, 3, 5, 7),
-        true
+        true,
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         47,
         CardType.RUSH,
         ZombieType.WALKER,
-        listOf(3, 5, 7, 9)
+        listOf(3, 5, 7, 9),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         48,
         CardType.RUSH,
         ZombieType.WALKER,
-        listOf(4, 6, 8, 10)
+        listOf(4, 6, 8, 10),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         49,
         CardType.SPAWN,
         ZombieType.FATTY,
         listOf(1, 1, 2, 3),
-        true
+        true,
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         50,
         CardType.SPAWN,
         ZombieType.FATTY,
-        listOf(2, 3, 4, 4)
+        listOf(2, 3, 4, 4),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         51,
         CardType.RUSH,
         ZombieType.FATTY,
         listOf(0, 1, 2, 3),
-        true
+        true,
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         52,
         CardType.RUSH,
         ZombieType.FATTY,
-        listOf(1, 2, 3, 4)
+        listOf(1, 2, 3, 4),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         53,
         CardType.SPAWN,
         ZombieType.RUNNER,
         listOf(0, 1, 2, 3),
-        true
+        true,
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         54,
         CardType.SPAWN,
         ZombieType.RUNNER,
         listOf(1, 1, 2, 3),
-        true
+        true,
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         55,
         CardType.SPAWN,
         ZombieType.RUNNER,
         listOf(1, 2, 3, 4),
-        true
+        true,
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         56,
         CardType.SPAWN,
         ZombieType.RUNNER,
-        listOf(2, 3, 4, 4)
+        listOf(2, 3, 4, 4),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         57,
         CardType.SPAWN,
         ZombieType.ABOMINATION,
-        listOf(0, 1, 1, 1)
+        listOf(0, 1, 1, 1),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         58,
         CardType.SPAWN,
         ZombieType.ABOMINATION,
-        listOf(0, 1, 1, 1)
+        listOf(0, 1, 1, 1),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         59,
         CardType.SPAWN,
         ZombieType.WALKER,
         listOf(2, 4, 6, 8),
-        true
+        true,
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         60,
         CardType.SPAWN,
         ZombieType.WALKER,
         listOf(3, 5, 7, 9),
-        true
+        true,
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         61,
         CardType.SPAWN,
         ZombieType.WALKER,
-        listOf(4, 6, 8, 10)
+        listOf(4, 6, 8, 10),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         62,
         CardType.SPAWN,
         ZombieType.WALKER,
-        listOf(6, 8, 10, 12)
+        listOf(6, 8, 10, 12),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         63,
         CardType.RUSH,
         ZombieType.WALKER,
-        listOf(2, 4, 6, 8)
+        listOf(2, 4, 6, 8),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         64,
         CardType.RUSH,
         ZombieType.WALKER,
-        listOf(3, 5, 7, 9)
+        listOf(3, 5, 7, 9),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         65,
         CardType.RUSH,
         ZombieType.WALKER,
-        listOf(4, 6, 8, 10)
+        listOf(4, 6, 8, 10),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         66,
         CardType.RUSH,
         ZombieType.WALKER,
-        listOf(6, 8, 10, 12)
+        listOf(6, 8, 10, 12),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         67,
         CardType.SPAWN,
         ZombieType.FATTY,
         listOf(1, 2, 3, 4),
-        true
+        true,
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         68,
         CardType.SPAWN,
         ZombieType.FATTY,
-        listOf(3, 4, 5, 6)
+        listOf(3, 4, 5, 6),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         69,
         CardType.RUSH,
         ZombieType.FATTY,
         listOf(1, 2, 3, 4),
-        true
+        true,
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         70,
         CardType.RUSH,
         ZombieType.FATTY,
-        listOf(2, 3, 4, 5)
+        listOf(2, 3, 4, 5),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         71,
         CardType.SPAWN,
         ZombieType.RUNNER,
-        listOf(1, 2, 3, 4)
+        listOf(1, 2, 3, 4),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         72,
         CardType.SPAWN,
         ZombieType.RUNNER,
         listOf(1, 2, 3, 4),
-        true
+        true,
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         73,
         CardType.SPAWN,
         ZombieType.RUNNER,
-        listOf(2, 3, 4, 5)
+        listOf(2, 3, 4, 5),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         74,
         CardType.SPAWN,
         ZombieType.RUNNER,
-        listOf(3, 4, 5, 6)
+        listOf(3, 4, 5, 6),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         75,
         CardType.SPAWN,
         ZombieType.ABOMINATION,
-        listOf(1, 1, 1, 1)
+        listOf(1, 1, 1, 1),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         76,
         CardType.SPAWN,
         ZombieType.ABOMINATION,
-        listOf(1, 1, 1, 1)
+        listOf(1, 1, 1, 1),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         77,
         CardType.EXTRA_ACTIVATION,
         ZombieType.WALKER,
-        listOf(0, 1, 1, 1)
+        listOf(0, 1, 1, 1),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         78,
         CardType.EXTRA_ACTIVATION,
         ZombieType.WALKER,
-        listOf(0, 1, 1, 1)
+        listOf(0, 1, 1, 1),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         79,
         CardType.EXTRA_ACTIVATION,
         ZombieType.FATTY,
-        listOf(0, 1, 1, 1)
+        listOf(0, 1, 1, 1),
+        expansion = Expansion.FORT_HENDRIX
     ),
     Card(
         80,
         CardType.EXTRA_ACTIVATION,
         ZombieType.RUNNER,
-        listOf(0, 1, 1, 1)
+        listOf(0, 1, 1, 1),
+        expansion = Expansion.FORT_HENDRIX
     ),
+    // ─── DANNY TREJO (IDs 81–86) ────────────────────────────────────────────────
     Card(
         81,
         CardType.SPAWN,
         ZombieType.TREJO,
-        listOf()
+        listOf(),
+        expansion = Expansion.DANNY_TREJO
     ),
     Card(
         82,
         CardType.SPAWN,
         ZombieType.TREJO,
-        listOf()
+        listOf(),
+        expansion = Expansion.DANNY_TREJO
     ),
     Card(
         83,
         CardType.SPAWN,
         ZombieType.TREJO,
-        listOf()
+        listOf(),
+        expansion = Expansion.DANNY_TREJO
     ),
     Card(
         84,
         CardType.RUSH,
         ZombieType.TREJO,
-        listOf()
+        listOf(),
+        expansion = Expansion.DANNY_TREJO
     ),
     Card(
         85,
         CardType.RUSH,
         ZombieType.TREJO,
-        listOf()
+        listOf(),
+        expansion = Expansion.DANNY_TREJO
     ),
     Card(
         86,
         CardType.RUSH,
         ZombieType.TREJO,
-        listOf()
+        listOf(),
+        expansion = Expansion.DANNY_TREJO
     )
 )

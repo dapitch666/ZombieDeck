@@ -1,15 +1,17 @@
 package org.anne.zombideck.data
 
-data class Card (
+data class Card(
     val id: Int,
     val cardType: CardType,
     val zombieType: ZombieType,
     val amount: List<Int>,
-    val shooter: Boolean = false
+    val shooter: Boolean = false,
+    val expansion: Expansion = Expansion.BASE,
 ) {
     fun getAmount(danger: Danger): Int {
         return amount.getOrElse(danger.index) { 0 }
     }
+
     fun isAbomination(): Boolean {
         return zombieType == ZombieType.ABOMINATION
     }
